@@ -1043,32 +1043,45 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $pointer =& $forecastData["time"][$fromTime];
                                 break;
                             case "fmc";
-                                if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
-                                    // Handle the FMC, generate neccessary array if it's the first...
-                                    if (!isset($forecastData["time"][$fromTime]["fmc"])) {
-                                        $forecastData["time"][$fromTime]["fmc"] = array();
-                                    }
-                                    $forecastData["time"][$fromTime]["fmc"][$fmcCount] = array();
-                                    // ...and set pointer.
-                                    $pointer =& $forecastData["time"][$fromTime]["fmc"][$fmcCount];
-                                    $fmcCount++;
-
-                                    // Insert data
-                                    $pointer["type"] = $result[1];
+                                if (preg_match("/^BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
                                     if (isset($result[2]) && is_numeric($result[2])) {
-                                        $pointer["probability"] = $result[2];
-                                    }
-                                    
-                                    $pointer["from"] = $lresult[1].":00";
-                                    $pointer["to"]   = $lresult[2].":00";
-                                    // As we have just extracted the time for this FMC
-                                    // from our TAF, increase field-counter
-                                    $i++;
-                                } elseif (preg_match("/^PROB(\d{2})?|BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
-                                    if (isset($result[2]) && is_numeric($result[2])) {
-                                        $pointer["probability"] = $result[2];
+                                        $type        = $lresult[1]
+                                        $probability = $result[2];
+                                        // As we have just extracted the
+                                        // probability for the next FMC
+                                        // increase field-counter
+                                        $i++;
                                     }
                                 }
+                                if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
+                                    $from = $lresult[1].":00";
+                                    $to   = $lresult[2].":00";
+                                    // Same as above´, we have a time for this FMC
+                                    // from our TAF, increase field-counter
+                                    $i++;
+                                }
+                                // Handle the FMC, generate neccessary array if it's the first...
+                                if (!isset($forecastData["time"][$fromTime]["fmc"])) {
+                                    $forecastData["time"][$fromTime]["fmc"] = array();
+                                }
+                                $forecastData["time"][$fromTime]["fmc"][$fmcCount] = array();
+                                // ...and set pointer.
+                                $pointer =& $forecastData["time"][$fromTime]["fmc"][$fmcCount];
+                                $fmcCount++;
+
+                                // Insert data
+                                if (isset($type)) {
+                                    $pointer["type"] = $type;
+                                } else {
+                                    $pointer["type"] = $result[1];
+                                }
+                                if (isset($probability)) {
+                                    $pointer["probability"] = $probability;
+                                } elseif (isset($result[2]) && is_numeric($result[2])) {
+                                    $pointer["probability"] = $result[2];
+                                }
+                                $pointer["from"] = $from;
+                                $pointer["to"]   = $to;
                                 break;
                             default:
                                 // Do nothing
