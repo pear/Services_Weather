@@ -27,7 +27,7 @@
         <state>stable</state>
         <notes>
             - Common.php
-                o Added windspeed in Beaufort (bft)
+                o Added converting to Beaufort (bft) in convertSpeed()
             - Metar.php
                 o Fixed error in CAVOK handling, cloud-information was broken
             - Ejse.php
