@@ -137,13 +137,14 @@ class Services_Weather_Metar extends Services_Weather_Common
     *
     * @param    string                      $id
     * @param    string                      $url
+    * @param    array                       $units
     * @param    int                         $days
     * @return   PEAR_Error|array
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
     * @access   private
     */
-    function _parseWeatherData($id = null, $url, $days = null)
+    function _parseWeatherData($id = "", $url, $units, $days = 0)
     {
         static $compass;
         static $clouds;
@@ -244,11 +245,6 @@ class Services_Weather_Metar extends Services_Weather_Common
             "maintain"    => "[\$]"
         );        
 
-        // If noone has initialized the units, we have to do it _now_
-        if (!isset($this->_units)) {
-            $this->getUnits();
-        }
-
         $data = @file($url);
 
         // Check for correct data, 2 lines in size
@@ -283,7 +279,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                         switch ($key) {
                             case "wind":
                                 // Parse wind data, first the speed, convert from kt to chosen unit
-                                $weatherData["wind"] = $this->convertSpeed($result[2], strtolower($result[5]), str_replace("/", "", $this->_units["wind"]));
+                                $weatherData["wind"] = $this->convertSpeed($result[2], strtolower($result[5]), str_replace("/", "", $units["wind"]));
                                 if ($result[1] == "VAR" || $result[1] == "VRB") {
                                     // Variable winds
                                     $weatherData["windDegrees"]   = "Variable";
@@ -295,7 +291,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 }
                                 if (is_numeric($result[4])) {
                                     // Wind with gusts...
-                                    $weatherData["windGust"] = $this->convertSpeed($result[4], strtolower($result[5]), str_replace("/", "", $this->_units["wind"]));
+                                    $weatherData["windGust"] = $this->convertSpeed($result[4], strtolower($result[5]), str_replace("/", "", $units["wind"]));
                                 }
                                 // We got that, unset
                                 unset($metarCode["wind"]);
@@ -313,23 +309,23 @@ class Services_Weather_Metar extends Services_Weather_Common
                             case "visibility2":
                                 if (is_numeric($result[1]) && ($result[1] == 9999)) {
                                     // Upper limit of visibility range
-                                    $visibility = "greater than ".$this->convertDistance(10, "km", $this->_units["vis"]).$this->_units["vis"];
+                                    $visibility = "greater than ".$this->convertDistance(10, "km", $units["vis"]).$units["vis"];
                                 } elseif (is_numeric($result[1])) {
                                     // 4-digit visibility in m
-                                    $visibility = $this->convertDistance(($result[1]/1000), "km", $this->_units["vis"]);
+                                    $visibility = $this->convertDistance(($result[1]/1000), "km", $units["vis"]);
                                 } elseif ($result[7] != "CAVOK") {
                                     if (is_numeric($result[3])) {
                                         // visibility as one/two-digit number
-                                        $visibility = $this->convertDistance($result[3], $result[6], $this->_units["vis"]);
+                                        $visibility = $this->convertDistance($result[3], $result[6], $units["vis"]);
                                     } else {
                                         // the y/z part, add if we had a x part (see visibility1)
-                                        $visibility = $this->convertDistance($result[4] / $result[5], $result[6], $this->_units["vis"]);
+                                        $visibility = $this->convertDistance($result[4] / $result[5], $result[6], $units["vis"]);
                                         if (isset($weatherData["visibility"])) {
                                             $visibility += $weatherData["visibility"];
                                         }
                                     }
                                 } else {
-                                    $visibility               = "greater than ".$this->convertDistance(10, "km", $this->_units["vis"]).$this->_units["vis"];
+                                    $visibility               = "greater than ".$this->convertDistance(10, "km", $units["vis"]).$units["vis"];
                                     $weatherData["clouds"]    = array("amount" => "none", "height" => "below 5000ft");
                                     $weatherData["condition"] = "no  significant weather";
                                 }
@@ -378,7 +374,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 break;
                             case "temperature":
                                 // normal temperature in first part
-                                $temperature = $this->convertTemperature($result[2], "c", strtolower($this->_units["temp"]));
+                                $temperature = $this->convertTemperature($result[2], "c", strtolower($units["temp"]));
                                 // negative value
                                 if ($result[1] == "M") {
                                     $temperature *= -1;
@@ -386,7 +382,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $weatherData["temperature"] = $temperature;
                                 if (sizeof($result) > 4) {
                                     // same for dewpoint
-                                    $dewPoint = $this->convertTemperature($result[5], "c", strtolower($this->_units["temp"]));
+                                    $dewPoint = $this->convertTemperature($result[5], "c", strtolower($units["temp"]));
                                     if ($result[4] == "M") {
                                         $dewPoint *= -1;
                                     }
@@ -395,18 +391,18 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 }
                                 if (isset($weatherData["wind"])) {
                                     // Now calculate windchill from temperature and windspeed
-                                    $feltTemperature = $this->calculateWindChill($this->convertTemperature($weatherData["temperature"], strtolower($this->_units["temp"]), "f"), $this->convertSpeed($weatherData["wind"], str_replace("/", "", $this->_units["wind"]), "mph"));
-                                    $weatherData["feltTemperature"] = $this->convertTemperature($feltTemperature, "f", strtolower($this->_units["temp"]));
+                                    $feltTemperature = $this->calculateWindChill($this->convertTemperature($weatherData["temperature"], strtolower($units["temp"]), "f"), $this->convertSpeed($weatherData["wind"], str_replace("/", "", $units["wind"]), "mph"));
+                                    $weatherData["feltTemperature"] = $this->convertTemperature($feltTemperature, "f", strtolower($units["temp"]));
                                 }
                                 unset($metarCode["temperature"]);
                                 break;
                             case "pressure":
                                 if ($result[1] == "A") {
                                     // Pressure provided in inches
-                                    $weatherData["pressure"] = $this->convertPressure(($result[2] / 100), "in", $this->_units["pres"]);
+                                    $weatherData["pressure"] = $this->convertPressure(($result[2] / 100), "in", $units["pres"]);
                                 } elseif ($result[3] == "Q") {
                                     // ... in hectopascal
-                                    $weatherData["pressure"] = $this->convertPressure($result[4], "hpa", $this->_units["pres"]);
+                                    $weatherData["pressure"] = $this->convertPressure($result[4], "hpa", $units["pres"]);
                                 }
                                 unset($metarCode["pressure"]);
                                 break;
@@ -454,16 +450,16 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     } else {
                                         $press = 1000 + $result[1];
                                     }
-                                    $weatherData["remark"][] = "Sea-level pressure: ".$this->convertPressure($press, "hpa", $this->_units["pres"]).$this->_units["pres"];
+                                    $weatherData["remark"][] = "Sea-level pressure: ".$this->convertPressure($press, "hpa", $units["pres"]).$units["pres"];
                                 }
                                 unset($metarCode["seapressure"]);
                                 break;
                             case "1hprecip":
                                 // Precipitation for the last hour in inches
                                 if ($result[1] == 0) {
-                                    $precip = "less than ".$this->convertPressure(1/100, "in", $this->_units["rain"]).$this->_units["rain"];
+                                    $precip = "less than ".$this->convertPressure(1/100, "in", $units["rain"]).$units["rain"];
                                 } else {
-                                    $precip = $this->convertPressure($result[1]/100, "in", $this->_units["rain"]).$this->_units["rain"];
+                                    $precip = $this->convertPressure($result[1]/100, "in", $units["rain"]).$units["rain"];
                                 }
                                 $weatherData["remark"][] = "Precipitation last hour: ".$precip;
                                 unset($metarCode["1hprecip"]);
@@ -476,7 +472,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 } elseif ($result[1] == 0) {
                                     $precip = "traceable";
                                 }else {
-                                    $precip = $this->convertPressure($result[1] / 100, "in", $this->_units["rain"]).$this->_units["rain"];
+                                    $precip = $this->convertPressure($result[1] / 100, "in", $units["rain"]).$units["rain"];
                                 }
                                 $weatherData["remark"][] = "Precipitation last 3/6 hours: ".$precip;
                                 unset($metarCode["6hprecip"]);
@@ -488,20 +484,20 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 } elseif ($result[1] == 0) {
                                     $precip = "traceable";
                                 }else {
-                                    $precip = $this->convertPressure($result[1] / 100, "in", $this->_units["rain"]).$this->_units["rain"];
+                                    $precip = $this->convertPressure($result[1] / 100, "in", $units["rain"]).$units["rain"];
                                 }
                                 $weatherData["remark"][] = "Precipitation last 24 hours: ".$precip;
                                 unset($metarCode["24hprecip"]);
                                 break;
                             case "snowdepth":
                                 // Snow depth in inches
-                                $snow = $this->convertPressure($result[1], "in", $this->_units["rain"]).$this->_units["rain"];
+                                $snow = $this->convertPressure($result[1], "in", $units["rain"]).$units["rain"];
                                 $weatherData["remark"][] = "Snow depth on ground: ".$snow;
                                 unset($metarCode["snowdepth"]);
                                 break;
                             case "snowequiv":
                                 // Same for equivalent in Water... (inches)
-                                $equiv = $this->convertPressure($result[1] / 10, "in", $this->_units["rain"]).$this->_units["rain"];
+                                $equiv = $this->convertPressure($result[1] / 10, "in", $units["rain"]).$units["rain"];
                                 $weatherData["remark"][] = "Water equivalent of snow on ground: ".$equiv;
                                 unset($metarCode["snowequiv"]);
                                 break;
@@ -516,58 +512,58 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 break;
                             case "1htempdew":
                                 // Temperatures in the last hour in C
-                                $temp = $this->convertTemperature($result[2] / 10, "c", strtolower($this->_units["temp"]));
+                                $temp = $this->convertTemperature($result[2] / 10, "c", strtolower($units["temp"]));
                                 // negative value
                                 if ($result[1] == "1") {
                                     $temp *= -1;
                                 }
                                 $temptext = "Temperature";
-                                $temp     = $temp.$this->_units["temp"];
+                                $temp     = $temp.$units["temp"];
                                 if (sizeof($result) > 3) {
                                     // same for dewpoint
-                                    $dew = $this->convertTemperature($result[5] / 10, "c", strtolower($this->_units["temp"]));
+                                    $dew = $this->convertTemperature($result[5] / 10, "c", strtolower($units["temp"]));
                                     if ($result[4] == "1") {
                                         $dew *= -1;
                                     }
                                     $temptext = $temptext."/Dewpoint";
-                                    $temp     = $temp."/".$dew.$this->_units["temp"];
+                                    $temp     = $temp."/".$dew.$units["temp"];
                                 }
                                 $weatherData["remark"][] = $temptext." during the last hour: ".$temp;
                                 unset($metarCode["1htempdew"]);
                                 break;
                             case "6hmaxtemp":
                                 // Max temperature in the last 6 hours in C
-                                $max = $this->convertTemperature($result[2] / 10, "c", strtolower($this->_units["temp"]));
+                                $max = $this->convertTemperature($result[2] / 10, "c", strtolower($units["temp"]));
                                 // negative value
                                 if ($result[1] == "1") {
                                     $max *= -1;
                                 }
-                                $weatherData["remark"][] = "Maximum temperature in the last 6 hours: ".$max.$this->_units["temp"];
+                                $weatherData["remark"][] = "Maximum temperature in the last 6 hours: ".$max.$units["temp"];
                                 unset($metarCode["6hmaxtemp"]);
                                 break;
                             case "6hmintemp":
                                 // Min temperature in the last 6 hours in C
-                                $min = $this->convertTemperature($result[2] / 10, "c", strtolower($this->_units["temp"]));
+                                $min = $this->convertTemperature($result[2] / 10, "c", strtolower($units["temp"]));
                                 // negative value
                                 if ($result[1] == "1") {
                                     $min *= -1;
                                 }
-                                $weatherData["remark"][] = "Minimum temperature in the last 6 hours: ".$min.$this->_units["temp"];
+                                $weatherData["remark"][] = "Minimum temperature in the last 6 hours: ".$min.$units["temp"];
                                 unset($metarCode["6hmintemp"]);
                                 break;
                             case "24htemp":
                                 // Max/Min temperatures in the last 24 hours in C
-                                $max = $this->convertTemperature($result[2] / 10, "c", strtolower($this->_units["temp"]));
+                                $max = $this->convertTemperature($result[2] / 10, "c", strtolower($units["temp"]));
                                 // negative value
                                 if ($result[1] == "1") {
                                     $max *= -1;
                                 }
-                                $min = $this->convertTemperature($result[4] / 10, "c", strtolower($this->_units["temp"]));
+                                $min = $this->convertTemperature($result[4] / 10, "c", strtolower($units["temp"]));
                                 // negative value
                                 if ($result[3] == "1") {
                                     $min *= -1;
                                 }
-                                $weatherData["remark"][] = "Temperatures in the last 24 hours: max ".$max.$this->_units["temp"]."/min ".$min.$this->_units["temp"];
+                                $weatherData["remark"][] = "Temperatures in the last 24 hours: max ".$max.$units["temp"]."/min ".$min.$units["temp"];
                                 unset($metarCode["24htemp"]);
                                 break;
                             case "3hpresstend":
@@ -920,7 +916,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             $weatherReturn["cache"] = "HIT";
         } else {
             // Download and parse weather
-            $weatherReturn  = $this->_parseWeatherData(null, $weatherURL, $unitsFormat, null);
+            $weatherReturn  = $this->_parseWeatherData("", $weatherURL, $units, 0);
 
             if (Services_Weather::isError($weatherReturn)) {
                 return $weatherReturn;
