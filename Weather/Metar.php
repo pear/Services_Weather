@@ -393,7 +393,8 @@ class Services_Weather_Metar extends Services_Weather_Common
             $metar = explode(" ", trim($data[1]));
 
             // Add a few local variables for data processing
-            $pointer  =& $weatherData; // Pointer to the array we add the data to 
+            $trendCount = 0;             // If we have trends, we need this
+            $pointer    =& $weatherData; // Pointer to the array we add the data to 
             for ($i = 0; $i < sizeof($metar); $i++) {
                 // Check for whitespace and step loop, if nothing's there
                 $metar[$i] = trim($metar[$i]);
@@ -544,8 +545,12 @@ class Services_Weather_Metar extends Services_Weather_Common
                             case "trend":
                                 // We may have a trend here... extract type and set pointer on
                                 // created new array
-                                $weatherData["trend"] = array();
-                                $pointer =& $weatherData["trend"];
+                                if (!isset($weatherData["trend"])) {
+                                    $weatherData["trend"] = array();
+                                    $weatherData["trend"][$trendCount] = array();
+                                }
+                                $pointer =& $weatherData["trend"][$trendCount];
+                                $trendCount++;
                                 $pointer["type"] = $result[0];
                                 while (isset($metar[$i + 1]) && preg_match("/^(FM|TL|AT)(\d{2})(\d{2})$/i", $metar[$i + 1], $lresult)) {
                                     if ($lresult[1] == "FM") {
@@ -1043,9 +1048,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $pointer =& $forecastData["time"][$fromTime];
                                 break;
                             case "fmc";
+                                // Test, if this is a probability for the next FMC
                                 if (preg_match("/^BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
                                     if (isset($result[2]) && is_numeric($result[2])) {
-                                        $type        = $lresult[1];
+                                        $type        = $lresult[0];
                                         $probability = $result[2];
                                         // As we have just extracted the
                                         // probability for the next FMC
