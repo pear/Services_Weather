@@ -54,7 +54,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Partner-ID at weather.com
     *
-    * @var      string                      $_partnerID;
+    * @var      string                      $_partnerID
     * @access   private
     */
     var $_partnerID;
