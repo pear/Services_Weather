@@ -163,14 +163,13 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $id
     * @param    string                      $url
-    * @param    string                      $unitsFormat
     * @param    int                         $days
     * @return   PEAR_Error|bool
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @throws   PEAR_Error
     * @access   private
     */
-    function _parseWeatherData($id, $url, $unitsFormat = "", $days = 0)
+    function _parseWeatherData($id, $url, $days = 0)
     {
         // Get data from URL and unserialize
         $status = $this->_unserializer->unserialize($url, true);
@@ -194,8 +193,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 foreach(get_object_vars($data) as $key => $val) {
                     switch($key) {
                         case "head":
-                            $varname  = "units";
-                            $userData = $unitsFormat;
+                            continue 2;
                             break;
                         case "loc":
                             $varname  = "location";
@@ -203,11 +201,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                             break;
                         case "cc":
                             $varname  = "weather";
-                            $userData = $unitsFormat;
+                            $userData = "";
                             break;
                         case "dayf":
                             $varname  = "forecast";
-                            $userData = $unitsFormat." ".$days;
+                            $userData = $days;
                             break;
                     }
                     // Save data in object
@@ -268,47 +266,13 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $id
     * @param    string                      $unitsFormat
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
+    * @return   array
+    * @deprecated
     * @access   public
     */
-    function getUnits($id = "", $unitsFormat = "")
+    function getUnits($id = null, $unitsFormat = "")
     {
-        $status = $this->_checkLocationID($id);
-
-        if (Services_Weather::isError($status)) {
-            return $status;
-        }
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
-            $unitsFormat = strtolower($unitsFormat{0});
-        } else {
-            $unitsFormat = $this->_unitsFormat;
-        }
-
-        $unitsReturn = array();
-        $unitsURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$unitsFormat;
-
-        if ($this->_cacheEnabled && ($this->_unitsFormat == $this->_cache->getUserData($id, "units")) &&
-            // Get data from cache
-                 ($units = $this->_cache->get($id, "units"))) {
-            $this->_units = $units;
-            $unitsReturn["cache"] = "HIT";
-        } else {
-            // No cache, or no such data, so download data
-            $status = $this->_parseWeatherData($id, $unitsURL);
-
-            if (Services_Weather::isError($status)) {
-                return $status;
-            }
-            $unitsReturn["cache"] = "MISS";
-        }
-        $unitsReturn["temp"] = $this->_units->ut;
-        $unitsReturn["vis"]  = $this->_units->ud;
-        $unitsReturn["wind"] = $this->_units->us;
-        $unitsReturn["pres"] = $this->_units->up;
-        $unitsReturn["rain"] = $this->_units->ur;
-
-        return $unitsReturn;
+        return $this->getUnitsFormat($unitsFormat);
     }
     // }}}
 
@@ -330,7 +294,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         }
 
         $locationReturn = array();
-        $locationURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$this->_unitsFormat;
+        $locationURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
 
         if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
             // Get data from cache
@@ -374,23 +338,19 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
-            $unitsFormat = strtolower($unitsFormat{0});
-        } else {
-            $unitsFormat = $this->_unitsFormat;
-        }
+
+        $units    = $this->getUnitsFormat($unitsFormat);
 
         $weatherReturn = array();
-        $weatherURL    = "http://xoap.weather.com/weather/local/".$id."?cc=*&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$unitsFormat;
+        $weatherURL    = "http://xoap.weather.com/weather/local/".$id."?cc=*&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
 
-        if ($this->_cacheEnabled && ($this->_unitsFormat == $this->_cache->getUserData($id, "weather")) &&
-                ($weather = $this->_cache->get($id, "weather"))) {
+        if ($this->_cacheEnabled && ($weather = $this->_cache->get($id, "weather"))) {
             // Same procedure...
             $this->_weather = $weather;
             $weatherReturn["cache"] = "HIT";
         } else {
             // ...as last function
-            $status = $this->_parseWeatherData($id, $weatherURL, $unitsFormat);
+            $status = $this->_parseWeatherData($id, $weatherURL);
 
             if (Services_Weather::isError($status)) {
                 return $status;
@@ -399,22 +359,22 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         }
         $update = implode(" ", array_slice(explode(" ", $this->_weather->lsup), 0, 3));
 
-        $weatherReturn["update"]          = date($this->_dateFormat." ".$this->_timeFormat, strtotime($update));
-        $weatherReturn["station"]         = $this->_weather->obst;
-        $weatherReturn["temperature"]     = $this->_weather->tmp;
-        $weatherReturn["feltTemperature"] = $this->_weather->flik;
-        $weatherReturn["condition"]       = $this->_weather->t;
-        $weatherReturn["conditionIcon"]   = $this->_weather->icon;
-        $weatherReturn["pressure"]        = $this->_weather->bar->r;
-        $weatherReturn["pressureTrend"]   = $this->_weather->bar->d;
-        $weatherReturn["wind"]            = $this->_weather->wind->s;
-        $weatherReturn["windDegrees"]     = $this->_weather->wind->d;
-        $weatherReturn["windDirection"]   = $this->_weather->wind->t;
-        $weatherReturn["humidity"]        = $this->_weather->hmid;
-        $weatherReturn["visibility"]      = $this->_weather->vis;
-        $weatherReturn["uvIndex"]         = $this->_weather->uv->i;
-        $weatherReturn["uvText"]          = $this->_weather->uv->t;
-        $weatherReturn["dewPoint"]        = $this->_weather->dewp;
+        $weatherReturn["update"]            = date($this->_dateFormat." ".$this->_timeFormat, strtotime($update));
+        $weatherReturn["station"]           = $this->_weather->obst;
+        $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->tmp, "f", $units["temp"]);
+        $weatherReturn["feltTemperature"]   = $this->convertTemperature($this->_weather->flik, "f", $units["temp"]);
+        $weatherReturn["condition"]         = $this->_weather->t;
+        $weatherReturn["conditionIcon"]     = $this->_weather->icon;
+        $weatherReturn["pressure"]          = $this->convertPressure($this->_weather->bar->r, "in", $units["pres"]);
+        $weatherReturn["pressureTrend"]     = $this->_weather->bar->d;
+        $weatherReturn["wind"]              = $this->convertSpeed($this->_weather->wind->s, "mph", $units["wind"]);
+        $weatherReturn["windDegrees"]       = $this->_weather->wind->d;
+        $weatherReturn["windDirection"]     = $this->_weather->wind->t;
+        $weatherReturn["humidity"]          = $this->_weather->hmid;
+        $weatherReturn["visibility"]        = $this->convertDistance($this->_weather->vis, "sm", $units["vis"]);
+        $weatherReturn["uvIndex"]           = $this->_weather->uv->i;
+        $weatherReturn["uvText"]            = $this->_weather->uv->t;
+        $weatherReturn["dewPoint"]          = $this->convertTemperature($this->_weather->dewp, "f", $units["temp"]);
 
         return $weatherReturn;
     }
@@ -426,7 +386,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $id
     * @param    int                         $days           Values between 1 and 10
-    * @param    string      $unitsFormat
+    * @param    string                      $unitsFormat
     * @return   PEAR_Error|array
     * @throws   PEAR_Error
     * @access   public
@@ -441,23 +401,20 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (!in_array($days, range(1, 10))) {
             $days = 2;
         }
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
-            $unitsFormat = strtolower($unitsFormat{0});
-        } else {
-            $unitsFormat = $this->_unitsFormat;
-        }
+        
+        $units = $this->getUnitsFormat($unitsFormat);
 
         $forecastReturn = array();
-        $forecastURL = "http://xoap.weather.com/weather/local/".$id."?dayf=".$days."&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$unitsFormat;
+        $forecastURL = "http://xoap.weather.com/weather/local/".$id."?dayf=".$days."&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
 
-        if ($this->_cacheEnabled && ($userData = explode(" ", $this->_cache->getUserData($id, "forecast"))) &&
-                ($this->_unitsFormat == $userData[ 0 ]) && ($days <= $userData[ 1 ]) && ($forecast = $this->_cache->get($id, "forecast"))) {
+        if ($this->_cacheEnabled && ($userData = $this->_cache->getUserData($id, "forecast")) &&
+                ($days <= $userData) && ($forecast = $this->_cache->get($id, "forecast"))) {
             // Encore...
             $this->_forecast = $forecast;
             $forecastReturn["cache"] = "HIT";
         } else {
             // ...
-            $status = $this->_parseWeatherData($id, $forecastURL, $unitsFormat, $days);
+            $status = $this->_parseWeatherData($id, $forecastURL, $days);
 
             if (Services_Weather::isError($status)) {
                 return $status;
@@ -472,15 +429,15 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         for ($i = 0; $i < $days; $i++) {
             $day = array(
-                "tempertureHigh" => $this->_forecast->day[$i]->hi,
-                "temperatureLow" => $this->_forecast->day[$i]->low,
+                "tempertureHigh" => $this->convertTemperature($this->_forecast->day[$i]->hi, "f", $units["temp"]),
+                "temperatureLow" => $this->convertTemperature($this->_forecast->day[$i]->low, "f", $units["temp"]),
                 "sunrise"        => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->sunr)),
                 "sunset"         => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->suns)),
                 "day" => array(
                     "condition"     => $this->_forecast->day[$i]->part[0]->t,
                     "conditionIcon" => $this->_forecast->day[$i]->part[0]->icon,
-                    "wind"          => $this->_forecast->day[$i]->part[0]->wind->s,
-                    "windGust"      => $this->_forecast->day[$i]->part[0]->wind->gust,
+                    "wind"          => $this->convertSpeed($this->_forecast->day[$i]->part[0]->wind->s, "mph", $units["wind"]),
+                    "windGust"      => $this->convertSpeed($this->_forecast->day[$i]->part[0]->wind->gust, "mph", $units["wind"]),
                     "windDegrees"   => $this->_forecast->day[$i]->part[0]->wind->d,
                     "windDirection" => $this->_forecast->day[$i]->part[0]->wind->t,
                     "precipitation" => $this->_forecast->day[$i]->part[0]->ppcp,
@@ -489,8 +446,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 "night" => array (
                     "condition"     => $this->_forecast->day[$i]->part[1]->t,
                     "conditionIcon" => $this->_forecast->day[$i]->part[1]->icon,
-                    "wind"          => $this->_forecast->day[$i]->part[1]->wind->s,
-                    "windGust"      => $this->_forecast->day[$i]->part[1]->wind->gust,
+                    "wind"          => $this->convertSpeed($this->_forecast->day[$i]->part[1]->wind->s, "mph", $units["wind"]),
+                    "windGust"      => $this->convertSpeed($this->_forecast->day[$i]->part[1]->wind->gust, "mph", $units["wind"]),
                     "windDegrees"   => $this->_forecast->day[$i]->part[1]->wind->d,
                     "windDirection" => $this->_forecast->day[$i]->part[1]->wind->t,
                     "precipitation" => $this->_forecast->day[$i]->part[1]->ppcp,

@@ -174,35 +174,12 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     * @param    string                      $id
     * @param    string                      $unitsFormat
     * @return   array
+    * @deprecated
     * @access   public
     */
     function getUnits($id = null, $unitsFormat = "")
     {
-        // This is cheap'o stuff, no caching, no polling
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
-            $unitsFormat = strtolower($unitsFormat{0});
-        } else {
-            $unitsFormat = $this->_unitsFormat;
-        }
-        $s = array(
-            "cache" => "MISS",
-            "temp"  => "F",
-            "vis"   => "sm",
-            "wind"  => "mph",
-            "pres"  => "in",
-            "rain"  => "in"
-        );
-        $m = array(
-            "cache" => "MISS",
-            "temp"  => "C",
-            "vis"   => "km",
-            "wind"  => "km/h",
-            "pres"  => "mb",
-            "rain"  => "mm"
-        );
-        $this->_units = ${$unitsFormat};
-
-        return ${$unitsFormat};
+        return $this->getUnitsFormat($unitsFormat);
     }
     // }}}
 
@@ -289,7 +266,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("c", "m", "s"))) {
             $unitsFormat = strtolower($unitsFormat{0});
         } else {
             $unitsFormat = $this->_unitsFormat;
@@ -330,12 +307,12 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         } else {
             $locname = $this->_weather->station->name;
         }
-        $weatherReturn["station"]         = $locname;
-        $weatherReturn["wind"]            = $this->convertSpeed($this->_weather->wind->prevailing_speed, "mps", str_replace("/", "", $units["wind"]));
-        $weatherReturn["windDegrees"]     = $this->_weather->wind->prevailing_direction->degrees;
-        $weatherReturn["windDirection"]   = $this->_weather->wind->prevailing_direction->compass;
+        $weatherReturn["station"]           = $locname;
+        $weatherReturn["wind"]              = $this->convertSpeed($this->_weather->wind->prevailing_speed, "mps", $units["wind"]);
+        $weatherReturn["windDegrees"]       = $this->_weather->wind->prevailing_direction->degrees;
+        $weatherReturn["windDirection"]     = $this->_weather->wind->prevailing_direction->compass;
         if ($this->_weather->wind->prevailing_speed != $this->_weather->wind->gust_speed) {
-            $weatherReturn["windGust"]      = $this->convertSpeed($this->_weather->wind->gust_speed, "mps", str_replace("/", "", $units["wind"]));
+            $weatherReturn["windGust"]      = $this->convertSpeed($this->_weather->wind->gust_speed, "mps", $units["wind"]);
         }
         if ($this->_weather->wind->varying_from_direction != "" && $this->_weather->wind->varying_to_direction != "") {
             $weatherReturn["windVar"]       = array (
@@ -343,35 +320,35 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
                 "to"   => $this->_weather->wind->varying_to_direction
             );
         }
-        $weatherReturn["visibility"]      = $this->convertDistance($this->_weather->visibility->distance / 1000, "km", $units["vis"]);
-        if (strtoupper($this->_weather->visibility->qualifier) == "BEYOND") {
-            $weatherReturn["visibility"]  = "greater than ".$weatherReturn["visibility"].$units["vis"];
-        }
+
+        $weatherReturn["visibility"]        = $this->convertDistance($this->_weather->visibility->distance / 1000, "km", $units["vis"]);
+        $weatherReturn["visQualifier"]      = $this->_weather->visibility->qualifier;
+
         $condition = array();
         for ($i = 0; $i < sizeof($this->_weather->phenomena); $i++) {
             $condition[] = $this->_weather->phenomena[$i]->string;
         }
-        $weatherReturn["condition"]       = implode(", ", $condition);
+        $weatherReturn["condition"]         = implode(", ", $condition);
         $layers    = array();
         for($i = 0; $i < sizeof($this->_weather->sky->layers); $i++) {
             if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLEAR") {
-                $layers[$i]  = array();
-                $layers[$i]["amount"] = $clouds[$this->_weather->sky->layers[$i]->extent];
-                $layers[$i]["height"] = $this->convertDistance($this->_weather->sky->layers[$i]->altitude / 1000, "km", "ft");
+                $layers[$i]             = array();
+                $layers[$i]["amount"]   = $clouds[$this->_weather->sky->layers[$i]->extent];
+                $layers[$i]["height"]   = $this->convertDistance($this->_weather->sky->layers[$i]->altitude / 1000, "km", "ft");
                 if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLOUD") {
                     $layers[$i]["type"] = ucwords(str_replace("_", "", $this->_weather->sky->layers[$i]->type));
                 }
             }
         }
         if (sizeof($layers)) {
-            $weatherReturn["clouds"]      = $layers;
+            $weatherReturn["clouds"]        = $layers;
         }
-        $weatherReturn["temperature"]     = $this->convertTemperature($this->_weather->temperature->ambient, "c", $units["temp"]);
-        $feltTemperature = $this->calculateWindChill($this->convertTemperature($weatherReturn["temperature"], strtolower($units["temp"]), "f"), $this->convertSpeed($weatherReturn["wind"], str_replace("/", "", $units["wind"]), "mph"));
-        $weatherReturn["feltTemperature"] = $this->convertTemperature($feltTemperature, "f", strtolower($units["temp"]));
-        $weatherReturn["dewPoint"]        = $this->convertTemperature($this->_weather->temperature->dewpoint, "c", $units["temp"]);
-        $weatherReturn["humidity"]        = $this->_weather->temperature->relative_humidity;
-        $weatherReturn["pressure"]        = $this->convertPressure($this->_weather->pressure->altimeter, "hpa", $units["pres"]);
+        $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->temperature->ambient, "c", $units["temp"]);
+        $feltTemperature = $this->calculateWindChill($this->convertTemperature($weatherReturn["temperature"], $units["temp"], "f"), $this->convertSpeed($weatherReturn["wind"], $units["wind"], "mph"));
+        $weatherReturn["feltTemperature"]   = $this->convertTemperature($feltTemperature, "f", strtolower($units["temp"]));
+        $weatherReturn["dewPoint"]          = $this->convertTemperature($this->_weather->temperature->dewpoint, "c", $units["temp"]);
+        $weatherReturn["humidity"]          = $this->_weather->temperature->relative_humidity;
+        $weatherReturn["pressure"]          = $this->convertPressure($this->_weather->pressure->altimeter, "hpa", $units["pres"]);
 
         return $weatherReturn;
     }

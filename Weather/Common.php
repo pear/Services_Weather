@@ -43,12 +43,26 @@ class Services_Weather_Common {
 
     // {{{ properties
     /**
-    * Format of the units provided (standard/metric)
+    * Format of the units provided (standard/metric/custom)
     *
     * @var      string                      $_unitsFormat
     * @access   private
     */
     var $_unitsFormat = "s";
+
+    /**
+    * Custom format of the units
+    *
+    * @var      array                       $_customUnitsFormat
+    * @access   private
+    */
+    var $_customUnitsFormat = array(
+        "temp"  => "f",
+        "vis"   => "sm",
+        "wind"  => "mph",
+        "pres"  => "in",
+        "rain"  => "in"
+    );
 
     /**
     * Format of the used dates
@@ -65,14 +79,6 @@ class Services_Weather_Common {
     * @access   private
     */
     var $_timeFormat = "G:i A";
-
-    /**
-    * Object containing the units-data
-    *
-    * @var      object stdClass             $_units
-    * @access   private
-    */
-    var $_units;
 
     /**
     * Object containing the location-data
@@ -158,14 +164,18 @@ class Services_Weather_Common {
         }
 
         if (isset($options["unitsFormat"])) {
-            $this->setUnitsFormat($options["unitsFormat"]);
+            if (isset($options["customUnitsFormat"])) {
+                $this->setUnitsFormat($options["unitsFormat"], $options["customUnitsFormat"]);
+            } else {
+                $this->setUnitsFormat($options["unitsFormat"]);
+            }
         }
         
         if (isset($options["dateFormat"])) {
-            $this->setDateTimeFormat($options["dateFormat"]);
+            $this->setDateTimeFormat($options["dateFormat"], "");
         }
         if (isset($options["timeFormat"])) {
-            $this->setDateTimeFormat($options["timeFormat"]);
+            $this->setDateTimeFormat("", $options["timeFormat"]);
         }
         
         return true;
@@ -209,13 +219,71 @@ class Services_Weather_Common {
     * Changes the representation of the units (standard/metric)
     *
     * @param    string                      $unitsFormat
+    * @param    array                       $customUnitsFormat
     * @access   public
     */
-    function setUnitsFormat($unitsFormat)
+    function setUnitsFormat($unitsFormat, $customUnitsFormat = array())
     {
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
-            $this->_unitsFormat = strtolower($unitsFormat{0});
+        static $acceptedFormats;
+        if (!isset($acceptedFormats)) {
+            $acceptedFormats = array(
+                "temp"  => array("c", "f"),
+                "vis"   => array("km", "ft", "sm"),
+                "wind"  => array("mph", "kmh", "kt", "mps", "fps"),
+                "pres"  => array("in", "hpa", "mb", "mm", "atm"),
+                "rain"  => array("in", "mm")
+            );
         }
+        
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("c", "m", "s"))) {
+            $this->_unitsFormat = strtolower($unitsFormat{0});
+            if ($this->_unitsFormat == "c" && is_array($customUnitsFormat)) {
+                foreach ($customUnitsFormat as $key => $value) {
+                    if (array_key_exists($key, $acceptedFormats) && in_array($value, $acceptedFormats[$key])) {
+                        $this->_customUnitsFormat[$key] = $value;
+                    }
+                }
+            } elseif ($this->_unitsFormat == "c") {
+                $this->_unitsFormat = "s";
+            }
+        }
+    }
+    // }}}
+
+    // {{{ getUnitsFormat()
+    /**
+    * Returns the selected units format
+    *
+    * @param    string                      $unitsFormat
+    * @return   array
+    * @access   public
+    */
+    function getUnitsFormat($unitsFormat = "")
+    {
+        // This is cheap'o stuff
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("c", "m", "s"))) {
+            $unitsFormat = strtolower($unitsFormat{0});
+        } else {
+            $unitsFormat = $this->_unitsFormat;
+        }
+
+        $c = $this->_customUnitsFormat;
+        $m = array(
+            "temp"  => "c",
+            "vis"   => "km",
+            "wind"  => "kmh",
+            "pres"  => "mb",
+            "rain"  => "mm"
+        );
+        $s = array(
+            "temp"  => "f",
+            "vis"   => "sm",
+            "wind"  => "mph",
+            "pres"  => "in",
+            "rain"  => "in"
+        );
+
+        return ${$unitsFormat};
     }
     // }}}
 
@@ -384,10 +452,13 @@ class Services_Weather_Common {
     /**
     * Calculate windchill from temperature and windspeed (enhanced formula)
     *
+    * Temperature has to be entered in ?F!
+    *
     * @param    float                       $temperature
     * @param    float                       $speed
     * @return   float
     * @access   public
+    * @link     http://www.nws.noaa.gov/om/windchill/      
     */
     function calculateWindChill($temperature, $speed)
     {
@@ -398,12 +469,16 @@ class Services_Weather_Common {
     // {{{ calculateHumidity()
     /**
     * Calculate humidity from temperature and dewpoint
-    * This is only an approximation, there is no exact formula
+    * This is only an approximation, there is no exact formula, this
+    * one here is called Magnus-Formula
+    *
+    * Temperature and dewpoint have to be entered in ?C!
     *
     * @param    float                       $temperature
     * @param    float                       $dewPoint
     * @return   float
     * @access   public
+    * @link     http://www.faqs.org/faqs/meteorology/temp-dewpoint/
     */
     function calculateHumidity($temperature, $dewPoint)
     {   
@@ -433,12 +508,16 @@ class Services_Weather_Common {
     // {{{ calculateDewPoint()
     /**
     * Calculate dewpoint from temperature and humidity
-    * This is only an approximation, there is no exact formula
+    * This is only an approximation, there is no exact formula, this
+    * one here is called Magnus-Formula
+    *
+    * Temperature has to be entered in ?C!
     *
     * @param    float                       $temperature
     * @param    float                       $humidity
     * @return   float
     * @access   public
+    * @link     http://www.faqs.org/faqs/meteorology/temp-dewpoint/
     */
     function calculateDewPoint($temperature, $humidity)
     {   
