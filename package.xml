@@ -26,6 +26,7 @@
 		<license>PHP License</license>
         <state>stable</state>
 		<notes>
+			- Removed dependency on 4.3.0
             - Weather.php, Common.php, Globalweather.php, Metar.php, Weatherdotcom.php
                 o Changed error throwing in constructors to work actually
                 o Removed PEAR-package dependency checking
@@ -43,7 +44,6 @@
                 o Erased
 		</notes>
 		<deps>
-			<dep type="php" rel="ge">4.3.0</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.4.0">DB</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.7.5">SOAP</dep>
