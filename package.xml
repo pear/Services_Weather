@@ -22,10 +22,12 @@
     </maintainers>
     <release>
         <version>1.0.0</version>
-        <date>2003-12-06</date>
+        <date>2003-12-12</date>
 		<license>PHP License</license>
         <state>stable</state>
 		<notes>
+            First stable release (Birthday Release)
+            
             - buildMetarDB.php
               Submitted patch from Marcus I. Ryan <marcus[at]horde[dot]org>
                 o Fixed copy/paste error that sets dbName instead of dbType for -t
