@@ -40,12 +40,15 @@ require_once "XML/Unserializer.php";
 * implemented in this class. It obeys to the times as written down in the guidelines.
 *
 * For a working example, please take a look at
-*     docs/Weather/examples/weather.com-basic.php and
-*     docs/Weather/examples/weather.com-error.php
+*     docs/Services_Weather/examples/weather.com-basic.php and
+*     docs/Services_Weather/examples/weather.com-error.php
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.weather.com/services/xmloap.html
+* @example      docs/Services_Weather/examples/weather.com-basic.php
+* @example      docs/Services_Weather/examples/weather.com-error.php
 * @package      Services_Weather
+* @license      http://www.php.net/license/2_02.txt
 * @version      1.0
 */
 class Services_Weather_Weatherdotcom extends Services_Weather_Common {
