@@ -311,7 +311,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 unset($metarCode["visibility1"]);
                                 break;
                             case "visibility2":
-                                if (is_numeric($result[1])) {
+                                if (is_numeric($result[1]) && ($result[1] == 9999)) {
+                                    // Upper limit of visibility range
+                                    $visibility = "greater than ".$this->convertDistance(10, "km", $this->_units["vis"]).$this->_units["vis"];
+                                } elseif (is_numeric($result[1])) {
                                     // 4-digit visibility in m
                                     $visibility = $this->convertDistance(($result[1]/1000), "km", $this->_units["vis"]);
                                 } elseif ($result[7] != "CAVOK") {
@@ -327,7 +330,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     }
                                 } else {
                                     $visibility               = "greater than ".$this->convertDistance(10, "km", $this->_units["vis"]).$this->_units["vis"];
-                                    $weatherData["clouds"]    = array("amount" => "none below 5000ft");
+                                    $weatherData["clouds"]    = array("amount" => "none", "height" => "below 5000ft");
                                     $weatherData["condition"] = "no  significant weather";
                                 }
                                 $weatherData["visibility"] = $visibility;
