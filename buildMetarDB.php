@@ -40,9 +40,9 @@ require_once "DB.php";
 * @version      1.0
 */
 
-// {{{ checkData()
+// {{{ Services_Weather_checkData()
 /**
-* checkData
+* Services_Weather_checkData
 *
 * Checks the data for a certain string-length and if it either consists of
 * a certain char-type or a string of "-" as replacement.
@@ -51,7 +51,7 @@ require_once "DB.php";
 * @param    array                           $dataOrder      Because the data is in different locations, we provide this
 * @return   bool
 */
-function checkData($data, $dataOrder)
+function Services_Weather_checkData($data, $dataOrder)
 {
     $return = TRUE;
     foreach ($dataOrder as $type => $idx) {
@@ -336,7 +336,7 @@ if (DB::isError($db)) {
     // read data from file
     while ($data = fgetcsv($fp, 1000, ";")) {
         // Check for valid data
-        if ((sizeof($data) < 9) || !checkData($data, $dataOrder)) {
+        if ((sizeof($data) < 9) || !Services_Weather_checkData($data, $dataOrder)) {
                 echo "Services_Weather: Invalid data in file!\n";
                 echo "\tLine ".($line + 1).": ".implode(";", $data)."\n";
                 $error++;
