@@ -71,8 +71,10 @@ class Services_Weather {
         $classname = "Services_Weather_".$service;
 
         if (is_array($options) && isset($options["debug"]) && $options["debug"] >= 2) {
+            define("SERVICES_WEATHER_DEBUG", TRUE);
             include_once("Services/Weather/".$service.".php");
         } else {
+            define("SERVICES_WEATHER_DEBUG", FALSE);
             @include_once("Services/Weather/".$service.".php");
         }
 
