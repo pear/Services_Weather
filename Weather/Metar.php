@@ -1144,9 +1144,11 @@ class Services_Weather_Metar extends Services_Weather_Common
                             $newVal = $this->convertTemperature($val, "f", $units["temp"]);
                             break;
                         case "pressure":
+                            $newVal = $this->convertPressure($val, "in", $units["pres"]);
+                            break;
                         case "amount":
                             if (is_numeric($val)) {
-                                $newVal = $this->convertPressure($val, "in", $units["pres"]);
+                                $newVal = $this->convertPressure($val, "in", $units["rain"]);
                             } else {
                                 $newVal = $val;
                             }
