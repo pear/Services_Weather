@@ -888,6 +888,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 unset($tafCode["station"]);
                                 break;
                             case "valid":
+                                $pointer["validRaw"] = $result[0];
                                 // Generates the timeperiod the report is valid for
                                 list($year, $month, $day) = explode("-", date("Y-m-d", $forecastData["update"]));
                                 // Date is in next month
@@ -1037,14 +1038,20 @@ class Services_Weather_Metar extends Services_Weather_Common
                                         // increase field-counter
                                         $i++;
                                     }
+                                } else {
+                                    $type = $result[1];
+                                    if (isset($result[2]) && is_numeric($result[2])) {
+                                        $probability = $result[2];
+                                    }
                                 }
                                 if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                     $from = $lresult[1].":00";
                                     $to   = $lresult[2].":00";
-                                    // Same as above?, we have a time for this FMC from our TAF, 
+                                    // Same as above, we have a time for this FMC from our TAF, 
                                     // increase field-counter
                                     $i++;
                                 }
+
                                 // Handle the FMC, generate neccessary array if it's the first...
                                 if (!isset($forecastData["time"][$fromTime]["fmc"])) {
                                     $forecastData["time"][$fromTime]["fmc"] = array();
@@ -1055,18 +1062,14 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $fmcCount++;
 
                                 // Insert data
-                                if (isset($type)) {
-                                    $pointer["type"] = $type;
-                                } else {
-                                    $pointer["type"] = $result[1];
-                                }
+                                $pointer["type"] = $type;
                                 if (isset($probability)) {
                                     $pointer["probability"] = $probability;
-                                } elseif (isset($result[2]) && is_numeric($result[2])) {
-                                    $pointer["probability"] = $result[2];
                                 }
-                                $pointer["from"] = $from;
-                                $pointer["to"]   = $to;
+                                if (isset($from)) {
+                                    $pointer["from"] = $from;
+                                    $pointer["to"]   = $to;
+                                }
                                 break;
                             default:
                                 // Do nothing
