@@ -203,7 +203,7 @@ class Services_Weather {
     {
         // This should improve the performance of the script, as PEAR is only included, when
         // really needed.
-        require_once "PEAR.php";
+        include_once "PEAR.php";
 
         $message = "Services_Weather: ".Services_Weather::_errorMessage($code);
 

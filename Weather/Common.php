@@ -172,7 +172,6 @@ class Services_Weather_Common {
     * @param    string                      $cacheType
     * @param    array                       $cacheOptions
     * @return   PEAR_Error|bool
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_CACHE_NOT_INSTALLED
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED
     * @access   public
     */
@@ -180,9 +179,9 @@ class Services_Weather_Common {
     {
         // The error handling in Cache is a bit crummy (read: not existent)
         // so we have to do that on our own...
-        @require_once "Cache.php";
+        @include_once "Cache.php";
         @$cache = new Cache($cacheType, $cacheOptions);
-        if (!is_object($cache) || get_class($cache) != "cache") {
+        if (!is_object($cache) || is_a("cache")) {
             $this->_cache        = null;
             $this->_cacheEnabled = false;
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);

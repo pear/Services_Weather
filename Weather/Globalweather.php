@@ -91,7 +91,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
             return;
         }
 
-        require_once "SOAP/Client.php";
+        include_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl");
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
             $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);

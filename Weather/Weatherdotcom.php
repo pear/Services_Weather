@@ -105,7 +105,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $this->setAccountData("", $options["licenseKey"]);
         }
         
-        require_once "XML/Unserializer.php";
+        include_once "XML/Unserializer.php";
         $unserializer = &new XML_Unserializer(array("complexType" => "object"));
         if (Services_Weather::isError($unserializer)) {
             $error = $unserializer;
@@ -152,6 +152,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         } elseif(!ctype_alnum($id) || (strlen($id) > 8)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
+
         return true;
     }
     // }}}
@@ -217,6 +218,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 }
             }
         }
+
         return true;
     }
     // }}}
@@ -255,6 +257,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 }
             }
         }
+
         return $searchReturn;
     }
     // }}}
@@ -476,6 +479,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
             $forecastReturn["days"][] = $day;
         }
+
         return $forecastReturn;
     }
     // }}}
