@@ -20,16 +20,20 @@
 
 require_once "Services/Weather.php";
 
-$metar = &Services_Weather::service("METAR", array("debug" => 2));
+$metar = &Services_Weather::service("METAR", array("debug" => 0));
 
+$metar->setMetarDB("sqlite", "", "", "", "/usr/local/lib/php/data/Services_Weather/servicesWeatherDB", "");
+//$weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));
 $metar->setUnitsFormat("metric");
 $metar->setDateTimeFormat("d.m.Y", "H:i");
 
-$search = "KPIT";
+$search = $metar->searchLocation("Bonn, Germany");
 
-$units    = $metar->getUnits();
+$location = $metar->getLocation($search);
 $weather  = $metar->getWeather($search);
+$forecast = $metar->getForecast($search, 3);
 
-var_dump($units);
+var_dump($location);
 var_dump($weather);
+var_dump($forecast);
 ?>
