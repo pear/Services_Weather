@@ -25,10 +25,10 @@
  * from the weather-block which can be found within the Horde Framework,
  * courtesy of Rick Emery - creative pixelshoving isn't my domain :-P
  * I've used a Firefox for checking the design, so don't be too
- * disappointed, if the page looks shabby with with the IE, not that I care
+ * disappointed, if the page looks shabby with the IE, not that I care
  * very much anyway ;-)
  * If you want to know where you can obtain the icons, please register at
- * http://www.weather.com/services/xmloap.html you'll recive an eMail
+ * http://www.weather.com/services/xmloap.html and you'll receive an eMail
  * containing the partner id, the license key and a link pointing to the
  * SDK. Put the 32x32 and the logos folders into the images/ directory.
  * The design should adhere to the conventions defined by the weather.com
@@ -54,7 +54,7 @@ $unitsFormat  = "metric";        // The format the units are displayed in -
 $dateFormat   = "Y-m-d";         // Set the format the date is displayed in
                                  // Changing it will break a few things in
                                  // this script, but usually you can define
-                                 // this to your liking.
+                                 // this to your likings.
 $timeFormat   = "H:i";           // Set the format the time is displayed in
 //-------------------------------------------------------------------------
 
