@@ -376,8 +376,6 @@ class Services_Weather_Metar extends Services_Weather_Common
         // Check for correct data, 2 lines in size
         if (!$data || !is_array($data) || sizeof($data) < 2) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
-        } elseif (sizeof($data) > 2) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         } else {
             if (SERVICES_WEATHER_DEBUG) {
                 for ($i = 0; $i < sizeof($data); $i++) {
@@ -389,8 +387,9 @@ class Services_Weather_Metar extends Services_Weather_Common
             $weatherData["station"]   = "";
             $weatherData["update"]    = strtotime(trim($data[0])." GMT");
             $weatherData["updateRaw"] = trim($data[0]);
-            // and prepare the second line for stepping through
-            $metar = explode(" ", trim($data[1]));
+            // and prepare the rest for stepping through
+            array_shift($data);
+            $metar = explode(" ", preg_replace("/\s{2,}/", " ", implode(" ", $data)));
 
             // Add a few local variables for data processing
             $trendCount = 0;             // If we have trends, we need this
@@ -1016,7 +1015,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4] * 100), "type" => $clouds[strtolower($result[5])]);
                                 }
                                 else {
-                                    // SKC or CLR OR NSC
+                                    // SKC or CLR or NSC
                                     $cloud = array("amount" => $clouds[strtolower($result[0])]);
                                 }
                                 $pointer["clouds"][] = $cloud;
@@ -1053,8 +1052,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     if (isset($result[2]) && is_numeric($result[2])) {
                                         $type        = $lresult[0];
                                         $probability = $result[2];
-                                        // As we have just extracted the
-                                        // probability for the next FMC
+                                        // As we have just extracted the probability for the next FMC
                                         // increase field-counter
                                         $i++;
                                     }
@@ -1062,8 +1060,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                     $from = $lresult[1].":00";
                                     $to   = $lresult[2].":00";
-                                    // Same as above´, we have a time for this FMC
-                                    // from our TAF, increase field-counter
+                                    // Same as above´, we have a time for this FMC from our TAF, 
+                                    // increase field-counter
                                     $i++;
                                 }
                                 // Handle the FMC, generate neccessary array if it's the first...
@@ -1529,9 +1527,9 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             // Set the source
             if ($this->_source == "file") {
-                $source = realpath($this->_sourcePathMetar.$id.".TXT");
+                $source = realpath($this->_sourcePathMetar."/".$id.".TXT");
             } else {
-                $source = $this->_sourcePathMetar.$id.".TXT";
+                $source = $this->_sourcePathMetar."/".$id.".TXT";
             }
 
             // Download and parse weather
@@ -1588,9 +1586,9 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             // Set the source
             if ($this->_source == "file") {
-                $source = realpath($this->_sourcePathTaf.$id.".TXT");
+                $source = realpath($this->_sourcePathTaf."/".$id.".TXT");
             } else {
-                $source = $this->_sourcePathTaf.$id.".TXT";
+                $source = $this->_sourcePathTaf."/".$id.".TXT";
             }
 
             // Download and parse weather
