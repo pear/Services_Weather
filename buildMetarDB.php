@@ -387,7 +387,7 @@ if (DB::isError($db)) {
 
             // integers: convert "--" fields to null, empty fields to 0
             foreach (array($dataOrder["b"], $dataOrder["s"], 6) as $i) {
-                if (strpos($data[$i], "--") === false) { 
+                if (strpos($data[$i], "--") !== false) { 
                     $data[$i] = "null"; 
                 } elseif ($data[$i] == "") { 
                     $data[$i] = 0; 
