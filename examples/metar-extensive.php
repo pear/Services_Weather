@@ -553,7 +553,7 @@ for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
                     break;
             }
             if (isset($row["probability"])) {
-                $fmctype .= " (".$row["probability"]."%&nbsp;prob.)";
+                $fmctype .= " (".$row["probability"]."%&nbsp;Prob.)";
             }
         } else {
             $row = false;
