@@ -753,7 +753,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Check result for validity
             if (DB::isError($result)) {
                 return $result;
-            } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
+            } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
             }
             
@@ -831,7 +831,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         // Check result for validity
         if (DB::isError($result)) {
             return $result;
-        } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
+        } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         }
 
@@ -879,7 +879,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $result = $this->_db->query($select);
         if (DB::isError($result)) {
             return $result;
-        } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
+        } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         }
 
@@ -978,7 +978,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
             if (DB::isError($result)) {
                 return $result;
-            } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
+            } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
             }
             // Result is ok, put things into object

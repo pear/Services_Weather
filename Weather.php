@@ -190,7 +190,7 @@ class Services_Weather {
     */
     function isError($value)
     {
-        return (is_object($value) && (get_class($value) == "pear_error" || is_subclass_of($value, "pear_error")));
+        return (is_object($value) && (strtolower(get_class($value)) == "pear_error" || is_subclass_of($value, "pear_error")));
     }
     // }}}
 

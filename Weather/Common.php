@@ -181,7 +181,7 @@ class Services_Weather_Common {
         // so we have to do that on our own...
         @include_once "Cache.php";
         @$cache = new Cache($cacheType, $cacheOptions);
-        if (is_object($cache) && (get_class($cache) == "cache" || is_subclass_of($cache, "cache"))) {
+        if (is_object($cache) && (strtolower(get_class($cache)) == "cache" || is_subclass_of($cache, "cache"))) {
             $this->_cache        = $cache;
             $this->_cacheEnabled = true;
         } else {
