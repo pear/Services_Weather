@@ -25,7 +25,7 @@ require_once "Services/Weather/Common.php";
 * PEAR::Services_Weather_Ejse
 *
 * This class acts as an interface to the soap service of EJSE. It retrieves
-* current weather data and forecasts based on postal codes.
+* current weather data and forecasts based on postal codes (ZIP).
 *
 * Currently this service is only available for US territory.
 *
@@ -232,11 +232,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("c", "m", "s"))) {
-            $unitsFormat = strtolower($unitsFormat{0});
-        } else {
-            $unitsFormat = $this->_unitsFormat;
-        }
+
         // Get other data
         $units    = $this->getUnitsFormat($unitsFormat);
 
@@ -312,13 +308,18 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         $weatherReturn["uvIndex"]           = $uvIndex[1];
         $weatherReturn["uvText"]            = $uvIndex[2];
         $weatherReturn["humidity"]          = str_replace("%", "", $this->_weather->Humidity);
-        preg_match("/From the ([\w\ ]+) at ([\d\.]+) (gusting to ([\d\.]+) )?mph/", $this->_weather->Wind, $wind);
-        $weatherReturn["wind"]              = $this->convertSpeed($wind[2], "mph", $units["wind"]);
-        if (isset($wind[4])) {
-            $weatherReturn["windGust"]      = $this->convertSpeed($wind[4], "mph", $units["wind"]);
+        if (preg_match("/From the ([\w\ ]+) at ([\d\.]+) (gusting to ([\d\.]+) )?mph/", $this->_weather->Wind, $wind)) {
+            $weatherReturn["wind"]              = $this->convertSpeed($wind[2], "mph", $units["wind"]);
+            if (isset($wind[4])) {
+                $weatherReturn["windGust"]      = $this->convertSpeed($wind[4], "mph", $units["wind"]);
+            }
+            $weatherReturn["windDegrees"]       = $compass[strtolower($wind[1])][1];
+            $weatherReturn["windDirection"]     = $compass[strtolower($wind[1])][0];
+        } elseif (strtolower($this->_weather->Wind) == "calm") {
+            $weatherReturn["wind"]          = 0;
+            $weatherReturn["windDegrees"]   = 0;
+            $weatherReturn["windDirection"] = "CALM";
         }
-        $weatherReturn["windDegrees"]       = $compass[strtolower($wind[1])][1];
-        $weatherReturn["windDirection"]     = $compass[strtolower($wind[1])][0];
 
         return $weatherReturn;
     }
@@ -326,18 +327,71 @@ class Services_Weather_Ejse extends Services_Weather_Common {
 
     // {{{ getForecast()
     /**
-    * Foo
+    * Get the forecast for the next days
     *
     * @param    string                      $int
-    * @param    int                         $days
+    * @param    int                         $days           Values between 1 and 9
     * @param    string                      $unitsFormat
-    * @return   bool
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error
     * @access   public
-    * @deprecated
     */
-    function getForecast($id = null, $days = null, $unitsFormat = null)
+    function getForecast($id = "", $days = 2, $unitsFormat = "")
     {
-        return false;
+        $status = $this->_checkLocationID($id);
+
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+        if (!in_array($days, range(1, 9))) {
+            $days = 2;
+        }
+
+        // Get other data
+        $units    = $this->getUnitsFormat($unitsFormat);
+
+        $forecastReturn = array();
+        if ($this->_cacheEnabled && ($forecast = $this->_cache->get($id, "forecast"))) {
+            // Same procedure...
+            $this->_forecast = $forecast;
+            $forecastReturn["cache"] = "HIT";
+        } else {
+            // ...as last function
+            $forecast = $this->_weatherSoap->GetNineDayForecastInfo($id);
+
+            if (Services_Weather::isError($forecast)) {
+                return $forecast;
+            }
+
+            $this->_forecast = $forecast;
+
+            if ($this->_cacheEnabled) {
+                // ...and cache it
+                $expire = constant("SERVICES_WEATHER_EXPIRES_FORECAST");
+                $this->_cache->extSave($id, $this->_forecast, "", $expire, "forecast");
+            }
+            $forecastReturn["cache"] = "MISS";
+        }
+
+        $forecastReturn["days"]   = array();
+
+        for ($i = 1; $i <= $days; $i++) {
+            preg_match("/(-?\d+)\D+/", $this->_forecast->{"Day".$i}->High, $temperatureHigh);        
+            preg_match("/(-?\d+)\D+/", $this->_forecast->{"Day".$i}->Low, $temperatureLow);        
+            $day = array(
+                "tempertureHigh" => $this->convertTemperature($temperatureHigh[1], "f", $units["temp"]),
+                "temperatureLow" => $this->convertTemperature($temperatureLow[1], "f", $units["temp"]),
+                "day" => array(
+                    "condition"     => $this->_forecast->{"Day".$i}->Forecast,
+                    "conditionIcon" => $this->_forecast->{"Day".$i}->IconIndex,
+                    "precipitation" => trim(str_replace("%", "", $this->_forecast->{"Day".$i}->PrecipChance))
+                )
+            );
+
+            $forecastReturn["days"][] = $day;
+        }
+
+        return $forecastReturn;        
     }
     // }}}
 }
