@@ -517,7 +517,7 @@ class Services_Weather_Common {
 
         $v   = log($SP / 6.1078, 10);
 
-        return  round($b * $v / ($a - $v), 1);
+        return round($b * $v / ($a - $v), 1);
     }
     // }}}
 
