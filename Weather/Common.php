@@ -30,6 +30,10 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 /**
 * PEAR::Services_Weather_Common
 *
+* Parent class for weather-services. Defines common functions for unit
+* conversions, checks for astronomy-class, cache enabling and does other
+* miscellaneous things. 
+*
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @package      Services
 * @version      1.0
@@ -110,7 +114,7 @@ class Services_Weather_Common {
     var $_cache;
 
     /**
-    * Provides check for caching
+    * Provides check for Cache
     *
     * @var      bool                        $_cacheEnabled
     * @access   private
@@ -135,7 +139,7 @@ class Services_Weather_Common {
     function Services_Weather_Common()
     {
         $this->_registry = new PEAR_Registry();
-        if($this->_registry->packageExists("Science_Astronomy");
+        if($this->_registry->packageExists("Science_Astronomy")) {
             $this->_astroEnabled = TRUE;
         }
     }
@@ -168,7 +172,7 @@ class Services_Weather_Common {
     */
     function setUnitsFormat($unitsFormat)
     {
-        if (strlen($unitsFormat)) {
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
             $this->_unitsFormat = strtolower($unitsFormat{0});
         }
     }
@@ -195,7 +199,7 @@ class Services_Weather_Common {
 
     // {{{ convertTemperature()
     /**
-    * Convert temperature between farenheit and celsius
+    * Convert temperature between f and c
     *
     * @param    float                       $temperature
     * @param    string                      $from
