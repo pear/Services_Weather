@@ -29,7 +29,7 @@
 		<deps>
 			<dep type="php" rel="ge">4.3.0</dep>
 			<dep type="pkg" rel="ge" version="1.0">XML_Parser</dep>
-			<dep type="pkg" rel="ge" version="0.6">XML_Serializer</dep>
+            <dep type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
             <dep optional="yes" type="ext" rel="ge" version="1.4">DB</dep>
 		</deps>
@@ -42,17 +42,15 @@
                     <file>Weatherdotcom.php</file>
                 </dir>
             </dir>
-            <dir name="/" baseinstalldir="Weather" role="doc">
+            <dir name="/" role="doc">
                 <dir name="examples">
                     <file>metar-basic.php</file>
                     <file>weather.com-basic.php</file>
 			        <file>weather.com-error.php</file>
 			    </dir>
 			</dir>
-            <dir name="/" baseinstalldir="Weather" role="data">
-                <dir name="data">
-                    <file role="php">buildMetarDB.php</file>
-                </dir>
+            <dir name="/" role="data">
+                <file>buildMetarDB.php</file>
             </dir>
         </filelist>
 	</release>
