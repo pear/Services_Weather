@@ -24,7 +24,14 @@ require_once "Services/Weather/Common.php";
 /**
 * PEAR::Services_Weather_Metar
 *
+* This class acts as an interface to the metar service of weather.noaa.gov. It searches for
+* locations given in ICAO notation and retrieves the current weather data.
+*
+* For a working example, please take a look at
+*     docs/Weather/examples/metar-basic.php
+*
 * @author       Alexander Wirtz <alex@pc4p.net>
+* @link         http://weather.noaa.gov/weather/metar.shtml
 * @package      Services
 * @version      1.0
 */
@@ -46,7 +53,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     /**
     * Checks the id for valid values and thus prevents silly requests to METAR server
     *
-    * @param    string      $id
+    * @param    string                      $id
     * @return   PEAR_Error|bool
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
@@ -66,10 +73,12 @@ class Services_Weather_Metar extends Services_Weather_Common
     // {{{ _parseWeatherData()
     /**
     * Parses the data returned by the provided URL and caches it
+    *    
+    * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB 18/16 A2992 RMK SLP045 T01820159
     *
-    * @param    string      $id
-    * @param    string      $url
-    * @param    int         $days
+    * @param    string                      $id
+    * @param    string                      $url
+    * @param    int                         $days
     * @return   PHP_Error|array
     * @throws   PHP_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @throws   PHP_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
@@ -251,6 +260,24 @@ class Services_Weather_Metar extends Services_Weather_Common
     }
     // }}}
 
+    // {{{ searchLocation()
+    /**
+    * Not yet implemented...
+    */
+    function searchLocation()
+    {
+        return -1;
+    }
+    // }}}
+
+    /**
+    * Returns the units for the current query
+    *
+    * @param    string                      $id
+    * @param    string                      $unitsFormat
+    * @return   array
+    * @access   public
+    */
     function getUnits($id = null, $unitsFormat = "")
     {
         if (strlen($unitsFormat) > 0) {
@@ -279,9 +306,25 @@ class Services_Weather_Metar extends Services_Weather_Common
         return ${$unitsFormat};
     }
 
+    // {{{ getLocation()
+    /**
+    * Not yet implemented...
+    */
+    function getLocation()
+    {
+        return -1;
+    }
+    // }}}
+
     // {{{ getWeather()
     /**
-    * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB 18/16 A2992 RMK SLP045 T01820159
+    * Returns the weather-data for the supplied location
+    *
+    * @param    string                      $id
+    * @param    string                      $unitsFormat
+    * @return   PHP_Error|array
+    * @throws   PHP_Error
+    * @access   public
     */
     function getWeather($id = "", $unitsFormat = "")
     {
@@ -318,6 +361,16 @@ class Services_Weather_Metar extends Services_Weather_Common
             $weatherReturn["cache"] = "MISS";
         }
         return $weatherReturn;
+    }
+    // }}}
+    
+    // {{{ getForecast()
+    /**
+    * Not yet implemented...
+    */
+    function getForecast()
+    {
+        return -1;
     }
     // }}}
 }
