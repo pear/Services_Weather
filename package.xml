@@ -16,9 +16,9 @@
 			<name>Alexander Wirtz</name>
 			<email>alex@pc4p.net</email>
 			<role>lead</role>
-		</maintainer>
-´	</maintainers>
-	<release>
+        </maintainer>
+    </maintainers>
+    <release>
 		<version>1.0</version>
         <date>2003-11-01</date>
 		<license>PHP License</license>
