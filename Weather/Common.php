@@ -20,8 +20,6 @@
 
 require_once "Services/Weather.php";
 
-require_once "PEAR/Registry.php";
-
 // {{{ constants
 // {{{ natural constants and measures
 define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
@@ -133,7 +131,17 @@ class Services_Weather_Common {
     */
     function Services_Weather_Common()
     {
-        $this->_registry = new PEAR_Registry();
+        $files = array("Cache.php");
+        $incPath = get_include_path();
+        $incPath = strpos($incPath, ";") ? explode(";", $incPath) : explode(":", $incPath);
+        for ($i = 0; $i < sizeof($files); $i++) {
+            for ($j = 0; $j < sizeof($incPath); $j++) {
+                if (file_exists($incPath[$j]."/".$files[$i])) {
+                    $this->{"_has".basename($files[$i], ".php")} = true;
+                    break;
+                }
+            }
+        }   
     }
     // }}}
 
@@ -149,7 +157,7 @@ class Services_Weather_Common {
     */
     function setCache($cacheType = "file", $cacheOptions = array())
     {
-        if($this->_registry->packageExists("Cache")) {
+        if($this->_hasCache) {
             require_once "Cache.php";
             @$cache = new Cache($cacheType, $cacheOptions);
             // The error handling in Cache is a bit crummy (read: not existent)
@@ -163,6 +171,8 @@ class Services_Weather_Common {
                 $this->_cacheEnabled = true;
                 return true;
             }
+        } else {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
         }
     }
     // }}}
