@@ -83,8 +83,12 @@ if (strlen($cacheType)) {
 // something more common...
 $weatherDotCom->setUnitsFormat($unitsFormat);
 $units = $weatherDotCom->getUnitsFormat();
-$units["temp"] = strtoupper($units["temp"]);
-$units["wind"] = str_replace("kmh", "km/h", $units["wind"]);
+$units["temp"]   = "&deg;".strtoupper($units["temp"]);
+$units["wind"]   = "&nbsp;".str_replace("kmh", "km/h", $units["wind"]);
+$units["vis"]    = "&nbsp;".$units["vis"];
+$units["height"] = "&nbsp;".$units["height"];
+$units["pres"]   = "&nbsp;".$units["pres"];
+$units["rain"]   = "&nbsp;".$units["rain"];
 
 // Set date-/time-format
 $weatherDotCom->setDateTimeFormat($dateFormat, $timeFormat);
@@ -186,17 +190,17 @@ for ($i = 0; $i < sizeof($links["promo"]); $i++) {
             </td>
         </tr>
         <tr>
-            <td><span class="bold">Temperature:</span> <?=round($weather["temperature"], 1)?>&deg;<?=$units["temp"]?></td>
-            <td><span class="bold">Dew point:</span> <?=round($weather["dewPoint"], 1)?>&deg;<?=$units["temp"]?></td>
-            <td><span class="bold">Felt temperature:</span> <?=round($weather["feltTemperature"], 1)?>&deg;<?=$units["temp"]?></td>
+            <td><span class="bold">Temperature:</span> <?=round($weather["temperature"], 1).$units["temp"]?></td>
+            <td><span class="bold">Dew point:</span> <?=round($weather["dewPoint"], 1).$units["temp"]?></td>
+            <td><span class="bold">Felt temperature:</span> <?=round($weather["feltTemperature"], 1).$units["temp"]?></td>
         </tr>
         <tr>
-            <td colspan="2"><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1)?> <?=$units["pres"]?> and <?=$weather["pressureTrend"]?></td>
+            <td colspan="2"><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1).$units["pres"]?> and <?=$weather["pressureTrend"]?></td>
             <td><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
         </tr>
         <tr>
-            <td colspan="2"><span class="bold">Wind:</span> <?=strtolower($weather["windDirection"]) == "calm" ? "Calm" : "From the ".$weather["windDirection"]." (".$weather["windDegrees"]."&deg;) at ".round($weather["wind"], 1)." ".$units["wind"]?></td>
-            <td><span class="bold">Visibility:</span> <?=round($weather["visibility"], 1)?> <?=$units["vis"]?></td>
+            <td colspan="2"><span class="bold">Wind:</span> <?=strtolower($weather["windDirection"]) == "calm" ? "Calm" : "From the ".$weather["windDirection"]." (".$weather["windDegrees"]."&deg;) at ".round($weather["wind"], 1).$units["wind"]?></td>
+            <td><span class="bold">Visibility:</span> <?=round($weather["visibility"], 1).$units["vis"]?></td>
         </tr>
         <tr>
             <td><span class="bold">Current condition:</span><br><?=$weather["condition"]?></td>
@@ -256,7 +260,7 @@ for ($day = 0; $day < $forecastDays; $day++) {
                         <td align="center" colspan="2" style="height: 15px"><span class="bold"><?=$dayname?></span></td>
                     </tr>
                     <tr>
-                        <td align="center" colspan="2" style="height: 45px"><?=$afternoon ? "" : '<span class="redbold">'.round($forecast["days"][$day]["temperatureHigh"], 0).'&deg;'.$units["temp"].'</span> / '?><span class="bluebold"><?=round($forecast["days"][$day]["temperatureLow"], 0)?>&deg;<?=$units["temp"]?></span></td>
+                        <td align="center" colspan="2" style="height: 45px"><?=$afternoon ? "" : '<span class="redbold">'.round($forecast["days"][$day]["temperatureHigh"], 0).$units["temp"].'</span> / '?><span class="bluebold"><?=round($forecast["days"][$day]["temperatureLow"], 0).$units["temp"]?></span></td>
                     </tr>
                     <tr>
                         <td align="center" style="width: 50%; height: 15px"><?=$afternoon ? "&nbsp;" : '<span class="bold">Day</span>'?></td>
@@ -277,8 +281,8 @@ for ($day = 0; $day < $forecastDays; $day++) {
                         <td align="center" style="height: 45px"><?=$forecast["days"][$day]["night"]["precipitation"]?>%</td>
                     </tr>
                     <tr>
-                        <td align="center" style="height: 45px"><?=$afternoon ? "&nbsp;" : round($forecast["days"][$day]["day"]["wind"], 0)."&nbsp;".$units["wind"]." from&nbsp;".$forecast["days"][0]["day"]["windDirection"]?></td>
-                        <td align="center" style="height: 45px"><?=round($forecast["days"][$day]["night"]["wind"], 0)?>&nbsp;<?=$units["wind"]?> from&nbsp;<?=$forecast["days"][0]["day"]["windDirection"]?></td>
+                        <td align="center" style="height: 45px"><?=$afternoon ? "&nbsp;" : round($forecast["days"][$day]["day"]["wind"], 0).$units["wind"]." from&nbsp;".$forecast["days"][0]["day"]["windDirection"]?></td>
+                        <td align="center" style="height: 45px"><?=round($forecast["days"][$day]["night"]["wind"], 0).$units["wind"]?> from&nbsp;<?=$forecast["days"][0]["day"]["windDirection"]?></td>
                     </tr>
                     <tr>
                         <td align="center" style="height: 15px"><?=$afternoon ? "" : $forecast["days"][$day]["day"]["humidity"]."%"?></td>
