@@ -155,18 +155,18 @@ if (isset($_GET["debug"])) {
 } 
 ?>
 <span class="bluebold" style="font-size: 13pt">Weather Forecast</span> created with <a style="font-size: 13pt" href="http://pear.php.net/">PEARs</a> <a style="font-size: 13pt" href="http://pear.php.net/package/Services_Weather/">Services_Weather</a><br>
-<table width="100%">
+<table style="width: 100%">
 <tr>
     <td>
-        <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0" width="100%">
+        <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0; width: 100%">
         <tr class="bgkhaki">
-            <td width="310" colspan="2" style="border-bottom: 2px solid #abada2"><span class="bold"><?=$location["name"]?></span></td>
-            <td width="190" style="border-bottom: 2px solid #abada2"><span class="bold">Local time:</span> <?=$location["time"]?> (GMT<?=(($location["timezone"] < 0) ? "" : "+").$location["timezone"]?>)</td>
+            <td style="width: 310px; border-bottom: 2px solid #abada2" colspan="2"><span class="bold"><?=$location["name"]?></span></td>
+            <td style="width: 190px; border-bottom: 2px solid #abada2"><span class="bold">Local time:</span> <?=$location["time"]?> (GMT<?=(($location["timezone"] < 0) ? "" : "+").$location["timezone"]?>)</td>
             <td style="border-bottom: 2px solid #abada2">&nbsp;</td>
         </tr>
         <tr>
-            <td><span class="bold">Sunrise:</span> <img width="28" height="13" style="vertical-align: baseline" alt="Sunrise" src="images/sunrise.gif"> <?=$location["sunrise"]?></td>
-            <td colspan="2"><span class="bold">Sunset:</span> <img width="30" height="15" style="vertical-align: baseline" alt="Sunset" src="images/sunset.gif"> <?=$location["sunset"]?></td>
+            <td><span class="bold">Sunrise:</span> <img style="width: 28px; height: 13px; vertical-align: baseline" alt="Sunrise" src="images/sunrise.gif"> <?=$location["sunrise"]?></td>
+            <td colspan="2"><span class="bold">Sunset:</span> <img style="width: 30px; height: 15px; vertical-align: baseline" alt="Sunset" src="images/sunset.gif"> <?=$location["sunset"]?></td>
             <td rowspan="5" valign="middle" align="center">
                 <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0">
                 <tr class="bgkhaki">
@@ -200,7 +200,7 @@ for ($i = 0; $i < sizeof($links["promo"]); $i++) {
         </tr>
         <tr>
             <td><span class="bold">Current condition:</span><br><?=$weather["condition"]?></td>
-            <td><img height="32" width="32" alt="<?=$weather["condition"]?>" src="images/32x32/<?=$weather["conditionIcon"]?>.png"></td>
+            <td><img style="height: 32px; width: 32px" alt="<?=$weather["condition"]?>" src="images/32x32/<?=$weather["conditionIcon"]?>.png"></td>
             <td valign="top"><span class="bold">UV-Index:</span> <?=$weather["uvIndex"]?> (<?=$weather["uvText"]?>)</td>
         </tr>
         </table>
@@ -213,27 +213,27 @@ for ($i = 0; $i < sizeof($links["promo"]); $i++) {
             <td align="center" style="border-bottom: 2px solid #abada2" colspan="<?=(1 + $forecastDays)?>"><span class="bold"><?=$forecastDays?>-day forecast</span></td>
         </tr>
         <tr valign="top">
-            <td width="10%">
-                <table width="100%" class="bgkhaki" style="border-top: 2px solid #d8d8c0; border-bottom: 2px solid #d8d8c0; border-left: 2px solid #d8d8c0; border-right: 2px solid #8b87a0">
+            <td style="width: 10%">
+                <table class="bgkhaki" style="width: 100%; border-top: 2px solid #d8d8c0; border-bottom: 2px solid #d8d8c0; border-left: 2px solid #d8d8c0; border-right: 2px solid #8b87a0">
                 <tr>
-                    <td align="center" style="height:15px">&nbsp;</td>
+                    <td align="center" style="height: 15px">&nbsp;</td>
                 <tr>
-                    <td align="center" style="height:45px"><span class="bold">Temperature</span> <span class="redbold">High</span> / <span class="bluebold">Low</span></td>
+                    <td align="center" style="height: 45px"><span class="bold">Temperature</span> <span class="redbold">High</span> / <span class="bluebold">Low</span></td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:15px">&nbsp;</td>
+                    <td align="center" style="height: 15px">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:75px"><span class="bold">Condition</span></td>
+                    <td align="center" style="height: 75px"><span class="bold">Condition</span></td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:45px"><span class="bold">Precipitation probability</span></td>
+                    <td align="center" style="height: 45px"><span class="bold">Precipitation probability</span></td>
                 </tr>            
                 <tr>
-                    <td align="center" style="height:45px"><span class="bold">Wind</span></td>
+                    <td align="center" style="height: 45px"><span class="bold">Wind</span></td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:15px"><span class="bold">Humidity</span></td>
+                    <td align="center" style="height: 15px"><span class="bold">Humidity</span></td>
                 </tr>
                 </table>
             </td>
@@ -250,39 +250,39 @@ for ($day = 0; $day < $forecastDays; $day++) {
     // Afternoon is only important for today
     $afternoon = ($day == 0) ? $afternoon : false;
 ?>
-            <td width="<?=(90 / $forecastDays)?>%">
-                <table width="100%"<?=($day % 2) ? ' class="bggrey"' : ""?>>
+            <td style="width: <?=(90 / $forecastDays)?>%">
+                <table style="width: 100%"<?=($day % 2) ? ' class="bggrey"' : ""?>>
                     <tr>
-                        <td align="center" colspan="2" style="height:15px"><span class="bold"><?=$dayname?></span></td>
+                        <td align="center" colspan="2" style="height: 15px"><span class="bold"><?=$dayname?></span></td>
                     </tr>
                     <tr>
-                        <td align="center" colspan="2" style="height:45px"><?=$afternoon ? "" : '<span class="redbold">'.round($forecast["days"][$day]["temperatureHigh"], 0).'&deg;'.$units["temp"].'</span> / '?><span class="bluebold"><?=round($forecast["days"][$day]["temperatureLow"], 0)?>&deg;<?=$units["temp"]?></span></td>
+                        <td align="center" colspan="2" style="height: 45px"><?=$afternoon ? "" : '<span class="redbold">'.round($forecast["days"][$day]["temperatureHigh"], 0).'&deg;'.$units["temp"].'</span> / '?><span class="bluebold"><?=round($forecast["days"][$day]["temperatureLow"], 0)?>&deg;<?=$units["temp"]?></span></td>
                     </tr>
                     <tr>
-                        <td align="center" width="50%" style="height:15px"><?=$afternoon ? "&nbsp;" : '<span class="bold">Day</span>'?></td>
-                        <td align="center" width="50%" style="height:15px"><span class="bold">Night</span></td>
+                        <td align="center" style="width: 50%; height: 15px"><?=$afternoon ? "&nbsp;" : '<span class="bold">Day</span>'?></td>
+                        <td align="center" style="width: 50%; height: 15px"><span class="bold">Night</span></td>
                     <tr>
                     <tr>
-                        <td align="center" style="height:75px" validn="top">
-                            <?=$afternoon ? "&nbsp;" : '<img height="32" width="32" align="top" alt="'.$forecast["days"][$day]["day"]["condition"].'" src="images/32x32/'.$forecast["days"][$day]["day"]["conditionIcon"].'.png">'?><br>
+                        <td align="center" style="height: 75px" validn="top">
+                            <?=$afternoon ? "&nbsp;" : '<img style="height: 32px; width: 32px" align="top" alt="'.$forecast["days"][$day]["day"]["condition"].'" src="images/32x32/'.$forecast["days"][$day]["day"]["conditionIcon"].'.png">'?><br>
                             <?=$afternoon ? "&nbsp;" : $forecast["days"][$day]["day"]["condition"]?>
                         </td>
-                        <td align="center" style="height:75px" validn="top">
-                            <img height="32" width="32" align="top" alt="<?=$forecast["days"][$day]["night"]["condition"]?>" src="images/32x32/<?=$forecast["days"][$day]["night"]["conditionIcon"]?>.png"><br>
+                        <td align="center" style="height: 75px" validn="top">
+                            <img style="height: 32px; width: 32px" align="top" alt="<?=$forecast["days"][$day]["night"]["condition"]?>" src="images/32x32/<?=$forecast["days"][$day]["night"]["conditionIcon"]?>.png"><br>
                             <?=$forecast["days"][$day]["night"]["condition"]?>
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" style="height:45px"><?=$afternoon ? "&nbsp" : $forecast["days"][$day]["day"]["precipitation"]."%"?></td>
-                        <td align="center" style="height:45px"><?=$forecast["days"][$day]["night"]["precipitation"]?>%</td>
+                        <td align="center" style="height: 45px"><?=$afternoon ? "&nbsp" : $forecast["days"][$day]["day"]["precipitation"]."%"?></td>
+                        <td align="center" style="height: 45px"><?=$forecast["days"][$day]["night"]["precipitation"]?>%</td>
                     </tr>
                     <tr>
-                        <td align="center" style="height:45px"><?=$afternoon ? "&nbsp;" : round($forecast["days"][$day]["day"]["wind"], 0)."&nbsp;".$units["wind"]." from&nbsp;".$forecast["days"][0]["day"]["windDirection"]?></td>
-                        <td align="center" style="height:45px"><?=round($forecast["days"][$day]["night"]["wind"], 0)?>&nbsp;<?=$units["wind"]?> from&nbsp;<?=$forecast["days"][0]["day"]["windDirection"]?></td>
+                        <td align="center" style="height: 45px"><?=$afternoon ? "&nbsp;" : round($forecast["days"][$day]["day"]["wind"], 0)."&nbsp;".$units["wind"]." from&nbsp;".$forecast["days"][0]["day"]["windDirection"]?></td>
+                        <td align="center" style="height: 45px"><?=round($forecast["days"][$day]["night"]["wind"], 0)?>&nbsp;<?=$units["wind"]?> from&nbsp;<?=$forecast["days"][0]["day"]["windDirection"]?></td>
                     </tr>
                     <tr>
-                        <td align="center" style="height:15px"><?=$afternoon ? "" : $forecast["days"][$day]["day"]["humidity"]."%"?></td>
-                        <td align="center" style="height:15px"><?=$forecast["days"][$day]["night"]["humidity"]?>%</td>
+                        <td align="center" style="height: 15px"><?=$afternoon ? "" : $forecast["days"][$day]["day"]["humidity"]."%"?></td>
+                        <td align="center" style="height: 15px"><?=$forecast["days"][$day]["night"]["humidity"]?>%</td>
                     </tr>
                 </table>
             </td>
@@ -293,7 +293,7 @@ for ($day = 0; $day < $forecastDays; $day++) {
         <tr class="bgkhaki">
     	    <td style="border-top: 2px solid #abada2">&nbsp;</td>
             <td style="border-top: 2px solid #abada2">Updated: (<?=date($timeFormat, $wupd)?>&nbsp;/&nbsp;<?=date($timeFormat, $fupd)?>)</td>
-            <td align="right" style="border-top: 2px solid #abada2" colspan="<?=($forecastDays - 1)?>">Weather data provided by <a href="http://www.weather.com/?prod=xoap&par=<?=$partnerID?>">weather.com<span class="reg">&reg;</span></a><a href="http://www.weather.com/?prod=xoap&par=<?=$partnerID?>"><img height="32" width="43" alt="weather.com(R) logo" src="images/logos/TWClogo_32px.png"></a></td>
+            <td align="right" style="border-top: 2px solid #abada2" colspan="<?=($forecastDays - 1)?>">Weather data provided by <a href="http://www.weather.com/?prod=xoap&par=<?=$partnerID?>">weather.com<span class="reg">&reg;</span></a><a href="http://www.weather.com/?prod=xoap&par=<?=$partnerID?>"><img style="height: 32px; width: 43px" alt="weather.com(R) logo" src="images/logos/TWClogo_32px.png"></a></td>
         </tr>
         </table>
     </td>
