@@ -458,7 +458,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         for ($i = 0; $i < $days; $i++) {
             $day = array(
-                "temperatureHigh" => $this->convertTemperature($this->_forecast->day[$i]->hi,  "f", $units["temp"]),
+                "temperatureHigh" => $this->convertTemperature($this->_forecast->day[$i]->hi, "f", $units["temp"]),
                 "temperatureLow"  => $this->convertTemperature($this->_forecast->day[$i]->low, "f", $units["temp"]),
                 "sunrise"         => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->sunr)),
                 "sunset"          => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->suns)),
