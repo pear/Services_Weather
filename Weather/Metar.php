@@ -1004,28 +1004,30 @@ class Services_Weather_Metar extends Services_Weather_Common
             $weatherReturn["cache"] = "MISS";
         }
 
-        foreach ($weatherReturn["remark"] as $key => $val) {
-            switch ($key) {
-                case "seapressure":
-                    $newVal = $this->convertPressure($val, "in", $units["pres"]);
-                    break;
-                case "snowdepth":
-                case "snowequiv":
-                    $newVal = $this->convertPressure($val, "in", $units["rain"]);
-                    break;
-                case "1htemp":
-                case "1hdew":
-                case "6hmaxtemp":
-                case "6hmintemp":
-                case "24hmaxtemp":
-                case "24hmintemp":
-                    $newVal = $this->convertTemperature($val, "f", $units["temp"]);
-                    break;
-                default:
-                    continue 2;
-                    break;
+        if (isset($weatherReturn["remark"])) {
+            foreach ($weatherReturn["remark"] as $key => $val) {
+                switch ($key) {
+                    case "seapressure":
+                        $newVal = $this->convertPressure($val, "in", $units["pres"]);
+                        break;
+                    case "snowdepth":
+                    case "snowequiv":
+                        $newVal = $this->convertPressure($val, "in", $units["rain"]);
+                        break;
+                    case "1htemp":
+                    case "1hdew":
+                    case "6hmaxtemp":
+                    case "6hmintemp":
+                    case "24hmaxtemp":
+                    case "24hmintemp":
+                        $newVal = $this->convertTemperature($val, "f", $units["temp"]);
+                        break;
+                    default:
+                        continue 2;
+                        break;
+                }
+                $weatherReturn["remark"][$key] = $newVal;
             }
-            $weatherReturn["remark"][$key] = $newVal;
         }
 
         foreach ($weatherReturn as $key => $val) {
