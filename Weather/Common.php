@@ -105,14 +105,6 @@ class Services_Weather_Common {
     var $_forecast;
 
     /**
-    * Object for registry lookups
-    *
-    * @var      object  PEAR_Registry       $_registry
-    * @access   private
-    */
-    var $_registry;
-
-    /**
     * Cache, containing the data-objects
     *
     * @var      object Cache                $_cache
