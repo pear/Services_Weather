@@ -121,7 +121,7 @@ class Services_Weather_Common {
     * @var      bool                        $_cacheEnabled
     * @access   private
     */
-    var $_cacheEnabled = FALSE;
+    var $_cacheEnabled = false;
 
     /**
     * Provides check for Science_Astronomy
@@ -129,7 +129,7 @@ class Services_Weather_Common {
     * @var      bool                        $_astroEnabled
     * @access   private
     */
-    var $_astroEnabled = FALSE;
+    var $_astroEnabled = false;
     // }}}
 
     // {{{ constructor
@@ -142,7 +142,7 @@ class Services_Weather_Common {
     {
         $this->_registry = new PEAR_Registry();
         if($this->_registry->packageExists("Science_Astronomy")) {
-            $this->_astroEnabled = TRUE;
+            $this->_astroEnabled = true;
         }
     }
     // }}}
@@ -165,13 +165,13 @@ class Services_Weather_Common {
             // The error handling in Cache is a bit crummy (read: not existent)
             // so we have to do that on our own...
             if (!is_object($cache) || get_class($cache) != "cache") {
-                $this->_cache        = NULL;
-                $this->_cacheEnabled = FALSE;
+                $this->_cache        = null;
+                $this->_cacheEnabled = false;
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
             } else {
                 $this->_cache        = $cache;
-                $this->_cacheEnabled = TRUE;
-                return TRUE;
+                $this->_cacheEnabled = true;
+                return true;
             }
         }
     }

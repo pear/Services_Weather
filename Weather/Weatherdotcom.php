@@ -125,7 +125,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         } elseif(!ctype_alnum($id) || (strlen($id) > 8)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
-        return TRUE;
+        return true;
     }
     // }}}
 
@@ -144,7 +144,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function _parseWeatherData($id, $url, $unitsFormat = "", $days = 0)
     {
         // Get data from URL and unserialize
-        $status = $this->_unserializer->unserialize($url, TRUE);
+        $status = $this->_unserializer->unserialize($url, true);
 
         if (Services_Weather::isError($status)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
@@ -191,7 +191,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 }
             }
         }
-        return TRUE;
+        return true;
     }
     // }}}
 
@@ -206,11 +206,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
     * @access   public
     */
-    function searchLocation($location, $useFirst = FALSE)
+    function searchLocation($location, $useFirst = false)
     {
         // Get search data from server and unserialize
         $searchURL = "http://xoap.weather.com/search/search?where=".urlencode(trim($location));
-        $status = $this->_unserializer->unserialize($searchURL, TRUE, array("overrideOptions" => TRUE, "complexType" => "array", "keyAttribute" => "id"));
+        $status = $this->_unserializer->unserialize($searchURL, true, array("overrideOptions" => true, "complexType" => "array", "keyAttribute" => "id"));
 
         if (Services_Weather::isError($status)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);

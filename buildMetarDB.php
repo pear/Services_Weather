@@ -53,7 +53,7 @@ require_once "DB.php";
 */
 function Services_Weather_checkData($data, $dataOrder)
 {
-    $return = TRUE;
+    $return = true;
     foreach ($dataOrder as $type => $idx) {
         switch (strtolower($type)) {
             case "b":
@@ -72,7 +72,7 @@ function Services_Weather_checkData($data, $dataOrder)
                 break;
         }
         if ((strlen($data[$idx]) != $len) || (!$func($data[$idx]) && ($data[$idx] != str_repeat("-", $len)))) {
-            $return = FALSE;
+            $return = false;
             break;
         }
     }
@@ -82,10 +82,10 @@ function Services_Weather_checkData($data, $dataOrder)
 
 
 // First set a few variables for processing the options
-$modeSet   = FALSE;
-$saveFile  = FALSE;
-$printHelp = FALSE;
-$invOpt    = FALSE;
+$modeSet   = false;
+$saveFile  = false;
+$printHelp = false;
+$invOpt    = false;
 $verbose   = 0;
 $dbType    = "mysql";
 $dbName    = "servicesWeatherDB";
@@ -101,9 +101,9 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
         case "l":
             // location-mode, if another mode is set, bail out
             if ($modeSet) {
-                $printHelp = TRUE;
+                $printHelp = true;
             } else {
-                $modeSet   = TRUE;
+                $modeSet   = true;
                 $filePart  = "bbsss";
                 $tableName = "metarLocations";
                 $dataOrder = array("b" => 0, "s" => 1, "i" => 2);
@@ -112,9 +112,9 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
         case "a":
             // dito for airport-mode
             if ($modeSet) {
-                $printHelp = TRUE;
+                $printHelp = true;
             } else {
-                $modeSet   = TRUE;
+                $modeSet   = true;
                 $filePart  = "cccc";
                 $tableName = "metarAirports";
                 $dataOrder = array("b" => 1, "s" => 2, "i" => 0);
@@ -126,12 +126,12 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 $userFile  = $_SERVER["argv"][$c + 1];
                 $c++;
             } else {
-                $printHelp = TRUE;
+                $printHelp = true;
             }
             break;
         case "s":
             // If you download the file, it will be saved to disk
-            $saveFile      = TRUE;
+            $saveFile      = true;
             break;
         case "t":
             // The type of the DB to be used
@@ -139,7 +139,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 $dbType    = $_SERVER["argv"][$c + 1];
                 $c++;
             } else {
-                $printHelp = TRUE;
+                $printHelp = true;
             }
             break;
         case "d":
@@ -148,7 +148,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 $dbType    = $_SERVER["argv"][$c + 1];
                 $c++;
             } else {
-                $printHelp = TRUE;
+                $printHelp = true;
             }
             break;
         case "u":
@@ -157,7 +157,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 $dbUser    = $_SERVER["argv"][$c + 1];
                 $c++;
             } else {
-                $printHelp = TRUE;
+                $printHelp = true;
             }
             break;
         case "p":
@@ -166,7 +166,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 $dbPass    = $_SERVER["argv"][$c + 1];
                 $c++;
             } else {
-                $printHelp = TRUE;
+                $printHelp = true;
             }
             break;
         case "h":
@@ -175,7 +175,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 $dbHost    = $_SERVER["argv"][$c + 1];
                 $c++;
             } else {
-                $printHelp = TRUE;
+                $printHelp = true;
             }
             break;
         case "o":
@@ -189,7 +189,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 }
                 $c++;
             } else {
-                $printHelp = TRUE;
+                $printHelp = true;
             }
             break;
         case "v":
@@ -198,19 +198,19 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 if ($_SERVER["argv"][$c]{$i} == "v") {
                     $verbose++;
                 } else {
-                    $invOpt    = TRUE;
+                    $invOpt    = true;
                     break;
                 }
             }
             break;
         default:
             // argument not valid, bail out
-            $invOpt    = TRUE;
+            $invOpt    = true;
             break;
     }
     if ($invOpt) {
         // see above
-        $printHelp = TRUE;
+        $printHelp = true;
         echo "Invalid option: '".$_SERVER["argv"][$c]."'\n";
         break;
     }

@@ -98,7 +98,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         }
         $this->_db = $db;
 
-        return TRUE;
+        return true;
     }
     // }}}
 
@@ -119,7 +119,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         } elseif (!ctype_alpha($id) || (strlen($id) > 4)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
-        return TRUE;
+        return true;
     }
     // }}}
 
@@ -373,7 +373,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
     * @access   public
     */
-    function searchLocation($location, $useFirst = FALSE)
+    function searchLocation($location, $useFirst = false)
     {
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED);
@@ -408,7 +408,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             
             // Result is valid, start preparing the return
             $icao = array();
-            while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != NULL) {
+            while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != null) {
                 $locicao = $row["icao"];
                 // First the name of the location
                 if (!strlen($row["state"])) {
@@ -477,7 +477,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $min_dist = null;
         $query    = $this->polar2cartesian($latitude, $longitude);
         $search   = array("dist" => array(), "icao" => array());
-        while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != NULL) {
+        while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != null) {
             $icao = $row["icao"];
             $air  = $this->polar2cartesian($row["latitude"], $row["longitude"]);
 

@@ -81,10 +81,10 @@ class Services_Weather {
 
         // Check for debugging-mode and set stuff accordingly
         if (is_array($options) && isset($options["debug"]) && $options["debug"] >= 2) {
-            define("SERVICES_WEATHER_DEBUG", TRUE);
+            define("SERVICES_WEATHER_DEBUG", true);
             include_once("Services/Weather/".$service.".php");
         } else {
-            define("SERVICES_WEATHER_DEBUG", FALSE);
+            define("SERVICES_WEATHER_DEBUG", false);
             @include_once("Services/Weather/".$service.".php");
         }
 
