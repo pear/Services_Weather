@@ -437,8 +437,16 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $weatherReturn["cache"] = "MISS";
         }
         
-        $update  = str_replace("Local Time", "", $this->_weather->lsup);
-        $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update));
+        // Some explanation for the next two lines:
+        // weather.com isn't always supplying the timezone in the update string, but
+        // uses "Local Time" as reference, which is imho utterly stupid, because it's
+        // inconsistent. Well, what I do here is check for this string and if I can
+        // find it, I calculate the difference between the timezone at the location
+        // and this computers timezone. This amount of seconds is then subtracted from
+        // the time the update-string has delivered.
+        $update   = str_replace("Local Time", "", $this->_weather->lsup);
+        $adjustTZ = ($update == $this->_weather->lsup) ? 0 : $this->_location->zone * 3600 - date("Z");
+        $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update) - $adjustTZ);
         $weatherReturn["updateRaw"]         = $this->_weather->lsup;
         $weatherReturn["station"]           = $this->_weather->obst;
         $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->tmp, "f", $units["temp"]);
@@ -507,9 +515,16 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $forecastReturn["cache"] = "MISS";
         }
 
-        $update = str_replace("Local Time", "", $this->_forecast->lsup);
-
-        $forecastReturn["update"]    = gmdate($this->_dateFormat." ".$this->_timeFormat, strtotime($update));
+        // Some explanation for the next two lines: (same as above)
+        // weather.com isn't always supplying the timezone in the update string, but
+        // uses "Local Time" as reference, which is imho utterly stupid, because it's
+        // inconsistent. Well, what I do here is check for this string and if I can
+        // find it, I calculate the difference between the timezone at the location
+        // and this computers timezone. This amount of seconds is then subtracted from
+        // the time the update-string has delivered.
+        $update   = str_replace("Local Time", "", $this->_forecast->lsup);
+        $adjustTZ = ($update == $this->_forecast->lsup) ? 0 : $this->_location->zone * 3600 - date("Z");
+        $forecastReturn["update"]    = gmdate($this->_dateFormat." ".$this->_timeFormat, strtotime($update) - $adjustTZ);
         $forecastReturn["updateRaw"] = $this->_forecast->lsup;
         $forecastReturn["days"]      = array();
 
