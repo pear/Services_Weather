@@ -28,16 +28,17 @@
 		</notes>
 		<deps>
 			<dep type="php" rel="ge">4.3.0</dep>
-			<dep type="pkg" rel="ge" version="1.0">XML_Parser</dep>
-            <dep type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.4.0">DB</dep>
-		</deps>
+            <dep optional="yes" type="pkg" rel="ge" version="0.7.5">SOAP</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
+        </deps>
 		<filelist>
             <dir name="/" baseinstalldir="Services">
                 <file role="php">Weather.php</file>
                 <dir name="Weather" role="php">
                     <file>Common.php</file>
+                    <file>GlobalWeather.php</file>
                     <file>Metar.php</file>
                     <file>Weatherdotcom.php</file>
                 </dir>
