@@ -18,14 +18,13 @@
 //
 // $Id$
 
-/*
-   The sun position algorithm taken from the 'US Naval Observatory's
-   Almanac for Computers', implemented by Ken Bloom <kekabloom@ucdavis.edu>
-   for the zmanim project <http://sourceforge.net/projects/zmanim/>
-   and finally converted to C by Moshe Doron <mosdoron@netvision.net.il>.
-   
-   Taken from the PHP5 sources and converted to PHP by above authors.
-*/
+// The sun position algorithm taken from the 'US Naval Observatory's
+// Almanac for Computers', implemented by Ken Bloom <kekabloom@ucdavis.edu>
+// for the zmanim project <http://sourceforge.net/projects/zmanim/>
+// and finally converted to C by Moshe Doron <mosdoron@netvision.net.il>.
+// 
+// Taken from the PHP5 sources and converted to PHP by above authors.
+
 
 if(!defined("SUNFUNCS_RET_TIMESTAMP")) {
     define("SUNFUNCS_RET_TIMESTAMP", 1);
@@ -39,104 +38,100 @@ define("SUNFUNCS_SUNSET_ZENITH",     90.83);
 
 function php_sunrise_sunset($N, $latitude, $longitude, $zenith, $calc_sunset)
 {
-    /* step 1: First calculate the day of the year
-     * int N = theday - date(1, 1, theday.year()) + 1;
-     */
+    // step 1: First calculate the day of the year
+    // int N = theday - date(1, 1, theday.year()) + 1;
 
-    /* step 2: convert the longitude to hour value and calculate an approximate time */
+    // step 2: convert the longitude to hour value and calculate an approximate time
     $lngHour = $longitude / 15;
 
-    /* use 18 for sunset instead of 6 */
+    // use 18 for sunset instead of 6
     if ($calc_sunset) {
-        $t = $N + ((18 - $lngHour) / 24); /* Sunset */
+        // Sunset
+        $t = $N + ((18 - $lngHour) / 24);
     } else {
-        $t = $N + ((6 - $lngHour) / 24);  /* Sunrise */
+        // Sunrise
+        $t = $N + ((6 - $lngHour) / 24);
     } 
 
-    /* step 3: calculate the sun's mean anomaly */
+    // step 3: calculate the sun's mean anomaly
     $M = (0.9856 * $t) - 3.289;
 
-    /* step 4: calculate the sun's true longitude */
+    // step 4: calculate the sun's true longitude
     $L = $M + (1.916 * sin(deg2rad($M))) + (0.020 * sin(deg2rad(2 * $M))) + 282.634;
 
     while ($L < 0) {
         $Lx = $L + 360;
-        assert($Lx != $L); /* askingtheguru: really needed? */
-
+        assert($Lx != $L); // askingtheguru: really needed?
         $L = $Lx;
     }
     
     while ($L >= 360) {
         $Lx = $L - 360;
-        assert ($Lx != $L); /* askingtheguru: really needed? */
-
+        assert($Lx != $L); // askingtheguru: really needed?
         $L = $Lx;
     }
 
-    /* step 5a: calculate the sun's right ascension */
+    // step 5a: calculate the sun's right ascension
     $RA = rad2deg(atan(0.91764 * tan(deg2rad($L))));
 
     while ($RA < 0) {
         $RAx = $RA + 360;
-        assert ($RAx != $RA); /* askingtheguru: really needed? */
-
+        assert($RAx != $RA); // askingtheguru: really needed?
         $RA = $RAx;
     }
 
     while ($RA >= 360) {
         $RAx = $RA - 360;
-        assert ($RAx != $RA); /* askingtheguru: really needed? */
-
+        assert($RAx != $RA); // askingtheguru: really needed?
         $RA = $RAx;
     } 
 
-    /* step 5b: right ascension value needs to be in the same quadrant as L */
+    // step 5b: right ascension value needs to be in the same quadrant as L
     $Lquadrant  = floor($L / 90) * 90;
     $RAquadrant = floor($RA / 90) * 90;
 
     $RA = $RA + ($Lquadrant - $RAquadrant);
 
-    /* step 5c: right ascension value needs to be converted into hours */
+    // step 5c: right ascension value needs to be converted into hours
     $RA /= 15;
 
-    /* step 6: calculate the sun's declination */
+    // step 6: calculate the sun's declination
     $sinDec = 0.39782 * sin(deg2rad($L));
     $cosDec = cos(asin($sinDec));
 
-    /* step 7a: calculate the sun's local hour angle */
+    // step 7a: calculate the sun's local hour angle
     $cosH = (cos(deg2rad($zenith)) - ($sinDec * sin(deg2rad($latitude)))) / ($cosDec * cos(deg2rad($latitude)));
 
-    /* XXX: What's the use of this block.. ?
-     * if (!calc_sunset && cosH > 1 || calc_sunset && cosH < -1) {
-     * throw doesnthappen();
-     * }
-     */
+    // XXX: What's the use of this block.. ?
+    // if (!calc_sunset && cosH > 1 || calc_sunset && cosH < -1) {
+    //     throw doesnthappen();
+    // }
 
-    /* step 7b: finish calculating H and convert into hours */ 
+    // step 7b: finish calculating H and convert into hours 
     if ($calc_sunset) {
-        $H = rad2deg(acos($cosH));       /* Sunset */
+        // Sunset
+        $H = rad2deg(acos($cosH));
     } else {
-        $H = 360 - rad2deg(acos($cosH)); /* Sunrise */
+        // Sunrise
+        $H = 360 - rad2deg(acos($cosH));
     }
     $H = $H / 15;
 
-    /* step 8: calculate local mean time */
+    // step 8: calculate local mean time
     $T = $H + $RA - (0.06571 * $t) - 6.622;
 
-    /* step 9: convert to UTC */
+    // Sunset step 9: convert to UTC
     $UT = $T - $lngHour;
 
     while ($UT < 0) {
         $UTx = $UT + 24;
-        assert ($UTx != $UT); /* askingtheguru: really needed? */
-
+        assert($UTx != $UT); // askingtheguru: really needed?
         $UT = $UTx;
     }
 
     while ($UT >= 24) {
         $UTx = $UT - 24;
-        assert ($UTx != $UT); /* askingtheguru: really needed? */
-
+        assert($UTx != $UT); // askingtheguru: really needed?
         $UT = $UTx;
     }
 
@@ -148,9 +143,10 @@ function php_do_sunrise_sunset($date, $retformat, $latitude, $longitude, $zenith
     if (is_int($date)) {
         $time = $date;
     } elseif (is_string($date)) {
-        /* todo: more user friendly format */
+        // todo: more user friendly format
     } else {
-        /* date must be timestamp for now */
+        // date must be timestamp for now
+        trigger_error("date must be timestamp for now", E_USER_WARNING);
         return false;
     }
     
@@ -191,8 +187,8 @@ function php_do_sunrise_sunset($date, $retformat, $latitude, $longitude, $zenith
             return $ret;
             break;
         default:
+            trigger_error("invalid format", E_USER_WARNING);
             return false;
-            break;
     } 
 }
 
