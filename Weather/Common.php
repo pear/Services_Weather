@@ -160,7 +160,7 @@ class Services_Weather_Common {
         if($this->_registry->packageExists("Cache")) {
             require_once "Cache.php";
             @$cache = new Cache($cacheType, $cacheOptions);
-            if (!is_object(§$cache) || !is_subclass_of($cache, "cache_container")) {
+            if (!is_object($cache) || !is_subclass_of($cache, "cache_container")) {
                 $this->_cache = NULL;
                 $this->_cacheEnabled = FALSE;
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
