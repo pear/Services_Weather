@@ -374,9 +374,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "autostation" => "AO(1|2)",
             "presschg"    => "PRES(R|F)R",
             "seapressure" => "SLP(\d{3}|NO)",
-            "1hprecip"    => "P(\d{4})",
-            "6hprecip"    => "6(\d{4}|\/{4})",
-            "24hprecip"   => "7(\d{4}|\/{4})",
+            "precip"      => "(P|6|7)(\d{4}|\/{4})",
             "snowdepth"   => "4\/(\d{3})",
             "snowequiv"   => "933(\d{3})",
             "cloudtypes"  => "8\/(\d|\/)(\d|\/)(\d|\/)",
@@ -620,60 +618,24 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 }
                                 unset($metarCode["seapressure"]);
                                 break;
-                            case "1hprecip":
-                                // Precipitation for the last hour in inches
+                            case "precip":
+                                // Precipitation in inches
+                                static $hours;
                                 if (!isset($weatherData["precipitation"])) {
                                     $weatherData["precipitation"] = array();
+                                    $hours = array("P" => "1", "6" => "3/6", "7" => "24");
                                 }
-                                if (!is_numeric($result[1])) {
+                                if (!is_numeric($result[2])) {
                                     $precip = "indeterminable";
-                                } elseif ($result[1] == "0000") {
+                                } elseif ($result[2] == "0000") {
                                     $precip = "traceable";
                                 }else {
-                                    $precip = $result[1] / 100;
+                                    $precip = $result[2] / 100;
                                 }
                                 $weatherData["precipitation"][] = array(
                                     "amount" => $precip,
-                                    "hours"  => "1" 
+                                    "hours"  => $hours[$result[1]]
                                 );
-                                unset($metarCode["1hprecip"]);
-                                break;
-                            case "6hprecip":
-                                // Same for last 3 resp. 6 hours... no way to determine
-                                // which report this is, so keeping the text general
-                                if (!isset($weatherData["precipitation"])) {
-                                    $weatherData["precipitation"] = array();
-                                }
-                                if (!is_numeric($result[1])) {
-                                    $precip = "indeterminable";
-                                } elseif ($result[1] == "0000") {
-                                    $precip = "traceable";
-                                }else {
-                                    $precip = $result[1] / 100;
-                                }
-                                $weatherData["precipitation"][] = array(
-                                    "amount" => $precip,
-                                    "hours"  => "3/6" 
-                                );
-                                unset($metarCode["6hprecip"]);
-                                break;
-                            case "24hprecip":
-                                // And the same for the last 24 hours
-                                if (!isset($weatherData["precipitation"])) {
-                                    $weatherData["precipitation"] = array();
-                                }
-                                if (!is_numeric($result[1])) {
-                                    $precip = "indeterminable";
-                                } elseif ($result[1] == "0000") {
-                                    $precip = "traceable";
-                                }else {
-                                    $precip = $result[1] / 100;
-                                }
-                                $weatherData["precipitation"][] = array(
-                                    "amount" => $precip,
-                                    "hours"  => "24" 
-                                );
-                                unset($metarCode["24hprecip"]);
                                 break;
                             case "snowdepth":
                                 // Snow depth in inches
@@ -1182,18 +1144,11 @@ class Services_Weather_Metar extends Services_Weather_Common
                             $newVal = $this->convertTemperature($val, "f", $units["temp"]);
                             break;
                         case "pressure":
-                            $newVal = $this->convertPressure($val, "in", $units["pres"]);
-                            break;
-                        case "precipitation":
-                            $newVal = array();
-                            for ($p = 0; $p < sizeof($val); $p++) {
-                                $newVal[$p] = array();
-                                if (is_numeric($val[$p]["amount"])) {
-                                    $newVal[$p]["amount"] = $this->convertPressure($val[$p]["amount"], "in", $units["rain"]);
-                                } else {
-                                    $newVal[$p]["amount"] = $val[$p]["amount"];
-                                }
-                                $newVal[$p]["hours"]  = $val[$p]["hours"];
+                        case "amount":
+                            if (is_numeric($val)) {
+                                $newVal = $this->convertPressure($val, "in", $units["pres"]);
+                            } else {
+                                $newVal = $val;
                             }
                             break;
                         case "seapressure":
