@@ -122,14 +122,6 @@ class Services_Weather_Common {
     * @access   private
     */
     var $_cacheEnabled = false;
-
-    /**
-    * Provides check for Science_Astronomy
-    *
-    * @var      bool                        $_astroEnabled
-    * @access   private
-    */
-    var $_astroEnabled = false;
     // }}}
 
     // {{{ constructor
@@ -141,9 +133,6 @@ class Services_Weather_Common {
     function Services_Weather_Common()
     {
         $this->_registry = new PEAR_Registry();
-        if($this->_registry->packageExists("Science_Astronomy")) {
-            $this->_astroEnabled = true;
-        }
     }
     // }}}
 
