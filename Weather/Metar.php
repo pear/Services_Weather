@@ -832,7 +832,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         $locationReturn = array();
 
-        if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
+        if ($this->_cacheEnabled && ($location = $this->_cache->get("METAR-".$id, "location"))) {
             // Grab stuff from cache
             $this->_location = $location;
             $locationReturn["cache"] = "HIT";
@@ -853,7 +853,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             if($this->_cacheEnabled) {
                 // ...and cache it
                 $expire = constant("SERVICES_WEATHER_EXPIRES_LOCATION");
-                $this->_cache->extSave($id, $this->_location, "", $expire, "location");
+                $this->_cache->extSave("METAR-".$id, $this->_location, "", $expire, "location");
             }
 
             $locationReturn["cache"] = "MISS";
@@ -913,7 +913,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         $weatherURL = "http://weather.noaa.gov/pub/data/observations/metar/stations/".$id.".TXT";
 
-        if ($this->_cacheEnabled && ($weather = $this->_cache->get($id, "weather"))) {
+        if ($this->_cacheEnabled && ($weather = $this->_cache->get("METAR-".$id, "weather"))) {
             // Wee... it was cached, let's have it...
             $weatherReturn  = $weather;
             $this->_weather = $weatherReturn;
@@ -928,7 +928,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             if ($this->_cacheEnabled) {
                 // Cache weather
                 $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
-                $this->_cache->extSave($id, $weatherReturn, $unitsFormat, $expire, "weather");
+                $this->_cache->extSave("METAR-".$id, $weatherReturn, $unitsFormat, $expire, "weather");
             }
             $this->_weather = $weatherReturn;
             $weatherReturn["cache"] = "MISS";
