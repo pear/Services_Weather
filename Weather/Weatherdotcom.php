@@ -159,7 +159,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     */
     function _checkLocationID($id)
     {
-        if (!strlen($id)) {
+        if (is_array($id) || is_object($id) || !strlen($id)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION, __FILE__, __LINE__);
         } elseif (!ctype_alnum($id) || (strlen($id) > 8)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);

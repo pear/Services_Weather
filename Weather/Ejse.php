@@ -117,7 +117,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
     */
     function _checkLocationID($id)
     {
-        if (!strlen($id)) {
+        if (is_array($id) || is_object($id) || !strlen($id)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION, __FILE__, __LINE__);
         } elseif (!ctype_digit($id) || (strlen($id) != 5)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
