@@ -93,6 +93,7 @@ $printHelp = false;
 $invOpt    = false;
 $verbose   = 0;
 $dbType    = "mysql";
+$dbProt    = "unix";
 $dbName    = "servicesWeatherDB";
 $dbUser    = "root";
 $dbPass    = "";
@@ -147,10 +148,19 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
                 $printHelp = true;
             }
             break;
+        case "r":
+            // The protocol of the DB to be used
+            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
+                $dbProt    = $_SERVER["argv"][$c + 1];
+                $c++;
+            } else {
+               $printHelp  = true;
+            }
+            break;
         case "d":
             // The name of the DB to be used
             if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $dbType    = $_SERVER["argv"][$c + 1];
+                $dbName    = $_SERVER["argv"][$c + 1];
                 $c++;
             } else {
                 $printHelp = true;
@@ -230,6 +240,7 @@ if (!$modeSet || $printHelp) {
     echo "  -f <file>       use <file> as input\n";
     echo "  -s              save downloaded file to disk\n";
     echo "  -t <dbtype>     type of the DB to be used\n";
+    echo "  -r <dbprotocol> protocol -----\"----------\n";
     echo "  -d <dbname>     name ---------\"----------\n";
     echo "  -u <dbuser>     user ---------\"----------\n";
     echo "  -p <dbpass>     pass ---------\"----------\n";
@@ -294,9 +305,10 @@ if (!$fp) {
     die("Services_Weather: Sourcefile nsd_".$filePart." not found!\n");
 }
 
-$dsn     = $dbType."://".$dbUser.":".$dbPass."@".$dbHost."/".$dbName;
+$dsn     = $dbType."://".$dbUser.":".$dbPass."@".$dbProt."+".$dbHost."/".$dbName;
 $dsninfo = array(
     "phptype"  => $dbType,
+    "protocol" => $dbProt,
     "username" => $dbUser,
     "password" => $dbPass,
     "hostspec" => $dbHost,
@@ -315,7 +327,7 @@ if (DB::isError($db)) {
 
     if (DB::isError($result)) {
         // Create new table
-        $create = "CREATE TABLE ".$tableName."(id int(5),block int(2),station int(3),icao varchar(4),name varchar(50),state varchar(2),country varchar(50),wmo int(1),latitude float,longitude float,elevation float,x float,y float,z float)";
+        $create = "CREATE TABLE ".$tableName."(id int,block int,station int,icao varchar(4),name varchar(80),state varchar(2),country varchar(50),wmo int,latitude float,longitude float,elevation float,x float,y float,z float)";
         if ($verbose > 0) {
             echo "Services_Weather: Creating table '".$tableName."'.\n";
         }
@@ -352,11 +364,11 @@ if (DB::isError($db)) {
             foreach ($coord as $latlon => $aId) {
                 preg_match("/^(\d{1,3})-(\d{1,2})(-(\d{1,2}))?([NSEW])$/", $data[$aId], $result);
                 ${$latlon} = 0; $factor = 1;
-                foreach($result as $var) {
+                foreach ($result as $var) {
                     if ((strlen($var) > 0) && ctype_digit($var)) {
                         ${$latlon} += $var / $factor;
                         $factor *= 60;
-                    } elseif(ctype_alpha($var) && in_array($var, array("S", "W"))) {
+                    } elseif (ctype_alpha($var) && in_array($var, array("S", "W"))) {
                         ${$latlon} *= (-1);
                     }
                 }
@@ -373,8 +385,17 @@ if (DB::isError($db)) {
             // Check for elevation in data
             $elevation = is_numeric($data[11]) ? $data[11] : 0;
 
-            // escape data strings
-            for ( $i = 0; $i <= 6; $i++ ) {
+            // integers: convert "--" fields to null, empty fields to 0
+            foreach (array($dataOrder["b"], $dataOrder["s"], 6) as $i) {
+                if (strpos($data[$i], "--")) { 
+                    $data[$i] = "null"; 
+                } elseif ($data[$i] == "") { 
+                    $data[$i] = 0; 
+                }
+            }
+
+            // strings: quote
+            foreach (array($dataOrder["i"], 3, 4, 5) as $i) {
                 $data[$i] = $db->quote($data[$i]);
             }
 
