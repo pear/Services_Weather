@@ -260,6 +260,22 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     }
     // }}}
 
+    // {{{ searchLocationByCountry()
+    /**
+    * Returns only false, as weather.com offers no country listing via 
+    * its XML services 
+    *
+    * @param    string                      $country
+    * @return   bool
+    * @access   public
+    * @deprecated
+    */
+    function searchLocationByCountry($country = "")
+    {
+        return false;
+    }
+    // }}}
+
     // {{{ getUnits()
     /**
     * Returns the units for the current query
@@ -357,8 +373,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             }
             $weatherReturn["cache"] = "MISS";
         }
-
-        $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($this->_weather->lsup));
+        
+        $update  = str_replace("Local Time", "", $this->_weather->lsup);
+        $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update));
         $weatherReturn["station"]           = $this->_weather->obst;
         $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->tmp, "f", $units["temp"]);
         $weatherReturn["feltTemperature"]   = $this->convertTemperature($this->_weather->flik, "f", $units["temp"]);

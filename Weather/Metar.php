@@ -732,13 +732,13 @@ class Services_Weather_Metar extends Services_Weather_Common
             // and build where clause from it for the select
             $location = explode(",", $location);
             if (sizeof($location) >= 1) {
-                $where  = "lower(name) like '%".strtolower(trim($location[0]))."%'";
+                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0]))."%'";
             }
             if (sizeof($location) == 2) {
-                $where .= " AND lower(country) like '%".strtolower(trim($location[1]))."%'";
+                $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[1]))."%'";
             } elseif (sizeof($location) == 3) {
-                $where .= " AND lower(state) like '%".strtolower(trim($location[1]))."%'";
-                $where .= " AND lower(country) like '%".strtolower(trim($location[2]))."%'";
+                $where .= " AND LOWER(state) LIKE '%".strtolower(trim($location[1]))."%'";
+                $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[2]))."%'";
             }
                 
             // Create select, locations with ICAO first
@@ -786,6 +786,65 @@ class Services_Weather_Metar extends Services_Weather_Common
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
         return $icao;
+    }
+    // }}}
+
+    // {{{ searchLocationByCountry()
+    /**
+    * Returns IDs with location-name for a given country or all available countries, if no value was given 
+    *
+    * @param    string                      $country
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+    * @access   public
+    */
+    function searchLocationByCountry($country = "")
+    {
+        if (!isset($this->_db) || !DB::isConnection($this->_db)) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED);
+        }
+
+        // Return the available countries as no country was given
+        if (!strlen($country)) {
+            $select = "SELECT DISTINCT(country) ".
+                      "FROM metarAirports ".
+                      "ORDER BY country ASC";
+            $countries = $this->_db->getCol($select);
+
+            // As $countries is either an error or the true result,
+            // we can just return it
+            return $countries;
+        }
+
+        // Now for the real search
+        $select = "SELECT icao, name, state, country ".
+                  "FROM metarAirports ".
+                  "WHERE LOWER(country) LIKE '%".strtolower(trim($country))."%' ".
+                  "ORDER BY name ASC";
+        $result = $this->_db->query($select);
+        // Check result for validity
+        if (DB::isError($result)) {
+            return $result;
+        } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+        }
+
+        // Construct the result
+        $locations = array();
+        while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != null) {
+            $locicao = $row["icao"];
+            // First the name of the location
+            if (!strlen($row["state"])) {
+                $locname = $row["name"].", ".$row["country"];
+            } else {
+                $locname = $row["name"].", ".$row["state"].", ".$row["country"];
+            }
+            $locations[$locicao] = $locname;
+        }
+
+        return $locations;
     }
     // }}}
 

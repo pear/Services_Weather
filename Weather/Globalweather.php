@@ -94,7 +94,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         
         require_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl");
-        if (Services_Weather::isError($this->_wsdl)) {
+        if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
         }
 
@@ -164,6 +164,47 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
             }
         }
         return $searchReturn;
+    }
+    // }}}
+
+    // {{{ searchLocationByCountry()
+    /**
+    * Returns IDs with location-name for a given country or all available countries, if no value was given 
+    *
+    * @param    string                      $country
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+    * @access   public
+    */
+    function searchLocationByCountry($country = "")
+    {
+        // Return the available countries as no country was given
+        if (!strlen($country)) {
+            $countries = $this->_stationSoap->listCountries();
+            if (Services_Weather::isError($countries)) {
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            }
+            return $countries;
+        }
+
+        // Now for the real search
+        $countryLocs = $this->_stationSoap->searchByCountry($country);
+        // Check result for validity
+        if (Services_Weather::isError($countryLocs)) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+        } elseif(!is_array($countryLocs)) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+        }
+
+        // Construct the result
+        $locations = array();
+        foreach($countryLocs as $location) {
+            $locations[$location->icao] = $location->name.", ".$location->country;
+        }
+        asort($locations);
+
+        return $locations;
     }
     // }}}
 
