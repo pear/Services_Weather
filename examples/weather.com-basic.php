@@ -18,9 +18,9 @@
 //
 // $Id$
 
-require_once "Science/Weather.php";
+require_once "Services/Weather.php";
 
-$weatherDotCom = &Science_Weather::service("WeatherDotCom", array("debug" => 2));
+$weatherDotCom = &Services_Weather::service("WeatherDotCom", array("debug" => 2));
 
 $weatherDotCom->setAccountData("<PartnerID>", "<LicenseKey>");
 //$weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));

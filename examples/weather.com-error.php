@@ -18,9 +18,9 @@
 //
 // $Id$
 
-require_once "Science/Weather.php";
+require_once "Services/Weather.php";
 
-$weatherDotCom = &Science_Weather::service("WeatherDotCom", array("debug" => 2));
+$weatherDotCom = &Services_Weather::service("WeatherDotCom", array("debug" => 2));
 
 $weatherDotCom->setAccountData("<PartnerID>", "<LicenseKey>");
 //$weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));
@@ -28,17 +28,17 @@ $weatherDotCom->setUnitsFormat("metric" );
 $weatherDotCom->setDateTimeFormat("d.m.Y", "H:i");
 
 $search = $weatherDotCom->searchLocation("foobar");
-if (Science_Weather::isError($search)) {
+if (Services_Weather::isError($search)) {
 	echo "Error: ".$search->getMessage()."\n";
 }
 
 $location = $weatherDotCom->getLocation("foobar");
-if (Science_Weather::isError($location)) {
+if (Services_Weather::isError($location)) {
 	echo "Error: ".$location->getMessage()."\n";
 }
 
 $location = $weatherDotCom->getLocation();
-if (Science_Weather::isError($location)) {
+if (Services_Weather::isError($location)) {
 	echo "Error: ".$location->getMessage("")."\n";
 }
 ?>

@@ -18,9 +18,9 @@
 //
 // $Id$
 
-require_once "Science/Weather.php";
+require_once "Services/Weather.php";
 
-$metar = &Science_Weather::service("METAR", array("debug" => 2));
+$metar = &Services_Weather::service("METAR", array("debug" => 2));
 
 $metar->setUnitsFormat("metric");
 $metar->setDateTimeFormat("d.m.Y", "H:i");
