@@ -315,8 +315,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                         case "pressure":
                             if ($result[1] == "A") {
                                 $weatherData["pressure"] = $this->convertPressure(($result[2] / 100), "in", $this->_units["pres"]);
-                            } else {
-                                $weatherData["pressure"] = $this->convertPressure($result[2], "hpa", $this->_units["pres"]);
+                            } elseif ($result[3] == "Q") {
+                                $weatherData["pressure"] = $this->convertPressure($result[4], "hpa", $this->_units["pres"]);
                             }
                             break;
                         default:
@@ -510,11 +510,55 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ getLocation()
     /**
-    * Not yet implemented...
+    * Returns the data for the location belonging to the ID
+    *
+    * @param    string                      $id
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error
+    * @access   public
     */
     function getLocation($id = "")
     {
-        return -1;
+        $status = $this->_checkLocationID($id);
+
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+
+        $locationReturn = array();
+
+        if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
+            $this->_location = $location;
+            $locationReturn["cache"] = "HIT";
+        } else {
+            $select = "SELECT icao, name, state, country, latitude, longitude ".
+                      "FROM metarAirports WHERE icao='".$id."'";
+            $result = $this->_db->query($select);
+
+            if (DB::isError($result)) {
+                return $result;
+            } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+            }
+            $this->_location = $result->fetchRow(DB_FETCHMODE_ASSOC);
+
+            if($this->_cacheEnabled) {
+                $expire = constant("SERVICES_WEATHER_EXPIRES_LOCATION");
+                $this->_cache->extSave($id, $this->_location, "", $expire, "location");
+            }
+
+            $locationReturn["cache"] = "MISS";
+        }
+        if (!strlen($this->_location["state"])) {
+            $locname = $this->_location["name"].", ".$this->_location["country"];
+        } else {
+            $locname = $this->_location["name"].", ".$this->_location["state"].", ".$this->_location["country"];
+        }
+        $locationReturn["name"]      = $locname;
+        $locationReturn["latitude"]  = $this->_location["latitude"];
+        $locationReturn["longitude"] = $this->_location["longitude"];
+
+        return $locationReturn;
     }
     // }}}
 
@@ -556,12 +600,16 @@ class Services_Weather_Metar extends Services_Weather_Common
                 return $weatherReturn;
             }
             if ($this->_cacheEnabled) {
-               $expire = constant("SERVICES_WEATHER_EXPIRES_".strtoupper($varname));
+               $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
                $this->_cache->extSave($id, $weatherReturn, $unitsFormat, $expire, "weather");
             }
             $this->_weather = $weatherReturn;
             $weatherReturn["cache"] = "MISS";
         }
+        
+        $location = $this->getLocation($id);
+        $weatherReturn["station"] = $location["name"];
+        
         return $weatherReturn;
     }
     // }}}
