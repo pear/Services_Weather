@@ -16,7 +16,7 @@
 // | Authors: Alexander Wirtz <alex@pc4p.net>                             |
 // +----------------------------------------------------------------------+
 //
-// $Id $
+// $Id$
 
 require_once "Services/Weather/Common.php";
 
@@ -262,35 +262,63 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             }
             $weatherReturn["cache"] = "MISS";
         }
-/*
-  <Wind>calm</Wind>
-  <Wind>From the East at 14 mph</Wind>
-*/
 
-//      Not working for all stations... fsck
-//      preg_match("/[^\(]+\(([^\)]+)\)/", $this->_weather->LastUpdated, $update);
-//      $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update[1]));
+        if (!isset($compass)) {
+            $compass = array(
+                "north"             => array("N", 0),
+                "north northeast"   => array("NNE", 22.5),
+                "northeast"         => array("NE", 45),
+                "east northeast"    => array("ENE", 67.5),
+                "east"              => array("E", 90),
+                "east southeast"    => array("ESE", 112.5),
+                "southeast"         => array("SE", 135),
+                "south southeast"   => array("SSE", 157.5),
+                "south"             => array("S", 180),
+                "south southwest"   => array("SSW", 202.5),
+                "southwest"         => array("SW", 225),
+                "west southwest"    => array("WSW", 247.5),
+                "west"              => array("w", 270),
+                "west northwest"    => array("WNW", 292.5),
+                "northwest"         => array("NW", 315),
+                "north northwest"   => array("NNW", 337.5)
+            );
+        }
 
+        preg_match("/(\w+) (\d+), (\d+), at (\d+:\d+) (\wM) [^\(]+(\(([^\)]+)\))?/", $this->_weather->LastUpdated, $update);
+        if (isset($update[6])) {
+            $timestring = $update[7];
+        } else {
+            $timestring = $update[2]." ".$update[1]." ".$update[3]." ".$update[4]." ".$update[5]." EST";
+        }
+        $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($timestring));
         $weatherReturn["station"]           = $this->_weather->ReportedAt;
         $weatherReturn["conditionIcon"]     = $this->_weather->IconIndex;
+        preg_match("/(-?\d+)\D+/", $this->_weather->Temprature, $temperature);        
         $weatherReturn["temperature"]       = $this->convertTemperature($temperature[1], "f", $units["temp"]);
-        preg_match("/(\d+)\D+/", $this->_weather->FeelsLike, $feltTemperature);        
+        preg_match("/(-?\d+)\D+/", $this->_weather->FeelsLike, $feltTemperature);        
         $weatherReturn["feltTemperature"]   = $this->convertTemperature($feltTemperature[1], "f", $units["temp"]);
         $weatherReturn["condition"]         = $this->_weather->Forecast;
-        if (preg_match("/([\d.]+)\D+/", $this->_weather->Visibility, $visibility)) { 
+        if (preg_match("/([\d\.]+)\D+/", $this->_weather->Visibility, $visibility)) { 
             $weatherReturn["visibility"]    = $this->convertDistance($visibility[1], "sm", $units["vis"]);
         } else {
-            $weatherReturn["visibility"]    = $this->_weather->Visibility;
+            $weatherReturn["visibility"]    = trim($this->_weather->Visibility);
         } 
-        preg_match("/([\d.]+) inches and (\w+)/", $this->_weather->Pressure, $pressure);
+        preg_match("/([\d\.]+) inches and (\w+)/", $this->_weather->Pressure, $pressure);
         $weatherReturn["pressure"]          = $this->convertPressure($pressure[1], "in", $units["pres"]);        
         $weatherReturn["pressureTrend"]     = $pressure[2];
-        preg_match("/(\d+)\D+/", $this->_weather->DewPoint, $dewPoint);      
+        preg_match("/(-?\d+)\D+/", $this->_weather->DewPoint, $dewPoint);      
         $weatherReturn["dewPoint"]          = $this->convertTemperature($dewPoint[1], "f", $units["temp"]);
         preg_match("/(\d+) (\w+)/", $this->_weather->UVIndex, $uvIndex);
         $weatherReturn["uvIndex"]           = $uvIndex[1];
         $weatherReturn["uvText"]            = $uvIndex[2];
         $weatherReturn["humidity"]          = str_replace("%", "", $this->_weather->Humidity);
+        preg_match("/From the ([\w\ ]+) at ([\d\.]+) (gusting to ([\d\.]+) )?mph/", $this->_weather->Wind, $wind);
+        $weatherReturn["wind"]              = $this->convertSpeed($wind[2], "mph", $units["wind"]);
+        if (isset($wind[4])) {
+            $weatherReturn["windGust"]      = $this->convertSpeed($wind[4], "mph", $units["wind"]);
+        }
+        $weatherReturn["windDegrees"]       = $compass[strtolower($wind[1])][1];
+        $weatherReturn["windDirection"]     = $compass[strtolower($wind[1])][0];
 
         return $weatherReturn;
     }
