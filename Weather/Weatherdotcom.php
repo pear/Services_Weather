@@ -45,7 +45,7 @@ require_once "XML/Unserializer.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.weather.com/services/xmloap.html
-* @package      Services
+* @package      Services_Weather
 * @version      1.0
 */
 class Services_Weather_Weatherdotcom extends Services_Weather_Common {
@@ -100,7 +100,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function setAccountData($partnerID, $licenseKey)
     {
         if (strlen($partnerID) && ctype_digit($partnerID)) {
-            $this->_partnerID = $partnerID;
+            $this->_partnerID  = $partnerID;
         }
         if (strlen($licenseKey) && ctype_alnum($licenseKey)) {
             $this->_licenseKey = $licenseKey;
@@ -143,12 +143,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     */
     function _parseWeatherData($id, $url, $unitsFormat = "", $days = 0)
     {
-        if (strlen($unitsFormat)) {
-            $unitsFormat = strtolower($unitsFormat{0});
-        }
-        else {
-            $unitsFormat = $this->_unitsFormat;
-        }
+        // Get data from URL and unserialize
         $status = $this->_unserializer->unserialize($url, TRUE);
 
         if (Services_Weather::isError($status)) {
@@ -158,11 +153,15 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $data = $this->_unserializer->getUnserializedData();
 
             if (Services_Weather::isError($root)) {
+                // Something wrong here...
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
             } elseif ($root == "error") {
+                // We got an error back from weather.com
                 $errno  = key(get_object_vars($data));
                 return Services_Weather::raiseError($this->_errorMessage($errno), $errno);
             } else {
+                // Valid data, lets get started
+                // Loop through the different sub-parts of the data fro processing
                 foreach(get_object_vars($data) as $key => $val) {
                     switch($key) {
                         case "head":
@@ -182,8 +181,10 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                             $userData = $unitsFormat." ".$days;
                             break;
                     }
+                    // Save data in object
                     $this->{"_".$varname} = $val;
                     if($this->_cacheEnabled) {
+                        // ...and cache if possible
                         $expire = constant("SERVICES_WEATHER_EXPIRES_".strtoupper($varname));
                         $this->_cache->extSave($id, $val, $userData, $expire, $varname);
                     }
@@ -207,6 +208,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     */
     function searchLocation($location, $useFirst = FALSE)
     {
+        // Get search data from server and unserialize
         $searchURL = "http://xoap.weather.com/search/search?where=".urlencode(trim($location));
         $status = $this->_unserializer->unserialize($searchURL, TRUE, array("overrideOptions" => TRUE, "complexType" => "array", "keyAttribute" => "id"));
 
@@ -248,21 +250,22 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (strlen($unitsFormat)) {
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
             $unitsFormat = strtolower($unitsFormat{0});
-        }
-        else {
+        } else {
             $unitsFormat = $this->_unitsFormat;
         }
 
         $unitsReturn = array();
-        $unitsURL = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$unitsFormat;
+        $unitsURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$unitsFormat;
 
         if ($this->_cacheEnabled && ($this->_unitsFormat == $this->_cache->getUserData($id, "units")) &&
+            // Get data from cache
                  ($units = $this->_cache->get($id, "units"))) {
             $this->_units = $units;
             $unitsReturn["cache"] = "HIT";
         } else {
+            // No cache, or no such data, so download data
             $status = $this->_parseWeatherData($id, $unitsURL);
 
             if (Services_Weather::isError($status)) {
@@ -298,12 +301,14 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         }
 
         $locationReturn = array();
-        $locationURL = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$this->_unitsFormat;
+        $locationURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$this->_unitsFormat;
 
         if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
+            // Get data from cache
             $this->_location = $location;
             $locationReturn["cache"] = "HIT";
         } else {
+            // Same as in the function above...
             $status = $this->_parseWeatherData($id, $locationURL);
 
             if (Services_Weather::isError($status)) {
@@ -340,20 +345,22 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (strlen($unitsFormat) > 0) {
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
             $unitsFormat = strtolower($unitsFormat{0});
         } else {
             $unitsFormat = $this->_unitsFormat;
         }
 
         $weatherReturn = array();
-        $weatherURL = "http://xoap.weather.com/weather/local/".$id."?cc=*&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$unitsFormat;
+        $weatherURL    = "http://xoap.weather.com/weather/local/".$id."?cc=*&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=".$unitsFormat;
 
         if ($this->_cacheEnabled && ($this->_unitsFormat == $this->_cache->getUserData($id, "weather")) &&
                 ($weather = $this->_cache->get($id, "weather"))) {
+            // Same procedure...
             $this->_weather = $weather;
             $weatherReturn["cache"] = "HIT";
         } else {
+            // ...as last function
             $status = $this->_parseWeatherData($id, $weatherURL, $unitsFormat);
 
             if (Services_Weather::isError($status)) {
@@ -405,7 +412,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (!in_array($days, range(1, 10))) {
             $days = 2;
         }
-        if (strlen($unitsFormat) > 0) {
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
             $unitsFormat = strtolower($unitsFormat{0});
         } else {
             $unitsFormat = $this->_unitsFormat;
@@ -416,9 +423,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         if ($this->_cacheEnabled && ($userData = explode(" ", $this->_cache->getUserData($id, "forecast"))) &&
                 ($this->_unitsFormat == $userData[ 0 ]) && ($days <= $userData[ 1 ]) && ($forecast = $this->_cache->get($id, "forecast"))) {
+            // Encore...
             $this->_forecast = $forecast;
             $forecastReturn["cache"] = "HIT";
         } else {
+            // ...
             $status = $this->_parseWeatherData($id, $forecastURL, $unitsFormat, $days);
 
             if (Services_Weather::isError($status)) {

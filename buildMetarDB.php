@@ -36,7 +36,7 @@ require_once "DB.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://weather.noaa.gov/tg/site.shtml
-* @package      Services
+* @package      Services_Weather
 * @version      1.0
 */
 

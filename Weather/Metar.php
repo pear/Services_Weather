@@ -34,7 +34,7 @@ require_once "DB.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://weather.noaa.gov/weather/metar.shtml
-* @package      Services
+* @package      Services_Weather
 * @version      1.0
 */
 class Services_Weather_Metar extends Services_Weather_Common
@@ -91,6 +91,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "mode"     => 0644
         );
         
+        // Initialize connection to DB and store in object if successful
         $db =  DB::connect($dsninfo, $dbOptions);
         if (DB::isError($db)) {
             return $db;
@@ -172,7 +173,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                 "vv"          => "vertival visibility",
                 "tcu"         => "Towering Cumulus",
                 "cb"          => "Cumulonimbus",
-                "clt"         => "clear below 12,000 ft"
+                "clr"         => "clear below 12,000 ft"
             );
             $conditions = array(
                 "+"           => "heavy",        "-"           => "light",
@@ -205,50 +206,65 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         $data = @file($url);
 
+        // Check for correct data, 2 lines in size
         if (!$data || !is_array($data) || sizeof($data) < 2) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
         } elseif (sizeof($data) > 2) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         } else {
+            // Ok, we have correct data, start with parsing the first line for the last update
             $weatherData = array();
             $weatherData["update"] = date( $this->_timeFormat, strtotime(trim($data[0])) + date("Z") );
+            // and prepare the second line for stepping through
             $metar = explode(" ", $data[1]);
 
             foreach ($metarCode as $key => $regexp) {
+                // We use the code as anchor
                 if(SERVICES_WEATHER_DEBUG) {
                     echo $key."->".current($metar)."\n";
                 }
+                // Check if current code matches current metar snippet
                 if (preg_match("/".$regexp."/i", current($metar), $result)) {
                     switch ($key) {
                         case "station":
+                            // Simple the station... no big deal
                             $weatherData["station"] = $result[0];
                             break;
                         case "wind":
+                            // Parse wind data, first the speed, convert from kt to chosen unit
                             $weatherData["wind"] = $this->convertSpeed($result[2], strtolower($result[5]), str_replace("/", "", $this->_units["wind"]));
                             if ($result[1] == "VAR" || $result[1] == "VRB") {
+                                // Variable winds
                                 $weatherData["windDegrees"] = "Variable";
                                 $weatherData["windDirection"] = "Variable";
                             } else {
+                                // Save wind degree and calc direction
                                 $weatherData["windDegrees"] = $result[1];
 	                			$weatherData["windDirection"] = $compass[round($result[1] / 22.5) % 16];
                             }
                             if (is_numeric($result[4])) {
+                                // Wind with gusts...
                                 $weatherData["windGust"] = $this->convertSpeed($result[4], strtolower($result[5]), str_replace("/", "", $this->_units["wind"]));
                             }
                             break;
                         case "windVar":
+                            // Once more wind, now variability around the current wind-direction
                             $weatherData["windVariability"] = array("from" => $result[1], "to" => $result[2]);
                             break;
                         case "visibility1":
+                            // Visibility will come as x y/z, first the single digit part
                             $weatherData["visibility"] = $result[0];
                             break;
                         case "visibility2":
                             if (is_numeric($result[1])) {
+                                // 4-digit visibility in m
                                 $visibility = $this->convertDistance(($result[1]/1000), "km", $this->_units["vis"]);
                             } else {
                                 if (is_numeric($result[3])) {
+                                    // visibility as one/two-digit number
                                     $visibility = $this->convertDistance($result[3], $result[6], $this->_units["vis"]);
                                 } else {
+                                    // the y/z part, add if we had a x part (see visibility1)
                                     $visibility = $this->convertDistance($result[4] / $result[5], $result[6], $this->_units["vis"]);
                                     if (isset($weatherData["visibility"])) {
                                         $visibility += $weatherData["visibility"];
@@ -258,6 +274,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                             $weatherData["visibility"] = $visibility;
                             break;
                         case "condition":
+                            // We may have several condition strings, so extra parse-loop
                             prev($metar);
                             $weatherData["condition"] = "";
                             while (preg_match("/".$regexp."/i", next($metar), $result)) {
@@ -265,8 +282,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $weatherData["condition"] .= ",";
                                 }
                                 if (in_array(strtolower($result[0]), $conditions)) {
+                                    // First try matching the complete string
                                     $weatherData["condition"] .= " ".$conditions[strtolower($result[0])];
                                 } else {
+                                    // No luck, match part by part
                                     for ($i = 1; $i < sizeof($result); $i++) {
                                         if (strlen($result[$i]) > 0) {
                                             $weatherData["condition"] .= " ".$conditions[strtolower($result[$i])];
@@ -278,16 +297,20 @@ class Services_Weather_Metar extends Services_Weather_Common
                             $weatherData["condition"] = trim($weatherData["condition"]);
                             break;
                         case "clouds":
+                            // Same approach as the condition-part, multiple clouds possible
                             prev($metar);
                             $weatherData["clouds"] = array();
                             while (preg_match("/".$regexp."/i", next($metar), $result)) {
                                 if (sizeof($result) == 5) {
+                                    // Only amount and height
                                     $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4]*100));
                                 }
                                 elseif (sizeof($result) == 6) {
+                                    // Amount, height and type
                                     $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4]*100), "type" => $clouds[strtolower($result[5])]);
                                 }
                                 else {
+                                    // SKC or CLR
                                     $cloud = array("amount" => $clouds[strtolower($result[0])]);
                                 }
                                 $weatherData["clouds"][] = $cloud;
@@ -295,12 +318,15 @@ class Services_Weather_Metar extends Services_Weather_Common
                             prev($metar);
                             break;
                         case "temperature":
+                            // normal temperature in first part
                             $temperature = $this->convertTemperature($result[2], "c", strtolower($this->_units["temp"]));
+                            // negative value
                             if ($result[1] == "M") {
                                 $temperature *= -1;
                             }
                             $weatherData["temperature"] = $temperature;
                             if (sizeof($result) > 4) {
+                                // same for dewpoint
                                 $dewPoint = $this->convertTemperature($result[5], "c", strtolower($this->_units["temp"]));
                                 if ($result[4] == "M") {
                                     $dewPoint *= -1;
@@ -308,14 +334,17 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $weatherData["dewPoint"] = $dewPoint;
                             }
                             if (isset($weatherData["wind"])) {
+                                // Now calculate windchill from temperature and windspeed
                                 $feltTemperature = $this->calculateWindChill($this->convertTemperature($weatherData["temperature"], strtolower($this->_units["temp"]), "f"), $this->convertSpeed($weatherData["wind"], str_replace("/", "", $this->_units["wind"]), "mph"));
                                 $weatherData["feltTemperature"] = $this->convertTemperature($feltTemperature, "f", strtolower($this->_units["temp"]));
                             }
                             break;
                         case "pressure":
                             if ($result[1] == "A") {
+                                // Pressure provided in inches
                                 $weatherData["pressure"] = $this->convertPressure(($result[2] / 100), "in", $this->_units["pres"]);
                             } elseif ($result[3] == "Q") {
+                                // ... in hectopascal
                                 $weatherData["pressure"] = $this->convertPressure($result[4], "hpa", $this->_units["pres"]);
                             }
                             break;
@@ -351,6 +380,8 @@ class Services_Weather_Metar extends Services_Weather_Common
         }
         
         if (is_string($location)) {
+            // Try to part search string in name, state and country part
+            // and build where clause from it for the select
             $location = explode(",", $location);
             if (sizeof($location) >= 1) {
                 $where  = "lower(name) like '%".strtolower(trim($location[0]))."%'";
@@ -362,37 +393,46 @@ class Services_Weather_Metar extends Services_Weather_Common
                 $where .= " AND lower(country) like '%".strtolower(trim($location[2]))."%'";
             }
                 
+            // Create select, locations with ICAO first
             $select = "SELECT icao, name, state, country, latitude, longitude ".
                       "FROM metarLocations ".
                       "WHERE ".$where." ".
                       "ORDER BY icao DESC";
             $result = $this->_db->query($select);
+            // Check result for validity
             if (DB::isError($result)) {
                 return $result;
             } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
             }
+            
+            // Result is valid, start preparing the return
             $icao = array();
             while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != NULL) {
                 $locicao = $row["icao"];
+                // First the name of the location
                 if (!strlen($row["state"])) {
                     $locname = $row["name"].", ".$row["country"];
                 } else {
                     $locname = $row["name"].", ".$row["state"].", ".$row["country"];
                 }
                 if ($locicao != "----") {
+                    // We have a location with ICAO
                     $icao[$locicao] = $locname;
                 } else {
+                    // No ICAO, try finding the nearest airport
                     $locicao = $this->searchAirport($row["latitude"], $row["longitude"]);
                     if (!isset($icao[$locicao])) {
                         $icao[$locicao] = $locname;
                     }
                 }
             }
+            // Only one result? Return as string
             if (sizeof($icao) == 1) {
                 $icao = key($icao);
             }
         } elseif (is_array($location)) {
+            // Location was provided as coordinates, search nearest airport
             $icao = $this->searchAirport($location[0], $location[1]);
         } else {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
@@ -423,6 +463,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }           
         
+        // Get all airports
         $select = "SELECT icao, latitude, longitude FROM metarAirports";
         $result = $this->_db->query($select);
         if (DB::isError($result)) {
@@ -431,6 +472,8 @@ class Services_Weather_Metar extends Services_Weather_Common
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         }
 
+        // Result is valid, start search
+        // Initialize values
         $min_dist = null;
         $query    = $this->polar2cartesian($latitude, $longitude);
         $search   = array("dist" => array(), "icao" => array());
@@ -440,6 +483,8 @@ class Services_Weather_Metar extends Services_Weather_Common
 
             $dist = 0;
             $d = 0;
+            // Calculate distance of query and current airport
+            // break off, if distance is larger than current $min_dist
             for($d; $d < sizeof($air); $d++) {
                 $t = $air[$d] - $query[$d];
                 $dist += pow($t, 2);
@@ -449,9 +494,13 @@ class Services_Weather_Metar extends Services_Weather_Common
             }
 
             if($d >= sizeof($air)) {
+                // Ok, current airport is one of the nearer locations
+                // add to result-array
                 $search["dist"][] = $dist;
                 $search["icao"][] = $icao;
+                // Sort array for distance
                 array_multisort($search["dist"], SORT_NUMERIC, SORT_ASC, $search["icao"], SORT_STRING, SORT_ASC);
+                // If array is larger then desired results, chop off last one
                 if(sizeof($search["dist"]) > $numResults) {
                     array_pop($search["dist"]);
                     array_pop($search["icao"]);
@@ -459,10 +508,11 @@ class Services_Weather_Metar extends Services_Weather_Common
                 $min_dist = max($search["dist"]);
             }
         }
-        unset($search["dist"]);
         if ($numResults == 1) {
+            // Only one result wanted, return as string
             return $search["icao"][0];
         } elseif ($numResults > 1) {
+            // Return found locations
             return $search["icao"];
         } else {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
@@ -481,7 +531,8 @@ class Services_Weather_Metar extends Services_Weather_Common
     */
     function getUnits($id = null, $unitsFormat = "")
     {
-        if (strlen($unitsFormat) > 0) {
+        // This is cheap'o stuff, no caching, no polling
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
             $unitsFormat = strtolower($unitsFormat{0});
         } else {
             $unitsFormat = $this->_unitsFormat;
@@ -528,9 +579,11 @@ class Services_Weather_Metar extends Services_Weather_Common
         $locationReturn = array();
 
         if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
+            // Grab stuff from cache
             $this->_location = $location;
             $locationReturn["cache"] = "HIT";
         } else {
+            // Get data from DB
             $select = "SELECT icao, name, state, country, latitude, longitude ".
                       "FROM metarAirports WHERE icao='".$id."'";
             $result = $this->_db->query($select);
@@ -540,15 +593,18 @@ class Services_Weather_Metar extends Services_Weather_Common
             } elseif (get_class($result) != "db_result" || $result->numRows() == 0) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
             }
+            // Result is ok, put things into object
             $this->_location = $result->fetchRow(DB_FETCHMODE_ASSOC);
 
             if($this->_cacheEnabled) {
+                // ...and cache it
                 $expire = constant("SERVICES_WEATHER_EXPIRES_LOCATION");
                 $this->_cache->extSave($id, $this->_location, "", $expire, "location");
             }
 
             $locationReturn["cache"] = "MISS";
         }
+        // Stuff name-string together
         if (!strlen($this->_location["state"])) {
             $locname = $this->_location["name"].", ".$this->_location["country"];
         } else {
@@ -574,40 +630,43 @@ class Services_Weather_Metar extends Services_Weather_Common
     */
     function getWeather($id = "", $unitsFormat = "")
     {
-        $id = strtoupper($id);
+        $id     = strtoupper($id);
         $status = $this->_checkLocationID($id);
 
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (strlen($unitsFormat) > 0) {
+        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("s", "m"))) {
             $unitsFormat = strtolower($unitsFormat{0});
         } else {
             $unitsFormat = $this->_unitsFormat;
         }
-        $this->getUnits(null, $unitsFormat);
+        // Get other data
+        $units    = $this->getUnits(null, $unitsFormat);
+        $location = $this->getLocation($id);
 
         $weatherURL = "http://weather.noaa.gov/pub/data/observations/metar/stations/".$id.".TXT";
 
         if ($this->_cacheEnabled && ($weather = $this->_cache->get($id, "weather"))) {
+            // Wee... it was cached, let's have it...
             $weatherReturn  = $weather;
             $this->_weather = $weatherReturn;
             $weatherReturn["cache"] = "HIT";
         } else {
+            // Download and parse weather
             $weatherReturn  = $this->_parseWeatherData(null, $weatherURL, $unitsFormat, null);
 
             if (Services_Weather::isError($weatherReturn)) {
                 return $weatherReturn;
             }
             if ($this->_cacheEnabled) {
-               $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
-               $this->_cache->extSave($id, $weatherReturn, $unitsFormat, $expire, "weather");
+                // Cache weather
+                $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
+                $this->_cache->extSave($id, $weatherReturn, $unitsFormat, $expire, "weather");
             }
             $this->_weather = $weatherReturn;
             $weatherReturn["cache"] = "MISS";
         }
-        
-        $location = $this->getLocation($id);
         $weatherReturn["station"] = $location["name"];
         
         return $weatherReturn;

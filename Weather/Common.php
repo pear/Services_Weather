@@ -37,7 +37,7 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 * miscellaneous things. 
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
-* @package      Services
+* @package      Services_Weather
 * @version      1.0
 */
 class Services_Weather_Common {
@@ -162,12 +162,14 @@ class Services_Weather_Common {
         if($this->_registry->packageExists("Cache")) {
             require_once "Cache.php";
             @$cache = new Cache($cacheType, $cacheOptions);
+            // The error handling in Cache is a bit crummy (read: not existent)
+            // so we have to do that on our own...
             if (!is_object($cache) || get_class($cache) != "cache") {
-                $this->_cache = NULL;
+                $this->_cache        = NULL;
                 $this->_cacheEnabled = FALSE;
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
             } else {
-                $this->_cache = $cache;
+                $this->_cache        = $cache;
                 $this->_cacheEnabled = TRUE;
                 return TRUE;
             }

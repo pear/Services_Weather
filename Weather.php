@@ -51,15 +51,22 @@ define("SERVICES_WEATHER_ERROR_INVALID_LICENSE_KEY",    102);
 /**
 * PEAR::Services_Weather
 *
+* This class acts as an interface to various online weather-services.
+*
+* Services_Weather searches for given locations and retrieves current weather data
+* and, dependant on the used service, also forecasts. Up to now, weather.com-XML and
+* METAR from noaa.gov are supported, further services will get included, if they become
+* available and are properly documented.
+*
 * @author       Alexander Wirtz <alex@pc4p.net>
-* @package      Services
+* @package      Services_Weather
 * @version      1.0
 */
 class Services_Weather {
 
     // {{{ &service()
     /**
-    *
+    * Factory for creating the services-objects
     *
     * @param    string                      $service
     * @param    array                       $options
@@ -72,6 +79,7 @@ class Services_Weather {
         $service = ucfirst(strtolower($service));
         $classname = "Services_Weather_".$service;
 
+        // Check for debugging-mode and set stuff accordingly
         if (is_array($options) && isset($options["debug"]) && $options["debug"] >= 2) {
             define("SERVICES_WEATHER_DEBUG", TRUE);
             include_once("Services/Weather/".$service.".php");
@@ -80,10 +88,12 @@ class Services_Weather {
             @include_once("Services/Weather/".$service.".php");
         }
 
+        // No such service... bail out
         if (!class_exists($classname)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND);
         }
 
+        // Create service and return
         @$obj = &new $classname;
 
         return $obj;
@@ -105,7 +115,7 @@ class Services_Weather {
 
     // {{{ _errorMessage()
     /**
-    *
+    * Returns the message for a certain error code
     *
     * @param    PEAR_Error|int              $value
     * @return   string
@@ -140,7 +150,7 @@ class Services_Weather {
 
     // {{{ isError()
     /**
-    *
+    * Checks for an error object, same as in PEAR
     *
     * @param    PEAR_Error|mixed            $value
     * @return   bool
@@ -154,7 +164,7 @@ class Services_Weather {
 
     // {{{ &raiseError()
     /**
-    *
+    * Creates error, same as in PEAR with a customized flavor
     *
     * @param    int                         $code
     * @return   PEAR_Error
