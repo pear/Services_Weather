@@ -113,7 +113,6 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         if (!strlen($id)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION);
         } elseif (!ctype_digit($id) || (strlen($id) != 5)) {
-            var_dump(ctype_digit($id), strlen($id));
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
 
@@ -260,23 +259,26 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         }
 
         if (!isset($compass)) {
+            // Yes, NNE and the likes are multiples of 22.5, but as the other
+            // services return integers for this value, these directions are
+            // rounded up
             $compass = array(
-                "north"             => array("N", 0),
-                "north northeast"   => array("NNE", 22.5),
-                "northeast"         => array("NE", 45),
-                "east northeast"    => array("ENE", 67.5),
-                "east"              => array("E", 90),
-                "east southeast"    => array("ESE", 112.5),
-                "southeast"         => array("SE", 135),
-                "south southeast"   => array("SSE", 157.5),
-                "south"             => array("S", 180),
-                "south southwest"   => array("SSW", 202.5),
-                "southwest"         => array("SW", 225),
-                "west southwest"    => array("WSW", 247.5),
-                "west"              => array("W", 270),
-                "west northwest"    => array("WNW", 292.5),
-                "northwest"         => array("NW", 315),
-                "north northwest"   => array("NNW", 337.5)
+                "north"             => array("N",     0),
+                "north northeast"   => array("NNE",  23),
+                "northeast"         => array("NE",   45),
+                "east northeast"    => array("ENE",  68),
+                "east"              => array("E",    90),
+                "east southeast"    => array("ESE", 113),
+                "southeast"         => array("SE",  135),
+                "south southeast"   => array("SSE", 158),
+                "south"             => array("S",   180),
+                "south southwest"   => array("SSW", 203),
+                "southwest"         => array("SW",  225),
+                "west southwest"    => array("WSW", 248),
+                "west"              => array("W",   270),
+                "west northwest"    => array("WNW", 293),
+                "northwest"         => array("NW",  315),
+                "north northwest"   => array("NNW", 338)
             );
         }
 
