@@ -317,7 +317,7 @@ $dsninfo = array(
     "password" => $dbPass,
     "hostspec" => $dbHost,
     "database" => $dbName,
-    "mode"     => 0644
+    "mode"     => "0644"
 );
 
 $db  = DB::connect($dsninfo, $dbOptions);
