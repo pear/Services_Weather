@@ -26,21 +26,21 @@
         <license>PHP License</license>
         <state>stable</state>
         <notes>
-        	- Weather.php, Common.php, Metar.php
-        		o Fixed bug #896: Improvement for get_class()-usage
+            - Weather.php, Common.php, Metar.php
+                o Fixed bug #896: Improvement for get_class()-usage
             - Ejse.php, Globalweather.php, Metar.php, Weatherdotcom.php
                 o Added updateRaw to current weather array
-        	- Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php 	
+            - Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php
                 o Fixed bug #1074: Set timeout for requests
                   Added $_httpTimeout and setHttpTimeout() to Common.php
                   Added documentation of httpTimeout option in Weather.php
                   Added timeout parameter to WSDL-constructors in Ejse.php and Globalweather.php
                   Switched to using HTTP_Request in Weatherdotcom.php
             - Globalweather.php
-            	o Fixed wrong behaviour when sky->layers is a string
+                o Fixed wrong behaviour when sky->layers is a string
             - Weatherdotcom.php
-            	o Added windGust to current weather array
-				o Fixed typo in forecast array-key
+                o Added windGust to current weather array
+                o Fixed typo in forecast array-key
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
