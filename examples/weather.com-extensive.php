@@ -269,11 +269,11 @@ for ($day = 0; $day < $forecastDays; $day++) {
                     <tr>
                         <td align="center" style="height: 75px" validn="top">
                             <?=$afternoon ? "&nbsp;" : '<img style="height: 32px; width: 32px" align="top" alt="'.$forecast["days"][$day]["day"]["condition"].'" src="images/32x32/'.$forecast["days"][$day]["day"]["conditionIcon"].'.png">'?><br>
-                            <?=$afternoon ? "&nbsp;" : $forecast["days"][$day]["day"]["condition"]?>
+                            <?=$afternoon ? "&nbsp;" : $forecast["days"][$day]["day"]["condition"]?> 
                         </td>
                         <td align="center" style="height: 75px" validn="top">
                             <img style="height: 32px; width: 32px" align="top" alt="<?=$forecast["days"][$day]["night"]["condition"]?>" src="images/32x32/<?=$forecast["days"][$day]["night"]["conditionIcon"]?>.png"><br>
-                            <?=$forecast["days"][$day]["night"]["condition"]?>
+                            <?=$forecast["days"][$day]["night"]["condition"]?> 
                         </td>
                     </tr>
                     <tr>

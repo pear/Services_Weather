@@ -128,7 +128,7 @@ $location["sunset"]  = date_sunset($timestamp, "", $location["latitude"], $locat
 ?>
 <html>
 <head>
-    <title>Services_Weather::Weatherdotcom</title>
+    <title>Services_Weather::METAR/TAF</title>
     <style type="text/css">
         .normal     { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; font-weight: normal; font-style: normal }
         .italic     { font-weight: normal; font-style: italic }
@@ -166,8 +166,9 @@ if (isset($_GET["debug"])) {
         </tr>
         <tr>
             <td><span class="bold">Sunrise:</span> <img style="width: 28px; height: 13px; vertical-align: baseline" alt="Sunrise" src="images/sunrise.gif"> <?=$location["sunrise"]?></td>
-            <td colspan="2"><span class="bold">Sunset:</span> <img style="width: 30px; height: 15px; vertical-align: baseline" alt="Sunset" src="images/sunset.gif"> <?=$location["sunset"]?></td>
-            <td>&nbsp;</td>
+            <td><span class="bold">Sunset:</span> <img style="width: 30px; height: 15px; vertical-align: baseline" alt="Sunset" src="images/sunset.gif"> <?=$location["sunset"]?></td>
+            <td style="width: 190px">&nbsp;</td>
+            <td style="width: auto">&nbsp;</td>
         </tr>
         <tr style="height: 15px">
             <td nowrap><span class="bold">Temperature:</span> <?=round($weather["temperature"], 1).$units["temp"]?></td>
@@ -346,30 +347,20 @@ if (isset($weather["remark"]) && sizeof($weather["remark"])) {
         </tr>
         <tr style="height: 15px">
             <td colspan="2" style="width: 310px" nowrap><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1).$units["pres"]?></td>
-            <td style="width: 190px" nowrap><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
+            <td nowrap><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
         </tr>
         <tr style="height: 15px">
             <td colspan="2" nowrap>
-                <span class="bold">Wind:</span> <?=strtolower($weather["windDirection"]) == "calm" ? "Calm" : "From the ".$weather["windDirection"]." (".$weather["windDegrees"]."&deg;) at ".round($weather["wind"], 1).$units["wind"]?>
-<?php
-if (isset($weather["windVariability"])) {
-?>
-                <br>variable from <?=$weather["windVariability"]["from"]?>&deg; to <?=$weather["windVariability"]["to"]?>&deg;
-<?php
-}
-if (isset($weather["windGust"])) {
-?>
-                <br>with gusts up to <?=round($weather["windGust"], 1).$units["wind"]?>
-<?php
-}
-?>
+                <span class="bold">Wind:</span> <?=strtolower($weather["windDirection"]) == "calm" ? "Calm" : "From the ".$weather["windDirection"]." (".$weather["windDegrees"]."&deg;) at ".round($weather["wind"], 1).$units["wind"]?> 
+                <?=isset($weather["windVariability"]) ? "<br>variable from ".$weather["windVariability"]["from"]."&deg; to ".$weather["windVariability"]["to"]."&deg;" : ""?> 
+                <?=isset($weather["windGust"]) ? "<br>with gusts up to ".round($weather["windGust"], 1).$units["wind"] : ""?> 
             </td>
             <td valign="top" nowrap><span class="bold">Visibility:</span> <?=strtolower($weather["visQualifier"])?> <?=round($weather["visibility"], 1).$units["vis"]?></td>
         </tr>
         <tr>
             <td colspan="2" valign="top">
                 <span class="bold">Current condition:</span><br>
-                <?=isset($weather["condition"]) ? ucwords($weather["condition"]) : "No Significant Weather"?>
+                <?=isset($weather["condition"]) ? ucwords($weather["condition"]) : "No Significant Weather"?> 
 <?php
 if (isset($weather["precipitation"]) && sizeof($weather["precipitation"])) {
     // Output a line for each type of precipitation,
@@ -406,7 +397,7 @@ if (isset($weather["clouds"]) && sizeof($weather["clouds"])) {
     }
 } else {
 ?>
-                Clear Below <?=$metar->convertDistance(12000, "ft", $units["height"]).$units["height"]?>
+                Clear Below <?=$metar->convertDistance(12000, "ft", $units["height"]).$units["height"]?> 
 <?php
 }
 ?>
