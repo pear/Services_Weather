@@ -484,7 +484,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 } else {
                                     $pointer["visQualifier"] = "BEYOND";
                                     $visibility = $this->convertDistance(10, "km", "sm");
-                                    $pointer["clouds"] = array("amount" => "Clear below", "height" => 5000);
+                                    $pointer["clouds"] = array(array("amount" => "Clear below", "height" => 5000));
                                     $pointer["condition"] = "no significant weather";
                                 }
                                 $pointer["visibility"] = $visibility;
@@ -961,7 +961,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 } else {
                                     $pointer["visQualifier"] = "BEYOND";
                                     $visibility = $this->convertDistance(10, "km", "sm");
-                                    $pointer["clouds"] = array("amount" => "none", "height" => "below 5000ft");
+                                    $pointer["clouds"] = array(array("amount" => "Clear below", "height" => 5000));
                                     $pointer["condition"] = "no significant weather";
                                 }
                                 if (isset($probability)) {
