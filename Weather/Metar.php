@@ -1036,11 +1036,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("c", "m", "s"))) {
-            $unitsFormat = strtolower($unitsFormat{0});
-        } else {
-            $unitsFormat = $this->_unitsFormat;
-        }
+
         // Get other data
         $units    = $this->getUnitsFormat($unitsFormat);
         $location = $this->getLocation($id);
