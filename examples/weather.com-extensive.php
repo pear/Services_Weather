@@ -112,12 +112,13 @@ foreach ($fetch as $variable => $function) {
 }
 
 // We need this for some time-checks and displays later
-$wup = strtotime($weather["update"])  + $location["timezone"] * 3600;
-$fup = strtotime($forecast["update"]) + $location["timezone"] * 3600;
+$wupd = strtotime($weather["update"])  + date("Z");
+$fupd = strtotime($forecast["update"]) + date("Z");
+$fup  = strtotime($forecast["update"]) + $location["timezone"] * 3600;
 
 // Check, if we're in the afternoon and if the forecast was updated yet...
 // This triggers if the day-forecast for the current day will get shown.
-$afternoon = (date("G") > 13 || date("Ymd", $fup) < date("Ymd")) ? true : false;
+$afternoon = ($location["time"] > "13:59" || date("Ymd", $fup) < date("Ymd")) ? true : false;
 
 // Now we output all the data, please don't expect extensive comments here, this is basic
 // HTML/CSS stuff. Also this isn't a very fancy design, it's just to show you, what
@@ -157,14 +158,32 @@ if (isset($_GET["debug"])) {
 <table width="100%">
 <tr>
     <td>
-        <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0">
+        <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0" width="100%">
         <tr class="bgkhaki">
-            <td colspan="2" style="border-bottom: 2px solid #abada2"><span class="bold"><?=$location["name"]?></span></td>
-            <td style="border-bottom: 2px solid #abada2"><span class="bold">Local time:</span> <?=$location["time"]?> (GMT<?=(($location["timezone"] < 0) ? "" : "+").$location["timezone"]?>)</td>
+            <td width="290" colspan="2" style="border-bottom: 2px solid #abada2"><span class="bold"><?=$location["name"]?></span></td>
+            <td width="190" style="border-bottom: 2px solid #abada2"><span class="bold">Local time:</span> <?=$location["time"]?> (GMT<?=(($location["timezone"] < 0) ? "" : "+").$location["timezone"]?>)</td>
+            <td style="border-bottom: 2px solid #abada2">&nbsp;</td>
         </tr>
         <tr>
             <td><span class="bold">Sunrise:</span> <img width="28" height="13" style="vertical-align: baseline" alt="Sunrise" src="images/sunrise.gif"> <?=$location["sunrise"]?></td>
             <td colspan="2"><span class="bold">Sunset:</span> <img width="30" height="15" style="vertical-align: baseline" alt="Sunset" src="images/sunset.gif"> <?=$location["sunset"]?></td>
+            <td rowspan="5" valign="middle" align="center">
+                <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0">
+                <tr class="bgkhaki">
+                    <td align="center" style="border-bottom: 2px solid #abada2"><span class="bold">Featured on <span class="bolditalic">weather.com<span class="reg">&reg;</span></span></span></td>
+                </tr>
+<?php
+// Loop through the mandatory links, nothing spectacular
+for ($i = 0; $i < sizeof($links["promo"]); $i++) {
+?>
+                <tr class="bggrey">
+                    <td><a href="<?=$links["promo"][$i]["link"]?>"><?=$links["promo"][$i]["title"]?></a></td>
+                </tr>
+<?php
+}
+?>
+                </table>
+            </td>
         </tr>
         <tr>
             <td><span class="bold">Temperature:</span> <?=round($weather["temperature"], 1)?>&deg;<?=$units["temp"]?></td>
@@ -176,7 +195,7 @@ if (isset($_GET["debug"])) {
             <td><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
         </tr>
         <tr>
-            <td colspan="2"><span class="bold">Wind:</span> From the <?=$weather["windDirection"]?> (<?=$weather["windDegrees"]?>&deg;) at <?=round($weather["wind"], 1)?> <?=$units["wind"]?></td>
+            <td colspan="2"><span class="bold">Wind:</span> <?=strtolower($weather["windDirection"]) == "calm" ? "Calm" : "From the ".$weather["windDirection"]." (".$weather["windDegrees"]."&deg;) at ".round($weather["wind"], 1)." ".$units["wind"]?></td>
             <td><span class="bold">Visibility:</span> <?=round($weather["visibility"], 1)?> <?=$units["vis"]?></td>
         </tr>
         <tr>
@@ -185,26 +204,9 @@ if (isset($_GET["debug"])) {
         </tr>
         </table>
     </td>
-    <td valign="top">
-        <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0">
-        <tr class="bgkhaki">
-            <td align="center" style="border-bottom: 2px solid #abada2"><span class="bold">Featured on <span class="bolditalic">weather.com<span class="reg">&reg;</span></span>:</span></td>
-        </tr>
-<?php
-// Loop through the mandatory links, nothing spectacular
-for ($i = 0; $i < sizeof($links["promo"]); $i++) {
-?>
-        <tr>
-            <td><a href="<?=$links["promo"][$i]["link"]?>"><?=$links["promo"][$i]["title"]?></a></td>
-        </tr>
-<?php
-}
-?>
-        </table>
-    </td>
 </tr>
 <tr>
-    <td colspan="2">
+    <td>
         <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0">
         <tr class="bgkhaki">
             <td align="center" style="border-bottom: 2px solid #abada2" colspan="<?=(1 + $forecastDays)?>"><span class="bold"><?=$forecastDays?>-day forecast</span></td>
@@ -289,7 +291,7 @@ for ($day = 0; $day < $forecastDays; $day++) {
         </tr>
         <tr class="bgkhaki">
     	    <td style="border-top: 2px solid #abada2">&nbsp;</td>
-            <td style="border-top: 2px solid #abada2">Updated: (<?=date($timeFormat, $wup)?>&nbsp;/&nbsp;<?=date($timeFormat, $fup)?>)</td>
+            <td style="border-top: 2px solid #abada2">Updated: (<?=date($timeFormat, $wupd)?>&nbsp;/&nbsp;<?=date($timeFormat, $fupd)?>)</td>
             <td align="right" style="border-top: 2px solid #abada2" colspan="<?=($forecastDays - 1)?>">Weather data provided by <a href="http://www.weather.com/?prod=xoap&par=<?=$partnerID?>">weather.com<span class="reg">&reg;</span></a><a href="http://www.weather.com/?prod=xoap&par=<?=$partnerID?>"><img height="32" width="43" alt="weather.com(R) logo" src="images/logos/TWClogo_32px.png"></a></td>
         </tr>
         </table>
