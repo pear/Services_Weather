@@ -296,7 +296,8 @@ class Services_Weather_Metar extends Services_Weather_Common
             $conditions = array(
                 "+"           => "heavy",        "-"           => "light",
 
-                "vc"          => "vicinity",
+                "vc"          => "vicinity",     "re"          => "recent",
+                "nsw"         => "no significant weather",
 
                 "mi"          => "shallow",      "bc"          => "patches",
                 "pr"          => "partial",      "ts"          => "thunderstorm",
@@ -321,13 +322,13 @@ class Services_Weather_Metar extends Services_Weather_Common
                 "+fc"         => "tornado/waterspout"
             );
             $sensors = array(
-                "rvrno"     => "Runway Visual Range Detector offline",
-                "pwino"     => "Present Weather Identifier offline",
-                "pno"       => "Tipping Bucket Rain Gauge offline",
-                "fzrano"    => "Freezing Rain Sensor offline",
-                "tsno"      => "Lightning Detection System offline",
-                "visno_loc" => "2nd Visibility Sensor offline",
-                "chino_loc" => "2nd Ceiling Height Indicator offline"
+                "rvrno"  => "Runway Visual Range Detector offline",
+                "pwino"  => "Present Weather Identifier offline",
+                "pno"    => "Tipping Bucket Rain Gauge offline",
+                "fzrano" => "Freezing Rain Sensor offline",
+                "tsno"   => "Lightning Detection System offline",
+                "visno"  => "2nd Visibility Sensor offline",
+                "chino"  => "2nd Ceiling Height Indicator offline"
             );
         }
  
@@ -340,7 +341,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "windVar"     => "(\d{3})V(\d{3})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "runway"      => "R(\d{2})(\w)?\/(P|M)?(\d{4})(FT)?(V(P|M)?(\d{4})(FT)?)?(\w)?",
-            "condition"   => "(-|\+|VC)?(MI|BC|PR|TS|BL|SH|DR|FZ)?(DZ|RA|SN|SG|IC|PL|GR|GS|UP)?(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
+            "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
             "clouds"      => "(SKC|CLR|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
             "temperature" => "(M)?(\d{2})\/((M)?(\d{2})|XX|\/\/)?",
             "pressure"    => "(A)(\d{4})|(Q)(\d{4})",
@@ -351,7 +352,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $remarks = array(
             "nospeci"     => "NOSPECI",
             "autostation" => "AO(1|2)",
-            "presschg"    => "PRESS(R|F)R",
+            "presschg"    => "PRES(R|F)R",
             "seapressure" => "SLP(\d{3}|NO)",
             "1hprecip"    => "P(\d{4})",
             "6hprecip"    => "6(\d{4}|\/{4})",
@@ -365,7 +366,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "6hmintemp"   => "2(0|1)(\d{3})",
             "24htemp"     => "4(0|1)(\d{3})(0|1)(\d{3})",
             "3hpresstend" => "5([0-8])(\d{3})",
-            "sensors"     => "RVRNO|PWINO|PNO|FZRANO|TSNO|VISNO_LOC|CHINO_LOC",
+            "sensors"     => "RVRNO|PWINO|PNO|FZRANO|TSNO|VISNO|CHINO",
             "maintain"    => "[\$]"
         );        
 
@@ -483,9 +484,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $weatherData["condition"] .= " ".$conditions[strtolower($result[0])];
                                 } else {
                                     // No luck, match part by part
-                                    for ($c = 1; $c < sizeof($result); $c++) {
-                                        if (strlen($result[$c]) > 0) {
-                                            $weatherData["condition"] .= " ".$conditions[strtolower($result[$c])];
+                                    $result = array_unique($result);
+                                    foreach ($result as $condition) {
+                                        if (strlen($condition) > 0) {
+                                            $pointer["condition"] .= " ".$conditions[strtolower($condition)];
                                         }
                                     }
                                 }
@@ -798,7 +800,8 @@ class Services_Weather_Metar extends Services_Weather_Common
             $conditions = array(
                 "+"           => "heavy",        "-"           => "light",
 
-                "vc"          => "vicinity",
+                "vc"          => "vicinity",     "re"          => "recent",
+                "nsw"         => "no significant weather",
 
                 "mi"          => "shallow",      "bc"          => "patches",
                 "pr"          => "partial",      "ts"          => "thunderstorm",
@@ -831,7 +834,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "valid"       => "(\d{2})(\d{2})(\d{2})",
             "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2}))?(\w{2,3})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
-            "condition"   => "(-|\+|VC)?(MI|BC|PR|TS|BL|SH|DR|FZ)?(DZ|RA|SN|SG|IC|PL|GR|GS|UP)?(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
+            "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
             "clouds"      => "(SKC|CLR|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
             "windshear"   => "WS(\d{3})\/(\d{3})(\d{2,3})(\w{2,3})",
             "from"        => "FM(\d{2})(\d{2})",
@@ -969,9 +972,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $pointer["condition"] .= " ".$conditions[strtolower($result[0])];
                                 } else {
                                     // No luck, match part by part
-                                    for ($c = 1; $c < sizeof($result); $c++) {
-                                        if (strlen($result[$c]) > 0) {
-                                            $pointer["condition"] .= " ".$conditions[strtolower($result[$c])];
+                                    $result = array_unique($result);
+                                    foreach ($result as $condition) {
+                                        if (strlen($condition) > 0) {
+                                            $pointer["condition"] .= " ".$conditions[strtolower($condition)];
                                         }
                                     }
                                 }
@@ -1008,31 +1012,36 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 // set pointer accordingly
                                 $fromTime = $result[1].":".$result[2];
                                 $forecastData["time"][$fromTime] = array();
+                                $fmcCount = 0;
                                 $pointer =& $forecastData["time"][$fromTime];
                                 break;
                             case "fmc";
-                                // Handle the FMC, generate neccessary array if it's the first...
-                                if (!isset($forecastData["time"][$fromTime]["fmc"])) {
-                                    $forecastData["time"][$fromTime]["fmc"] = array();
-                                }
-                                // ...increase counter, generate array...
-                                $fmcCount++;
-                                $forecastData["time"][$fromTime]["fmc"][$fmcCount] = array();
-                                // ...and set pointer.
-                                $pointer =& $forecastData["time"][$fromTime]["fmc"][$fmcCount];
+                                if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
+                                    // Handle the FMC, generate neccessary array if it's the first...
+                                    if (!isset($forecastData["time"][$fromTime]["fmc"])) {
+                                        $forecastData["time"][$fromTime]["fmc"] = array();
+                                    }
+                                    $forecastData["time"][$fromTime]["fmc"][$fmcCount] = array();
+                                    // ...and set pointer.
+                                    $pointer =& $forecastData["time"][$fromTime]["fmc"][$fmcCount];
+                                    $fmcCount++;
 
-                                // Insert data
-                                $pointer["type"] = $result[1];
-                                if (isset($result[2]) && is_numeric($result[2])) {
-                                    $pointer["propability"] = $result[2];
+                                    // Insert data
+                                    $pointer["type"] = $result[1];
+                                    if (isset($result[2]) && is_numeric($result[2])) {
+                                        $pointer["propability"] = $result[2];
+                                    }
+                                    
+                                    $pointer["from"] = $lresult[1].":00";
+                                    $pointer["to"]   = $lresult[2].":00";
+                                    // As we have just extracted the time for this FMC
+                                    // from our TAF, increase field-counter
+                                    $i++;
+                                } elseif (preg_match("/^PROB(\d{2})?|BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
+                                    if (isset($result[2]) && is_numeric($result[2])) {
+                                        $pointer["propability"] = $result[2];
+                                    }
                                 }
-
-                                preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $result);
-                                $pointer["from"] = $result[1].":00";
-                                $pointer["to"]   = $result[2].":00";
-                                // As we have just extracted the time for this FMC
-                                // from our TAF, increase field-counter
-                                $i++;
                                 break;
                             default:
                                 // Do nothing
