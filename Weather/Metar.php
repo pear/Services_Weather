@@ -389,18 +389,19 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 unset($metarCode["visibility1"]);
                                 break;
                             case "visibility2":
-                                $weatherData["visQualifier"] = "";
                                 if (is_numeric($result[1]) && ($result[1] == 9999)) {
                                     // Upper limit of visibility range
-                                    $weatherData["visQualifier"] = "BEYOND";
                                     $visibility = $this->convertDistance(10, "km", "sm");
+                                    $weatherData["visQualifier"] = "BEYOND";
                                 } elseif (is_numeric($result[1])) {
                                     // 4-digit visibility in m
                                     $visibility = $this->convertDistance(($result[1]/1000), "km", "sm");
+                                    $weatherData["visQualifier"] = "AT";
                                 } elseif (!isset($result[7]) || $result[7] != "CAVOK") {
                                     if (is_numeric($result[3])) {
                                         // visibility as one/two-digit number
                                         $visibility = $this->convertDistance($result[3], $result[6], "sm");
+                                        $weatherData["visQualifier"] = "AT";
                                     } else {
                                         // the y/z part, add if we had a x part (see visibility1)
                                         $visibility = $this->convertDistance($result[4] / $result[5], $result[6], "sm");
@@ -409,7 +410,9 @@ class Services_Weather_Metar extends Services_Weather_Common
                                         }
                                         if ($result[0]{0} == "M") {
                                             $weatherData["visQualifier"] = "BELOW";
-                                        }
+                                        } else {
+                                            $weatherData["visQualifier"] = "AT";
+                                        } 
                                     }
                                 } else {
                                     $weatherData["visQualifier"] = "BEYOND";
@@ -541,6 +544,9 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 break;
                             case "1hprecip":
                                 // Precipitation for the last hour in inches
+                                if (!isset($weatherData["precipitation"])) {
+                                    $weatherData["precipitation"] = array();
+                                }
                                 if (!is_numeric($result[1])) {
                                     $precip = "indetermindable";
                                 } elseif ($result[1] == 0) {
@@ -548,12 +554,18 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 }else {
                                     $precip = $result[1] / 100;
                                 }
-                                $weatherData["remark"]["1hprecip"] = $precip;
+                                $weatherData["precipitation"][] = array(
+                                    "amount" => $precip,
+                                    "hours"  => "1" 
+                                );
                                 unset($metarCode["1hprecip"]);
                                 break;
                             case "6hprecip":
                                 // Same for last 3 resp. 6 hours... no way to determine
                                 // which report this is, so keeping the text general
+                                if (!isset($weatherData["precipitation"])) {
+                                    $weatherData["precipitation"] = array();
+                                }
                                 if (!is_numeric($result[1])) {
                                     $precip = "indetermindable";
                                 } elseif ($result[1] == 0) {
@@ -561,11 +573,17 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 }else {
                                     $precip = $result[1] / 100;
                                 }
-                                $weatherData["remark"]["6hprecip"] = $precip;
+                                $weatherData["precipitation"][] = array(
+                                    "amount" => $precip,
+                                    "hours"  => "3/6" 
+                                );
                                 unset($metarCode["6hprecip"]);
                                 break;
                             case "24hprecip":
                                 // And the same for the last 24 hours
+                                if (!isset($weatherData["precipitation"])) {
+                                    $weatherData["precipitation"] = array();
+                                }
                                 if (!is_numeric($result[1])) {
                                     $precip = "indetermindable";
                                 } elseif ($result[1] == 0) {
@@ -573,7 +591,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 }else {
                                     $precip = $result[1] / 100;
                                 }
-                                $weatherData["remark"]["24hprecip"] = $precip;
+                                $weatherData["precipitation"][] = array(
+                                    "amount" => $precip,
+                                    "hours"  => "24" 
+                                );
                                 unset($metarCode["24hprecip"]);
                                 break;
                             case "snowdepth":
@@ -988,16 +1009,9 @@ class Services_Weather_Metar extends Services_Weather_Common
                 case "seapressure":
                     $newVal = $this->convertPressure($val, "in", $units["pres"]);
                     break;
-                case "1hprecip":
-                case "6hprecip":
-                case "24hprecip":
                 case "snowdepth":
                 case "snowequiv":
-                    if (is_numeric($val)) {
-                        $newVal = $this->convertPressure($val, "in", $units["rain"]);
-                    } else {
-                        $newVal = $val;
-                    }
+                    $newVal = $this->convertPressure($val, "in", $units["rain"]);
                     break;
                 case "1htemp":
                 case "1hdew":
@@ -1036,6 +1050,14 @@ class Services_Weather_Metar extends Services_Weather_Common
                     break;
                 case "pressure":
                     $newVal = $this->convertPressure($val, "in", $units["pres"]);
+                    break;
+                case "precipitation":
+                    $newVal = array();
+                    for ($p = 0; $p < sizeof($val); $p++) {
+                        $newVal[$p] = array();
+                        $newVal[$p]["amount"] = $this->convertPressure($val[$p]["amount"], "in", $units["rain"]);
+                        $newVal[$p]["hours"]  = $val[$p]["hours"];
+                    }
                     break;
 /*
                 case "remark":
