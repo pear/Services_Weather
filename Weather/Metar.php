@@ -668,10 +668,13 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 break;
                             case "sensors":
                                 // We may have multiple broken sensors, so do not unset
-                                $weatherData["remark"][] = $sensors[strtolower($result[0])];
+                                if (!isset($weatherData["remark"]["sensors"])) {
+                                    $weatherData["remark"]["sensors"] = array();
+                                }
+                                $weatherData["remark"]["sensors"][strtolower($result[0])] = $sensors[strtolower($result[0])];
                                 break;
                             case "maintain":
-                                $weatherData["remark"][] = "Maintainance needed";
+                                $weatherData["remark"]["maintain"] = "Maintainance needed";
                                 unset($metarCode["maintain"]);
                                 break;
                             default:
