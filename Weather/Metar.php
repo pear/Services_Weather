@@ -838,7 +838,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             $locationReturn["cache"] = "HIT";
         } elseif (isset($this->_db) && DB::isConnection($this->_db)) {
             // Get data from DB
-            $select = "SELECT icao, name, state, country, latitude, longitude ".
+            $select = "SELECT icao, name, state, country, latitude, longitude, elevation ".
                       "FROM metarAirports WHERE icao='".$id."'";
             $result = $this->_db->query($select);
 
@@ -863,7 +863,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                 "state"     => "",
                 "country"   => "",
                 "latitude"  => "",
-                "longitude" => ""
+                "longitude" => "",
+                "elevation" => ""
             );
         }
         // Stuff name-string together
@@ -877,6 +878,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $locationReturn["name"]      = $locname;
         $locationReturn["latitude"]  = $this->_location["latitude"];
         $locationReturn["longitude"] = $this->_location["longitude"];
+        $locationReturn["elevation"] = $this->_location["elevation"];
 
         return $locationReturn;
     }

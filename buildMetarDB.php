@@ -315,7 +315,7 @@ if (DB::isError($db)) {
 
     if (DB::isError($result)) {
         // Create new table
-        $create = "CREATE TABLE ".$tableName."(id int(5),block int(2),station int(3),icao varchar(4),name varchar(50),state varchar(2),country varchar(50),wmo int(1),latitude float,longitude float,x float,y float,z float)";
+        $create = "CREATE TABLE ".$tableName."(id int(5),block int(2),station int(3),icao varchar(4),name varchar(50),state varchar(2),country varchar(50),wmo int(1),latitude float,longitude float,elevation float,x float,y float,z float)";
         if ($verbose > 0) {
             echo "Services_Weather: Creating table '".$tableName."'.\n";
         }
@@ -361,6 +361,7 @@ if (DB::isError($db)) {
                     }
                 }
             }
+
             // Calculate the cartesian coordinates for latitude and longitude
             $theta = deg2rad($latitude);
             $phi   = deg2rad($longitude);
@@ -368,6 +369,10 @@ if (DB::isError($db)) {
             $x = SERVICES_WEATHER_RADIUS_EARTH * cos($phi) * cos($theta);
             $y = SERVICES_WEATHER_RADIUS_EARTH * sin($phi) * cos($theta);
             $z = SERVICES_WEATHER_RADIUS_EARTH             * sin($theta);
+
+            // Check for elevation in data
+            $elevation = is_numeric($data[11]) ? $data[11] : 0;
+
             // escape data strings
             for ( $i = 0; $i <= 6; $i++ ) {
                 $data[$i] = $db->quote($data[$i]);
@@ -378,8 +383,8 @@ if (DB::isError($db)) {
             $insert .= $data[$dataOrder["b"]].",".$data[$dataOrder["s"]].",";
             $insert .= $data[$dataOrder["i"]].",".$data[3].",".$data[4].",";
             $insert .= $data[5].",".$data[6].",".round($latitude, 4).",";
-            $insert .= round($longitude, 4).",".round($x, 4).",".round($y, 4).",";
-            $insert .= round($z, 4).")";
+            $insert .= round($longitude, 4).",".$elevation.",".round($x, 4).",";
+            $insert .= round($y, 4).",".round($z, 4).")";
 
             $result = $db->query($insert);
             if (DB::isError($result)) {
