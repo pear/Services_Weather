@@ -156,10 +156,10 @@ class Services_Weather_Common {
             } else {
                 $status = $this->setCache($options["cacheType"]);
             }
-        }
-        if (Services_Weather::isError($status)) {
-            $error = $status;
-            return;
+            if (Services_Weather::isError($status)) {
+                $error = $status;
+                return;
+            }
         }
 
         if (isset($options["unitsFormat"])) {
