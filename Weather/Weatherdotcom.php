@@ -392,6 +392,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $weatherReturn["pressure"]          = $this->convertPressure($this->_weather->bar->r, "in", $units["pres"]);
         $weatherReturn["pressureTrend"]     = $this->_weather->bar->d;
         $weatherReturn["wind"]              = $this->convertSpeed($this->_weather->wind->s, "mph", $units["wind"]);
+		$weatherReturn["windGust"]			= $this->convertSpeed($this->_weather->wind->gust, "mph", $units["wind"]);        
         $weatherReturn["windDegrees"]       = $this->_weather->wind->d;
         $weatherReturn["windDirection"]     = $this->_weather->wind->t;
         $weatherReturn["humidity"]          = $this->_weather->hmid;
@@ -457,10 +458,10 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         for ($i = 0; $i < $days; $i++) {
             $day = array(
-                "tempertureHigh" => $this->convertTemperature($this->_forecast->day[$i]->hi, "f", $units["temp"]),
-                "temperatureLow" => $this->convertTemperature($this->_forecast->day[$i]->low, "f", $units["temp"]),
-                "sunrise"        => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->sunr)),
-                "sunset"         => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->suns)),
+                "temperatureHigh" => $this->convertTemperature($this->_forecast->day[$i]->hi,  "f", $units["temp"]),
+                "temperatureLow"  => $this->convertTemperature($this->_forecast->day[$i]->low, "f", $units["temp"]),
+                "sunrise"         => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->sunr)),
+                "sunset"          => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->suns)),
                 "day" => array(
                     "condition"     => $this->_forecast->day[$i]->part[0]->t,
                     "conditionIcon" => $this->_forecast->day[$i]->part[0]->icon,
