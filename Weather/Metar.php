@@ -293,7 +293,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2}))?(\w{2,3})",
             "windVar"     => "(\d{3})V(\d{3})",
             "visibility1" => "\d",
-            "visibility2" => "(\d{4})|((\d{1,2}|(\d)\/(\d))(SM|KM))|(CAVOK)",
+            "visibility2" => "M?(\d{4})|((\d{1,2}|(\d)\/(\d))(SM|KM))|(CAVOK)",
             "runway"      => "R(\d{2})(\w)?\/(P|M)?(\d{4})(FT)?(V(P|M)?(\d{4})(FT)?)?(\w)?",
             "condition"   => "(-|\+|VC)?(MI|BC|PR|TS|BL|SH|DR|FZ)?(DZ|RA|SN|SG|IC|PL|GR|GS|UP)?(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
             "clouds"      => "(SKC|CLR|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
@@ -396,7 +396,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 } elseif (is_numeric($result[1])) {
                                     // 4-digit visibility in m
                                     $visibility = $this->convertDistance(($result[1]/1000), "km", $units["vis"]);
-                                } elseif ($result[7] != "CAVOK") {
+                                } elseif (!isset($result[7]) || $result[7] != "CAVOK") {
                                     if (is_numeric($result[3])) {
                                         // visibility as one/two-digit number
                                         $visibility = $this->convertDistance($result[3], $result[6], $units["vis"]);
