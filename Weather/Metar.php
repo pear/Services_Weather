@@ -260,7 +260,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Ok, we have correct data, start with parsing the first line for the last update
             $weatherData = array();
             $weatherData["station"] = $id;
-            $weatherData["update"]  = date( $this->_timeFormat, strtotime(trim($data[0])) + date("Z") );
+            $weatherData["update"]  = date($this->_dateFormat." ".$this->_timeFormat, strtotime(trim($data[0])) + date("Z"));
             // and prepare the second line for stepping through
             $metar = explode(" ", trim($data[1]));
 
