@@ -441,7 +441,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $pointer["windDirection"] = "Variable";
                                 } else {
                                     // Save wind degree and calc direction
-                                    $pointer["windDegrees"]   = $result[1];
+                                    $pointer["windDegrees"]   = intval($result[1]);
                                     $pointer["windDirection"] = $compass[round($result[1] / 22.5) % 16];
                                 }
                                 if (is_numeric($result[4])) {
@@ -451,7 +451,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 break;
                             case "windVar":
                                 // Once more wind, now variability around the current wind-direction
-                                $pointer["windVariability"] = array("from" => $result[1], "to" => $result[2]);
+                                $pointer["windVariability"] = array("from" => intval($result[1]), "to" => intval($result[2]));
                                 break;
                             case "visibility":
                                 $pointer["visQualifier"] = "AT";
@@ -1147,6 +1147,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                             $newVal = $this->convertPressure($val, "in", $units["pres"]);
                             break;
                         case "amount":
+                        case "snowdepth":
+                        case "snowequiv":
                             if (is_numeric($val)) {
                                 $newVal = $this->convertPressure($val, "in", $units["rain"]);
                             } else {
@@ -1155,10 +1157,6 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "seapressure":
                             $newVal = $this->convertPressure($val, "in", $units["pres"]);
-                            break;
-                        case "snowdepth":
-                        case "snowequiv":
-                            $newVal = $this->convertPressure($val, "in", $units["rain"]);
                             break;
                         case "1htemp":
                         case "1hdew":
