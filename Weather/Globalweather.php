@@ -74,39 +74,42 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     * Constructor
     *
     * @param    array                       $options
-    * @return   PEAR_Error|bool
+    * @param    mixed                       $error
     * @throws   PEAR_Error
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_SOAP_NOT_INSTALLED
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Globalweather($options)
+    function Services_Weather_Globalweather($options, &$error)
     {
-        $status = $this->Services_Weather_Common($options);
-        if (Services_Weather::isError($status)) {
-            return $status;
+        $perror = null;
+        $this->Services_Weather_Common($options, $perror);
+        if (Services_Weather::isError($perror)) {
+            $error = $perror;
+            return;
         }
 
         if (!$this->_hasClient) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SOAP_NOT_INSTALLED);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SOAP_NOT_INSTALLED);
+            return;
         }
         
         require_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl");
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return;
         }
 
         eval($this->_wsdl->generateAllProxies());
         if (!class_exists("WebService_GlobalWeather_StationInfo") || !class_exists("WebService_GlobalWeather_GlobalWeather")) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return;
         }
 
         $this->_stationSoap = &new WebService_GlobalWeather_StationInfo;
         $this->_weatherSoap = &new WebService_GlobalWeather_GlobalWeather;
-        
-        return true;
     }
     // }}}
 

@@ -85,16 +85,18 @@ class Services_Weather_Metar extends Services_Weather_Common
     * Constructor
     *
     * @param    array                       $options
-    * @return   PEAR_Error|bool
+    * @param    mixed                       $error
     * @throws   PEAR_Error
     * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Metar($options)
+    function Services_Weather_Metar($options, &$error)
     {
-        $status = $this->Services_Weather_Common($options);
-        if (Services_Weather::isError($status)) {
-            return $status;
+        $perror = null;
+        $this->Services_Weather_Common($options, $perror);
+        if (Services_Weather::isError($perror)) {
+            $error = $perror;
+            return;
         }
         
         // Set options accordingly        
@@ -106,7 +108,8 @@ class Services_Weather_Metar extends Services_Weather_Common
             }
         }
         if (Services_Weather::isError($status)) {
-            return $status;
+            $error = $status;
+            return;
         }
         
         if (isset($options["source"])) {
@@ -118,8 +121,6 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             $this->setMetarSource("http");
         }
-        
-        return true;
     }
     // }}}
 

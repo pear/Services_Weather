@@ -81,20 +81,19 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     * Constructor
     *
     * @param    array                       $options
-    * @return   PEAR_Error|bool
+    * @param    mixed                       $error
     * @throws   PEAR_Error
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_XML_NOT_INSTALLED
     * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Weatherdotcom($options)
+    function Services_Weather_Weatherdotcom($options, &$error)
     {
-        $status = $this->Services_Weather_Common($options);
-        if (Services_Weather::isError($status)) {
-            return $status;
-        }
-
-        if (!$this->_hasUnserializer) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_XML_NOT_INSTALLED);
+        $perror = null;
+        $this->Services_Weather_Common($options, $perror);
+        if (Services_Weather::isError($perror)) {
+            $error = $perror;
+            return;
         }
 
         // Set options accordingly
@@ -105,15 +104,19 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $this->setAccountData("", $options["licenseKey"]);
         }
         
+        if (!$this->_hasUnserializer) {
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_XML_NOT_INSTALLED);
+            return;
+        }
+
         require_once "XML/Unserializer.php";
         $unserializer = &new XML_Unserializer(array("complexType" => "object"));
         if (Services_Weather::isError($unserializer)) {
-            return $unserializer;
+            $error = $unserializer;
+            return;
         } else {
             $this->_unserializer = $unserializer;
         }
-        
-        return true;
     }
     // }}}
 

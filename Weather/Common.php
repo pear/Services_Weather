@@ -126,12 +126,12 @@ class Services_Weather_Common {
     * Constructor
     *
     * @param    array                       $options
-    * @return   PEAR_Error|bool
+    * @param    mixed                       $error
     * @throws   PEAR_Error
     * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Common($options)
+    function Services_Weather_Common($options, &$error)
     {
         // Ugly, but it works. Why isn't file_exists capable of searching
         // through the include_path? *sigh*
@@ -152,7 +152,8 @@ class Services_Weather_Common {
             }
         }
         if (Services_Weather::isError($status)) {
-            return $status;
+            $error = $status;
+            return;
         }
 
         if (isset($options["unitsFormat"])) {
@@ -169,8 +170,6 @@ class Services_Weather_Common {
         if (isset($options["timeFormat"])) {
             $this->setDateTimeFormat("", $options["timeFormat"]);
         }
-        
-        return true;
     }
     // }}}
 

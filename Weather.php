@@ -121,9 +121,14 @@ class Services_Weather {
         }
 
         // Create service and return
-        @$obj = &new $classname($options);
+        $error = null;
+        @$obj = &new $classname($options, $error);
 
-        return $obj;
+        if (Services_Weather::isError($error)) {
+            return $error;
+        } else {
+            return $obj;
+        }
     }
     // }}}
 
