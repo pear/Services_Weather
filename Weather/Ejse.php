@@ -91,13 +91,13 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         include_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://www.ejse.com/WeatherService/Service.asmx?WSDL", array("timeout" => $this->_httpTimeout));
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             return;
         }
 
         eval($this->_wsdl->generateAllProxies());
         if (!class_exists("WebService_Service_ServiceSoap")) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             return;
         }
 
@@ -118,9 +118,9 @@ class Services_Weather_Ejse extends Services_Weather_Common {
     function _checkLocationID($id)
     {
         if (!strlen($id)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION, __FILE__, __LINE__);
         } elseif (!ctype_digit($id) || (strlen($id) != 5)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
         }
 
         return true;

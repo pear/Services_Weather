@@ -207,7 +207,7 @@ class Services_Weather_Common {
         } else {
             $this->_cache        = null;
             $this->_cacheEnabled = false;
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED, __FILE__, __LINE__);
         }
 
         return true;

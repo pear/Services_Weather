@@ -102,13 +102,13 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         include_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl", array("timeout" => $this->_httpTimeout));
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             return;
         }
 
         eval($this->_wsdl->generateAllProxies());
         if (!class_exists("WebService_GlobalWeather_StationInfo") || !class_exists("WebService_GlobalWeather_GlobalWeather")) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             return;
         }
 
@@ -131,9 +131,9 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     function _checkLocationID($id)
     {
         if (!strlen($id)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION, __FILE__, __LINE__);
         } elseif ($this->_stationSoap->isValidCode($id) === false) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
         }
 
         return true;
@@ -158,10 +158,10 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         $search = $this->_stationSoap->searchByName($location);
 
         if (Services_Weather::isError($search)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         } else {
             if (!is_array($search) || !sizeof($search)) {
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
             } else {
                 if (!$useFirst && (sizeof($search) > 1)) {
                     $searchReturn = array();
@@ -195,7 +195,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         if (!strlen($country)) {
             $countries = $this->_stationSoap->listCountries();
             if (Services_Weather::isError($countries)) {
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             }
             return $countries;
         }
@@ -204,9 +204,9 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         $countryLocs = $this->_stationSoap->searchByCountry($country);
         // Check result for validity
         if (Services_Weather::isError($countryLocs)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         } elseif (!is_array($countryLocs)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
         }
 
         // Construct the result

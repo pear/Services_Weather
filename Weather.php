@@ -128,7 +128,7 @@ class Services_Weather {
 
         // No such service... bail out
         if (!class_exists($classname)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND, __FILE__, __LINE__);
         }
 
         // Create service and return
@@ -210,16 +210,21 @@ class Services_Weather {
     * Creates error, same as in PEAR with a customized flavor
     *
     * @param    int                         $code
+    * @param    string                      $file
+    * @param    int                         $line
     * @return   PEAR_Error
     * @access   private
     */
-    function &raiseError($code = SERVICES_WEATHER_ERROR_UNKNOWN_ERROR)
+    function &raiseError($code = SERVICES_WEATHER_ERROR_UNKNOWN_ERROR, $file = "", $line = 0)
     {
         // This should improve the performance of the script, as PEAR is only included, when
         // really needed.
         include_once "PEAR.php";
 
         $message = "Services_Weather: ".Services_Weather::_errorMessage($code);
+        if ($file != "" && $line > 0) {
+            $message .= " (".$file.":".$line.")";
+        }
 
         return PEAR::raiseError($message, $code, PEAR_ERROR_RETURN, E_USER_NOTICE, "Services_Weather_Error", null, false);
     }

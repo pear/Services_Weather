@@ -160,9 +160,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function _checkLocationID($id)
     {
         if (!strlen($id)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION, __FILE__, __LINE__);
         } elseif (!ctype_alnum($id) || (strlen($id) > 8)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
         }
 
         return true;
@@ -186,7 +186,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 		$request = &new HTTP_Request($url, array("timeout" => $this->_httpTimeout));
 		$status = $request->sendRequest();
         if (Services_Weather::isError($status)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
 		$data = $request->getResponseBody();
     	
@@ -194,18 +194,18 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $status = $this->_unserializer->unserialize($data);
 
         if (Services_Weather::isError($status)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         } else {
             $root = $this->_unserializer->getRootName();
             $data = $this->_unserializer->getUnserializedData();
 
             if (Services_Weather::isError($root)) {
                 // Something wrong here...
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             } elseif ($root == "error") {
                 // We got an error back from weather.com
                 $errno  = key(get_object_vars($data));
-                return Services_Weather::raiseError($errno);
+                return Services_Weather::raiseError($errno, __FILE__, __LINE__);
             } else {
                 // Valid data, lets get started
                 // Loop through the different sub-parts of the data fro processing
@@ -258,14 +258,14 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $status = $this->_unserializer->unserialize($searchURL, true, array("overrideOptions" => true, "complexType" => "array", "keyAttribute" => "id"));
 
         if (Services_Weather::isError($status)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         } else {
             $search = $this->_unserializer->getUnserializedData();
 
             if (Services_Weather::isError($search)) {
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             } elseif (!is_array($search) || !sizeof($search)) {
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
             } else {
                 if (!$useFirst && (sizeof($search) > 1)) {
                     $searchReturn = $search;

@@ -247,9 +247,9 @@ class Services_Weather_Metar extends Services_Weather_Common
     function _checkLocationID($id)
     {
         if (!strlen($id)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION, __FILE__, __LINE__);
         } elseif (!ctype_alpha($id) || (strlen($id) > 4)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
         }
 
         return true;
@@ -375,7 +375,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         // Check for correct data, 2 lines in size
         if (!$data || !is_array($data) || sizeof($data) < 2) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         } else {
             if (SERVICES_WEATHER_DEBUG) {
                 for ($i = 0; $i < sizeof($data); $i++) {
@@ -864,7 +864,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         // Check for correct data
         if (!$data || !is_array($data) || sizeof($data) < 2) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         } else {
             if (SERVICES_WEATHER_DEBUG) {
                 for ($i = 0; $i < sizeof($data); $i++) {
@@ -1219,7 +1219,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     function searchLocation($location, $useFirst = false)
     {
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED, __FILE__, __LINE__);
         }
         
         if (is_string($location)) {
@@ -1246,7 +1246,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             if (DB::isError($result)) {
                 return $result;
             } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
             }
             
             // Result is valid, start preparing the return
@@ -1278,7 +1278,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Location was provided as coordinates, search nearest airport
             $icao = $this->searchAirport($location[0], $location[1]);
         } else {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
         }
 
         return $icao;
@@ -1300,7 +1300,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     function searchLocationByCountry($country = "")
     {
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED, __FILE__, __LINE__);
         }
 
         // Return the available countries as no country was given
@@ -1325,7 +1325,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         if (DB::isError($result)) {
             return $result;
         } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
         }
 
         // Construct the result
@@ -1362,10 +1362,10 @@ class Services_Weather_Metar extends Services_Weather_Common
     function searchAirport($latitude, $longitude, $numResults = 1)
     {
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED, __FILE__, __LINE__);
         }
         if (!is_numeric($latitude) || !is_numeric($longitude)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
         }           
         
         // Get all airports
@@ -1374,7 +1374,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         if (DB::isError($result)) {
             return $result;
         } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
         }
 
         // Result is valid, start search
@@ -1420,7 +1420,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Return found locations
             return $search["icao"];
         } else {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
         }
     }
     // }}}
@@ -1457,7 +1457,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             if (DB::isError($result)) {
                 return $result;
             } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
             }
             // Result is ok, put things into object
             $this->_location = $result->fetchRow(DB_FETCHMODE_ASSOC);
