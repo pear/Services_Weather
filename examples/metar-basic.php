@@ -23,7 +23,7 @@ require_once "Services/Weather.php";
 $metar = &Services_Weather::service("METAR", array("debug" => 0));
 
 $metar->setMetarDB("sqlite", "", "", "", "/usr/local/lib/php/data/Services_Weather/servicesWeatherDB", "");
-//$weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));
+//$metar->setCache("file", array("cache_dir" => "/tmp/cache/"));
 $metar->setUnitsFormat("metric");
 $metar->setDateTimeFormat("d.m.Y", "H:i");
 
