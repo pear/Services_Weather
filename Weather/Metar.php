@@ -886,18 +886,17 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 break;
                             case "valid":
                                 // Generates the timeperiod the report is valid for
-                                $pointer["valid"] = array();
                                 list($year, $month, $day) = explode("-", date("Y-m-d", $forecastData["update"]));
                                 // Date is in next month
                                 if ($result[1] < $day) {
                                     $month++;
                                 }
-                                $pointer["valid"]["from"] = gmmktime($result[2], 0, 0, $month, $result[1], $year);
+                                $pointer["validFrom"] = gmmktime($result[2], 0, 0, $month, $result[1], $year);
                                 // Valid time ends next day
                                 if ($result[2] >= $result[3]) {
                                     $result[1]++;
                                 }
-                                $pointer["valid"]["to"]   = gmmktime($result[3], 0, 0, $month, $result[1], $year);
+                                $pointer["validTo"]   = gmmktime($result[3], 0, 0, $month, $result[1], $year);
                                 unset($tafCode["valid"]);
                                 // Now the groups will start, so initialize the time groups
                                 $pointer["time"] = array();
@@ -1087,12 +1086,9 @@ class Services_Weather_Metar extends Services_Weather_Common
                             $newVal = $location["name"];
                             break;
                         case "update":
+                        case "validFrom":
+                        case "validTo":
                             $newVal = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), $val);
-                            break;
-                        case "valid":
-                            $newVal = array();
-                            $newVal["from"] = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), $val["from"]);
-                            $newVal["to"]   = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), $val["to"]);
                             break;
                         case "wind":
                         case "windGust":
