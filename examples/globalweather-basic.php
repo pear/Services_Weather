@@ -20,18 +20,37 @@
 
 require_once "Services/Weather.php";
 
+// Object initialization - error checking is important, because of
+// handling exceptions such as missing PEAR modules or not being online
 $globalweather = &Services_Weather::service("GlobalWeather", array("debug" => 2));
-//$globalweather->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($globalweather)) {
+    die("Error: ".$globalweather->getMessage()."\n");
+}
+
+/* Erase comments to enable caching
+$globalweather->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($globalweather)) {
+    echo "Error: ".$globalweather->getMessage()."\n";
+}
+*/
+
 $globalweather->setUnitsFormat("metric");
 $globalweather->setDateTimeFormat("d.m.Y", "H:i");
 
+// First get code for location
 $search = $globalweather->searchLocation("Koeln / Bonn");
+if (Services_Weather::isError($search)) {
+    die("Error: ".$search->getMessage()."\n");
+}
 
-$location = $globalweather->getLocation($search);
-$weather  = $globalweather->getWeather($search);
-$forecast = $globalweather->getForecast($search, 3);
+// Now iterate through available functions for retrieving data
+foreach (array("getLocation", "getWeather", "getForecast") as $function) {
+    $data = $globalweather->$function($search);
+    if (Services_Weather::isError($data)) {
+        echo "Error: ".$data->getMessage()."\n";
+        continue;
+    }
 
-var_dump($location);
-var_dump($weather);
-var_dump($forecast);
+    var_dump($data);
+}
 ?>

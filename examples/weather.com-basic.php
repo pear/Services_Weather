@@ -20,20 +20,40 @@
 
 require_once "Services/Weather.php";
 
+// Object initialization - error checking is important, because of
+// handling exceptions such as missing PEAR modules
 $weatherDotCom = &Services_Weather::service("WeatherDotCom", array("debug" => 2));
+if (Services_Weather::isError($weatherDotCom)) {
+    die("Error: ".$weatherDotCom->getMessage()."\n");
+}
 
+// Set weather.com partner data
 $weatherDotCom->setAccountData("<PartnerID>", "<LicenseKey>");
-//$weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));
+
+/* Erase comments to enable caching
+$weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($weatherDotCom)) {
+    echo "Error: ".$weatherDotCom->getMessage()."\n";
+}
+*/
+
 $weatherDotCom->setUnitsFormat("metric");
 $weatherDotCom->setDateTimeFormat("d.m.Y", "H:i");
 
+// First get code for location
 $search = $weatherDotCom->searchLocation("Bonn, Germany");
+if (Services_Weather::isError($search)) {
+    die("Error: ".$search->getMessage()."\n");
+}
 
-$location = $weatherDotCom->getLocation($search);
-$weather  = $weatherDotCom->getWeather($search);
-$forecast = $weatherDotCom->getForecast($search, 3);
+// Now iterate through available functions for retrieving data
+foreach (array("getLocation", "getWeather", "getForecast") as $function) {
+    $data = $weatherDotCom->$function($search);
+    if (Services_Weather::isError($data)) {
+        echo "Error: ".$data->getMessage()."\n";
+        continue;
+    }
 
-var_dump($location);
-var_dump($weather);
-var_dump($forecast);
+    var_dump($data);
+}
 ?>

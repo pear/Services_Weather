@@ -20,10 +20,26 @@
 
 require_once "Services/Weather.php";
 
+// Object initialization - error checking is important, because of
+// handling exceptions such as missing PEAR modules
 $metar = &Services_Weather::service("METAR", array("debug" => 0));
+if (Services_Weather::isError($metar)) {
+    die("Error: ".$metar->getMessage()."\n");
+}
 
+// Set parameters for DB access, needed for location searches
 $metar->setMetarDB("sqlite://localhost//usr/local/lib/php/data/Services_Weather/servicesWeatherDB");
-//$metar->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($metar)) {
+    echo "Error: ".$metar->getMessage()."\n";
+}
+
+/* Erase comments to enable caching
+$metar->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($metar)) {
+    echo "Error: ".$metar->getMessage()."\n";
+}
+*/
+
 $metar->setUnitsFormat("custom", array(
     "wind" => "kt",
     "vis" => "km",
@@ -32,13 +48,20 @@ $metar->setUnitsFormat("custom", array(
     "rain" => "in"));
 $metar->setDateTimeFormat("d.m.Y", "H:i");
 
+// First get code for location
 $search = $metar->searchLocation("Bonn, Germany");
+if (Services_Weather::isError($search)) {
+    die("Error: ".$search->getMessage()."\n");
+}
 
-$location = $metar->getLocation($search);
-$weather  = $metar->getWeather($search);
-$forecast = $metar->getForecast($search, 3);
+// Now iterate through available functions for retrieving data
+foreach (array("getLocation", "getWeather", "getForecast") as $function) {
+    $data = $metar->$function($search);
+    if (Services_Weather::isError($data)) {
+        echo "Error: ".$data->getMessage()."\n";
+        continue;
+    }
 
-var_dump($location);
-var_dump($weather);
-var_dump($forecast);
+    var_dump($data);
+}
 ?>
