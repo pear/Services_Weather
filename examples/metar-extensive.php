@@ -33,24 +33,24 @@
 //-------------------------------------------------------------------------
 // This is the area, where you can customize the script
 //-------------------------------------------------------------------------
-$location    = "Bonn, Germany"; // The city we want to fetch the data for.
-                                // Where the search function will look for
-                                // the ICAO database (generated with the
-                                // buildMetarDB.php script)
-$dsn         = "sqlite://localhost//usr/local/lib/php/data/Services_Weather/servicesWeatherDB"; 
-$sourceMetar = "http";          // This script will pull the METAR data via http
-$sourceTaf   = "http";          //                           TAF
-$sourcePathMetar = "";          // Only needed when non-standard access is used
-$sourcePathTaf   = "";          //
-$cacheType   = "";              // Set a type (file, db, mdb, ...) to
-                                // enable caching.
-$cacheOpt    = array();         // Cache needs various options, depending
-                                // on the container-type - please consult
-                                // the Cache manual / sourcecode!
-$unitsFormat = "metric";        // The format the units are displayed in -
-                                // metric, standard or some customization.
-$dateFormat  = "j. M Y";        // Set the format the date is displayed in
-$timeFormat  = "H:i";           //                    time
+$location        = "Bonn, Germany"; // The city we want to fetch the data for.
+                                    // Where the search function will look for
+                                    // the ICAO database (generated with the
+                                    // buildMetarDB.php script)
+$dsn             = "sqlite://localhost//usr/local/lib/php/data/Services_Weather/servicesWeatherDB"; 
+$sourceMetar     = "http";          // This script will pull the METAR data via http
+$sourceTaf       = "http";          //                           TAF
+$sourcePathMetar = "";              // Only needed when non-standard access is used
+$sourcePathTaf   = "";              //
+$cacheType       = "";              // Set a type (file, db, mdb, ...) to
+                                    // enable caching.
+$cacheOpt        = array();         // Cache needs various options, depending
+                                    // on the container-type - please consult
+                                    // the Cache manual / sourcecode!
+$unitsFormat     = "metric";        // The format the units are displayed in -
+                                    // metric, standard or some customization.
+$dateFormat      = "j. M Y";        // Set the format the date is displayed in
+$timeFormat      = "H:i";           //                    time
 //-------------------------------------------------------------------------
 
 // Load the Weather class
@@ -425,8 +425,7 @@ if (isset($weather["clouds"]) && sizeof($weather["clouds"])) {
                 </tr>
 <?php
 $times = array_keys($forecast["time"]);
-$preclouds = "";
-$precond   = "";
+$pre   = array("wind" => 0, "vis" => 0, "clouds" => 0, "cond" => 0);
 // Ok, the forecast is a bit more interesting, as I'm taking a few
 // precautions here so that the table isn't filled up to the max.
 // o If a value is repeated in the next major timeslot (not when
@@ -438,9 +437,6 @@ $precond   = "";
 //   smaller changes are mentioned
 for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
     $row = $forecast["time"][$times[$i]];
-    if ($i > 0) {
-        $prerow = $forecast["time"][$times[$i - 1]];
-    }
 
     // Create timestamp
     $start = $times[$i];
@@ -473,18 +469,34 @@ for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
         foreach(array("wind", "vis", "clouds", "cond") as $val) {
             switch ($val) {
                 case "wind":
-                    if (!isset($row["windDirection"]) || (isset($prerow) && $prerow["windDegrees"] == $row["windDegrees"] && $prerow["wind"] == $row["wind"])) {
+                    if (!isset($row["windDirection"])) {
                         $string = "&nbsp;";
                     } else {
                         $string = strtolower($row["windDirection"]) == "calm" ? "Calm" : "From the ".$row["windDirection"]." (".$row["windDegrees"]."&deg;)<br>at ".round($row["wind"], 1).$units["wind"];
+                        if (isset($row["windProb"])) {
+                            $string .= " (".$row["windProb"]."%&nbsp;Prob.)";
+                        }
+                        if ($string === $pre["wind"]) {
+                            $string = "&nbsp;";
+                        } else {
+                            $pre["wind"] = $string;
+                        }
                     }
                     $class = ' class="bggrey"';
                     break;
                 case "vis":
-                    if (!isset($row["visibility"]) || (isset($prerow) && $prerow["visibility"] == $row["visibility"] && $prerow["visQualifier"] == $row["visQualifier"])) {
+                    if (!isset($row["visibility"])) {
                         $string = "&nbsp;";
                     } else {
                         $string = strtolower($row["visQualifier"])." ".round($row["visibility"], 1).$units["vis"];
+                        if (isset($row["visProb"])) {
+                            $string .= " (".$row["visProb"]."%&nbsp;Prob.)";
+                        }
+                        if ($string === $pre["vis"]) {
+                            $string = "&nbsp;";
+                        } else {
+                            $pre["vis"] = $string;
+                        }
                     }
                     $class = '';
                     break;
@@ -501,13 +513,16 @@ for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
                             if (isset($row["clouds"][$j]["height"])) {
                                 $cloud .= " at ".$row["clouds"][$j]["height"].$units["height"];
                             }
+                            if (isset($row["clouds"][$j]["prob"])) {
+                                $cloud .= " (".$row["clouds"][$j]["prob"]."%&nbsp;Prob.)";
+                            }
                             $clouds .= $cloud."<br>";
                         }
-                        if ($clouds == $preclouds) {
+                        if ($clouds === $pre["clouds"]) {
                             $string = "&nbsp;";
                         } else {
-                            $string    = $clouds;
-                            $preclouds = $clouds;
+                            $string        = $clouds;
+                            $pre["clouds"] = $clouds;
                         }
                     }
                     $class = ' class="bggrey"';
