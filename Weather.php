@@ -83,6 +83,8 @@ class Services_Weather {
     * --- METAR Options
     * o dsn             String for defining the DB connection
     * o dbOptions       passes DB options
+    * o source          http, ftp or file - type of data-source
+    * o sourcePath      where to look for the source, URI or filepath
     * --- weather.com Options
     * o partnerID       You'll receive these keys after registering
     * o licenseKey      with the weather.com XML-service
