@@ -75,7 +75,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     * @see      DB::parseDSN
     * @access   public
     */
-    function setMetarDB($dsn, $options)
+    function setMetarDB($dsn, $options = array())
     {
         $dsninfo = DB::parseDSN($dsn);
         if (is_array($dsninfo) && !isset($dsninfo["mode"])) {
