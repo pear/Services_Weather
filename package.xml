@@ -31,7 +31,7 @@
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.4.0">DB</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.7.5">SOAP</dep>
-            <dep optional="yes" type="pkg" rel="ge" version="0.8.0">XML_Serializer</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
         </deps>
 		<filelist>
             <dir name="/" baseinstalldir="Services">
