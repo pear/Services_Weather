@@ -38,7 +38,12 @@
                 o Changed RegExp for visibility2
                 o Fixed ENOTICE in handling of visibility2
                 o Moved precipitation from remark to main array
-                o Added "AT" qualifier to visibility            
+                o Added "AT" qualifier to visibility         
+                o Changed return of remarks, now as array instead of string
+                o Removed english descriptions in remarks, now only the data with
+                  added array-keys as denominator
+            - Weatherdotcom.php:
+                o Compensated for visibility being delivered as string "unlimited"    
 		</notes>
 		<deps>
 			<dep type="php" rel="ge">4.3.0</dep>
