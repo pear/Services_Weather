@@ -21,47 +21,15 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.3.0</version>
-        <date>2004-07-12</date>
+        <version>1.3.1</version>
+        <date>2004-10-01</date>
         <license>PHP License</license>
         <state>stable</state>
         <notes>
-            - Weather.php, Metar.php
-                o Introduced TAF as source for forecasts            
-            - metar-extensive.php, weather.com-extensive.php
-                o Created two example pages for showing off...
-                  they feature (almost) everything those classes
-                  have available. 
-            - Common.php, Globalweather.php, Metar.php
-                o Added height as unit for cloudlayers
             - Metar.php
-                o Added trend handling to METAR
-                o Rewrote visibility regexp in METAR decoding
-                o Rewrote condition regexp in METAR decoding
-                o Rewrote precipitation regexp in remarks decoding
-                o Fixed parsing of presschg in remarks decoding
-                o Fixed parsing of sensors in remarks decoding
-                o Fixed faulty conversion of precipitation
-                o Improved path-checking when files are used as source
-            - Weatherdotcom.php
-                o Added functionality for fetching the mandatory
-                  promotional links
-                o Fixed still broken update calculation to adjust
-                  for inconsistent weather.com behaviour
-                o Switched update in forecastReturn to GMT,
-                  to mirror behaviour in weatherReturn
-                o Added updateRaw to weatherForecast-array
-            - Ejse.php, Globalweather.php, Metar.php, Weatherdotcom.php
-                o Removed deprecated function getUnits()
-                o Fixed _checkLocationID() when function gets array or
-                  object passed
-            - Weather.php, Common.php, Ejse.php, Globalweather.php, Metar.php, Weatherdotcom.php
-                o Added $file and $line to raiseError for better tracking,
-                  calls use __FILE__ and __LINE__ respectively
-            - buildMetarDB.php
-                o Fixed wrong filemode when creating a SQLite DB-file
-            - metar-basic.php
-                o Updated example to reflect recent changes
+                o Fixed error in CAVOK handling, cloud-information was broken
+            - Ejse.php
+                o Fixed error when receiving empty LastUpdated from EJSE
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
