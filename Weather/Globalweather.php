@@ -272,7 +272,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
             $unitsFormat = $this->_unitsFormat;
         }
         // Get other data
-        $units    = $this->getUnits(null, $unitsFormat);
+        $units    = $this->getUnitsFormat($unitsFormat);
 
         $weatherReturn = array();
         if ($this->_cacheEnabled && ($weather = $this->_cache->get("GW-".$id, "weather"))) {
