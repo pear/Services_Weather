@@ -18,7 +18,6 @@
 // +----------------------------------------------------------------------+
 //
 // $Id$
-/
 
 /**
 * This script downloads, saves and processes the textfiles needed for
