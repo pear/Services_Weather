@@ -29,7 +29,7 @@
             First stable release (Birthday Release)
             
             - buildMetarDB.php
-              Submitted patch from Marcus I. Ryan <marcus[at]horde[dot]org>
+              Submitted patch from Marcus I. Ryan (marcus[at]horde[dot]org)
                 o Fixed copy/paste error that sets dbName instead of dbType for -t
                 o Added -r (Protocol) option defaulted to "unix"
                 o Removed field widths for integers - non-Standard SQL doesn't work with PgSQL
