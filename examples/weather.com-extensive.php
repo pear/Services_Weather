@@ -160,7 +160,7 @@ if (isset($_GET["debug"])) {
     <td>
         <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0" width="100%">
         <tr class="bgkhaki">
-            <td width="290" colspan="2" style="border-bottom: 2px solid #abada2"><span class="bold"><?=$location["name"]?></span></td>
+            <td width="310" colspan="2" style="border-bottom: 2px solid #abada2"><span class="bold"><?=$location["name"]?></span></td>
             <td width="190" style="border-bottom: 2px solid #abada2"><span class="bold">Local time:</span> <?=$location["time"]?> (GMT<?=(($location["timezone"] < 0) ? "" : "+").$location["timezone"]?>)</td>
             <td style="border-bottom: 2px solid #abada2">&nbsp;</td>
         </tr>
@@ -199,8 +199,9 @@ for ($i = 0; $i < sizeof($links["promo"]); $i++) {
             <td><span class="bold">Visibility:</span> <?=round($weather["visibility"], 1)?> <?=$units["vis"]?></td>
         </tr>
         <tr>
-            <td colspan="2"><span class="bold">Current condition:</span> <img height="32" width="32" alt="<?=$weather["condition"]?>" src="images/32x32/<?=$weather["conditionIcon"]?>.png"> <?=$weather["condition"]?></td>
-            <td><span class="bold">UV-Index:</span> <?=$weather["uvIndex"]?> (<?=$weather["uvText"]?>)</td>
+            <td><span class="bold">Current condition:</span><br><?=$weather["condition"]?></td>
+            <td><img height="32" width="32" alt="<?=$weather["condition"]?>" src="images/32x32/<?=$weather["conditionIcon"]?>.png"></td>
+            <td valign="top"><span class="bold">UV-Index:</span> <?=$weather["uvIndex"]?> (<?=$weather["uvText"]?>)</td>
         </tr>
         </table>
     </td>
