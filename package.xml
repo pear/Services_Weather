@@ -21,29 +21,23 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.0.0RC2</version>
-        <date>2003-12-03</date>
+        <version>1.0.0</version>
+        <date>2003-12-06</date>
 		<license>PHP License</license>
-        <state>beta</state>
+        <state>stable</state>
 		<notes>
-            - Weather.php:
-                o Removed ENOTICE for multiple defines
-            - Common.php, Globalweather.php, Metar.php, Weatherdotcom.php:
-                o Deprecated getUnits in all weather modules
-                o Added getUnitsFormat as replacement
-                o Added customizable unit formats
-            - Common.php:
-                o Fixed small bug in handling the options array            
-            - Metar.php:
-                o Changed RegExp for visibility2
-                o Fixed ENOTICE in handling of visibility2
-                o Moved precipitation from remark to main array
-                o Added "AT" qualifier to visibility         
-                o Changed return of remarks, now as array instead of string
-                o Removed english descriptions in remarks, now only the data with
-                  added array-keys as denominator
-            - Weatherdotcom.php:
-                o Compensated for visibility being delivered as string "unlimited"    
+            - buildMetarDB.php
+              Submitted patch from Marcus I. Ryan <marcus[at]horde[dot]org>
+                o Fixed copy/paste error that sets dbName instead of dbType for -t
+                o Added -r (Protocol) option defaulted to "unix"
+                o Removed field widths for integers - non-Standard SQL doesn't work with PgSQL
+                o Expanded name field to 80 chars (fixes quite a few errors from names that are too long)
+                o Updated quoting of integer fields (PgSQL complains about '' in atoi)
+                o Converted integer fields with "--" in there (airports list) to nulls            
+            - Globalweather.php, Metar.php, Weatherdotcom.php
+                o Switched to UTC for update timestrings to have consistent behaviour
+            - Metar.php
+                o Fixed flip of dateFormat/timeFormat in Metar.php
 		</notes>
 		<deps>
 			<dep type="php" rel="ge">4.3.0</dep>
