@@ -27,9 +27,9 @@ require_once "Services/Weather/Common.php";
 * This class acts as an interface to the soap service of capescience.com. It searches for given
 * locations and retrieves current weather data.
 *
-* GlobalWeather is a fast SOAP frontend for METAR data, provided by CapeScience. If you want to
-* use METAR, you should try this class first, as it is much more comfortable than the native
-* METAR-class provided by this package.
+* GlobalWeather is a SOAP frontend for METAR data, provided by CapeScience. If you want to
+* use METAR, you should try this class first, as it is much more comfortable (and also a bit
+* faster) than the native METAR-class provided by this package.
 *
 * For a working example, please take a look at
 *     docs/Services_Weather/examples/globalweather-basic.php
