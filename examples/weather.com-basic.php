@@ -22,7 +22,7 @@ require_once "Services/Weather.php";
 
 // Object initialization - error checking is important, because of
 // handling exceptions such as missing PEAR modules
-$weatherDotCom = &Services_Weather::service("WeatherDotCom", array("debug" => 2));
+$weatherDotCom = &Services_Weather::service("WeatherDotCom", array("debug" => 2, "httpTimeout" => 30));
 if (Services_Weather::isError($weatherDotCom)) {
     die("Error: ".$weatherDotCom->getMessage()."\n");
 }

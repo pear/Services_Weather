@@ -75,6 +75,7 @@ class Services_Weather {
     * o cacheOptions        passes cache options
     * o unitsFormat         use (US)-standard, metric or custom units
     * o customUnitsFormat   defines the customized units format
+    * o httpTimeout			sets timeout for HTTP requests
     * o dateFormat          string to use for date output
     * o timeFormat          string to use for time output
     * --- EJSE Options

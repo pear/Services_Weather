@@ -172,7 +172,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function _parseWeatherData($id, $url)
     {
 		// Get data from URL...
-		$request = &new HTTP_Request($url, array("timeout" => 60));
+		$request = &new HTTP_Request($url, array("timeout" => $this->_httpTimeout));
 		$status = $request->sendRequest();
         if (Services_Weather::isError($status)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);

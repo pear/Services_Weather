@@ -64,6 +64,14 @@ class Services_Weather_Common {
         "rain"  => "in"
     );
 
+	/**
+	* Timeout for HTTP requests
+	*
+	* @var		int							$_httpTimeout
+	* @access	private
+	*/
+	var $_httpTimeout = 60;
+
     /**
     * Format of the used dates
     *
@@ -153,6 +161,10 @@ class Services_Weather_Common {
                 $this->setUnitsFormat($options["unitsFormat"]);
             }
         }
+
+		if (isset($options["httpTimeout"])) {
+			$this->setHttpTimeout($options["httpTimeout"]);
+		}
         
         if (isset($options["dateFormat"])) {
             $this->setDateTimeFormat($options["dateFormat"], "");
@@ -229,6 +241,21 @@ class Services_Weather_Common {
         }
     }
     // }}}
+
+	// {{{ setHttpTimeout()
+    /**
+    * Sets the timeout in seconds for HTTP requests
+    *
+    * @param    int  	                    $httpTimeout
+    * @access   public
+    */
+	function setHttpTimeout($httpTimeout)
+	{
+		if (is_int($httpTimeout)) {
+			$this->_httpTimeout = $httpTimeout;
+		}
+	}
+	// }}}
 
     // {{{ getUnitsFormat()
     /**
