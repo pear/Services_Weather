@@ -36,7 +36,7 @@
 * @package      Services_Weather
 * @subpackage   buildMetarDB
 * @filesource
-* @version      1.2
+* @version      1.3
 */
 
 /**

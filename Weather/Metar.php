@@ -57,7 +57,7 @@ require_once "DB.php";
 * @example      examples/metar-basic.php metar-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
-* @version      1.2
+* @version      1.3
 */
 class Services_Weather_Metar extends Services_Weather_Common
 {
@@ -936,22 +936,6 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         }
-    }
-    // }}}
-
-    // {{{ getUnits()
-    /**
-    * Returns the units for the current query
-    *
-    * @param    string                      $id
-    * @param    string                      $unitsFormat
-    * @return   array
-    * @deprecated
-    * @access   public
-    */
-    function getUnits($id = null, $unitsFormat = "")
-    {
-        return $this->getUnitsFormat($unitsFormat);
     }
     // }}}
 

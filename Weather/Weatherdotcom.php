@@ -51,7 +51,7 @@ require_once "Services/Weather/Common.php";
 * @example      examples/weather.com-basic.php weather.com-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
-* @version      1.2
+* @version      1.3
 */
 class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
@@ -287,22 +287,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function searchLocationByCountry($country = "")
     {
         return false;
-    }
-    // }}}
-
-    // {{{ getUnits()
-    /**
-    * Returns the units for the current query
-    *
-    * @param    string                      $id
-    * @param    string                      $unitsFormat
-    * @return   array
-    * @deprecated
-    * @access   public
-    */
-    function getUnits($id = null, $unitsFormat = "")
-    {
-        return $this->getUnitsFormat($unitsFormat);
     }
     // }}}
 
