@@ -21,13 +21,26 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.0.1</version>
-        <date>2003-12-12</date>
+        <version>1.1.0</version>
+        <date>2003-12-30</date>
 		<license>PHP License</license>
         <state>stable</state>
 		<notes>
-            - buildMetarDB.php
-                o Fixed critical error when handling "--" fields
+            - Weather.php, Common.php, Globalweather.php, Metar.php, Weatherdotcom.php
+                o Changed error throwing in constructors to work actually
+                o Removed PEAR-package dependency checking
+            - Globalweather.php, Metar.php, Weatherdotcom.php
+                o Added searchLocationByCountry for listing available
+                  weatherstations per country
+            - Globalweather.php
+                o Fixed checking for SOAP error on object initialization
+            - Weatherdotcom.php
+                o Changed parsing of update time, as "Local Time" confuses
+                  strtotime, when querying locations in your timezone
+            - globalweather-basic.php, metar-basic.php, weather.com-basic.php
+                o Updated for proper error handling and added features
+            - weather.com-error.php
+                o Erased
 		</notes>
 		<deps>
 			<dep type="php" rel="ge">4.3.0</dep>
