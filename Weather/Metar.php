@@ -1039,11 +1039,15 @@ class Services_Weather_Metar extends Services_Weather_Common
                                         // As we have just extracted the probability for the next FMC
                                         // increase field-counter
                                         $i++;
+                                    } elseif (isset($probability)) {
+                                        unset($probability);
                                     }
                                 } else {
                                     $type = $result[1];
                                     if (isset($result[2]) && is_numeric($result[2])) {
                                         $probability = $result[2];
+                                    } elseif (isset($probability)) {
+                                        unset($probability);
                                     }
                                 }
                                 if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
