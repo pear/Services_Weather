@@ -43,6 +43,9 @@
 */
 require_once "DB.php";
 
+/**
+* @ignore
+*/
 // {{{ constants
 // {{{ natural constants and measures
 define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);

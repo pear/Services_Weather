@@ -54,7 +54,7 @@ require_once "DB.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://weather.noaa.gov/weather/metar.shtml
-* @example      docs/Services_Weather/examples/metar-basic.php metar-basic.php
+* @example      examples/metar-basic.php metar-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
 * @version      1.2

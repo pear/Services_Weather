@@ -18,6 +18,13 @@
 //
 // $Id$
 
+/**
+* @package      Services_Weather
+* @filesource
+*/
+
+/**
+*/
 require_once "Services/Weather/Common.php";
 
 // {{{ class Services_Weather_Weatherdotcom
@@ -41,7 +48,7 @@ require_once "Services/Weather/Common.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.weather.com/services/xmloap.html
-* @example      docs/Services_Weather/examples/weather.com-basic.php
+* @example      examples/weather.com-basic.php weather.com-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
 * @version      1.2

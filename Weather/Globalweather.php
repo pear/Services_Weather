@@ -43,7 +43,7 @@ require_once "Services/Weather/Common.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.capescience.com/webservices/globalweather/index.shtml
-* @example      docs/Services_Weather/examples/globalweather-basic.php globalweather-basic.php
+* @example      examples/globalweather-basic.php globalweather-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
 * @version      1.2
