@@ -26,15 +26,36 @@
         <license>PHP License</license>
         <state>beta</state>
         <notes>
-            - Ejse.php, Globalweather.php, Metar.php, Weatherdotcom.php
-                o Removed deprecated function getUnits()
-            - Common.php, Globalweather.php, Metar.php
-                o Added height as unit for clouds
             - Weather.php, Metar.php
                 o Introduced TAF as source for forecasts            
-                o Rewrote visibility RegExp in METAR decoding
+            - Common.php, Globalweather.php, Metar.php
+                o Added height as unit for cloudlayers
+            - Metar.php
+                o Added trend handling to METAR
+                o Rewrote visibility regexp in METAR decoding
+                o Rewrote condition regexp in METAR decoding
+                o Fixed parsing of presschg in remarks decoding
+                o Fixed parsing of sensors in remarks decoding
+                o Improved path-checking when files are used as source
+            - Weatherdotcom.php
+                o Added functionality for fetching the mandatory
+                  promotional links
+                o Switched update in forecastReturn to GMT,
+                  to mirror behaviour in weatherReturn
+                o Added updateRaw to weatherForecast-array
+            - Ejse.php, Globalweather.php, Metar.php, Weatherdotcom.php
+                o Removed deprecated function getUnits()
+                o Fixed _checkLocationID() when function gets array or
+                  object passed
+            - Weather.php, Common.php, Ejse.php, Globalweather.php, Metar.php, Weatherdotcom.php
+                o Added $file and $line to raiseError for better tracking,
+                  calls use __FILE__ and __LINE__ respectively
+            - buildMetarDB.php
+                o Fixed wrong filemode when creating a SQLite DB-file
             - metar-basic.php
                 o Updated example to reflect recent changes
+            - weather.com-extensive.php
+                o Created new example
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
@@ -60,10 +81,15 @@
                     <file>ejse-basic.php</file>
                     <file>metar-basic.php</file>
                     <file>weather.com-basic.php</file>
+                    <file>weather.com-extensive.php</file>
                 </dir>
             </dir>
             <dir name="/" role="data">
                 <file>buildMetarDB.php</file>
+                <dir name="images">
+                    <file>sunrise.gif</file>
+                    <file>sunset.gif</file>
+                </dir>
             </dir>
         </filelist>
     </release>
