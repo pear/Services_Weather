@@ -52,13 +52,15 @@ require_once "DB.php";
 * please file a feature-request/bugreport at http://pear.php.net/ and be
 * sure to provide the METAR (or TAF) report with a _detailed_ explanation!
 *
-* For a working example, please take a look at
+* For working examples, please take a look at
 *     docs/Services_Weather/examples/metar-basic.php
+*     docs/Services_Weather/examples/metar-extensive.php
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://weather.noaa.gov/weather/metar.shtml
 * @link         http://weather.noaa.gov/weather/taf.shtml
-* @example      examples/metar-basic.php metar-basic.php
+* @example      examples/metar-basic.php        metar-basic.php
+* @example      examples/metar-extensive.php    metar-extensive.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
 * @version      1.3

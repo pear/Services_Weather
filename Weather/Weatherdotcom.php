@@ -45,12 +45,14 @@ require_once "Services/Weather/Common.php";
 * strongly recommend enabling the caching implemented in this class. It
 * obeys to the times as written down in the guidelines.
 *
-* For a working example, please take a look at
+* For working examples, please take a look at
 *     docs/Services_Weather/examples/weather.com-basic.php
+*     docs/Services_Weather/examples/weather.com-extensive.php
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.weather.com/services/xmloap.html
-* @example      examples/weather.com-basic.php weather.com-basic.php
+* @example      examples/weather.com-basic.php      weather.com-basic.php
+* @example      examples/weather.com-extensive.php  weather.com-extensive.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
 * @version      1.3
