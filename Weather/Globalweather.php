@@ -37,7 +37,9 @@ require_once "Services/Weather/Common.php";
 * GlobalWeather is a SOAP frontend for METAR data, provided by CapeScience.
 * If you want to use METAR, you should try this class first, as it is much
 * more comfortable (and also a bit faster) than the native METAR-class
-* provided by this package.
+* provided by this package. On the other hand, this service won't supply
+* TAFs, the forecast system accompanying METAR, so you have to make
+* the call here...
 *
 * For a working example, please take a look at
 *     docs/Services_Weather/examples/globalweather-basic.php
