@@ -18,6 +18,13 @@
 //
 // $Id$
 
+/**
+* @package      Services_Weather
+* @filesource
+*/
+
+/**
+*/
 require_once "Services/Weather.php";
 
 // {{{ constants
@@ -31,8 +38,8 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 * PEAR::Services_Weather_Common
 *
 * Parent class for weather-services. Defines common functions for unit
-* conversions, checks for astronomy-class, cache enabling and does other
-* miscellaneous things. 
+* conversions, checks for cache enabling and does other miscellaneous
+* things. 
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @package      Services_Weather

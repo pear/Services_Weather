@@ -18,6 +18,13 @@
 //
 // $Id$
 
+/**
+* @package      Services_Weather
+* @filesource
+*/
+
+/**
+*/
 // {{{ constants
 // {{{ cache times
 define("SERVICES_WEATHER_EXPIRES_UNITS",      900);
@@ -79,9 +86,9 @@ class Services_Weather {
     * o dateFormat          string to use for date output
     * o timeFormat          string to use for time output
     * --- EJSE Options
-    * none
+    * o none
     * --- GlobalWeather Options
-    * none
+    * o none
     * --- METAR Options
     * o dsn                 String for defining the DB connection
     * o dbOptions           passes DB options

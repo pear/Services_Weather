@@ -18,6 +18,13 @@
 //
 // $Id$
 
+/**
+* @package      Services_Weather
+* @filesource
+*/
+
+/**
+*/
 require_once "Services/Weather/Common.php";
 
 // {{{ class Services_Weather_Ejse
@@ -34,7 +41,7 @@ require_once "Services/Weather/Common.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.ejse.com/services/weather_xml_web_services.htm
-* @example      docs/Services_Weather/examples/ejse-basic.php
+* @example      docs/Services_Weather/examples/ejse-basic.php ejse-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
 * @version      1.2

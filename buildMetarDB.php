@@ -18,14 +18,7 @@
 // +----------------------------------------------------------------------+
 //
 // $Id$
-
-require_once "DB.php";
-
-// {{{ constants
-// {{{ natural constants and measures
-define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
-// }}}
-// }}}
+/
 
 /**
 * This script downloads, saves and processes the textfiles needed for
@@ -42,8 +35,20 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://weather.noaa.gov/tg/site.shtml
 * @package      Services_Weather
+* @subpackage   buildMetarDB
+* @filesource
 * @version      1.2
 */
+
+/**
+*/
+require_once "DB.php";
+
+// {{{ constants
+// {{{ natural constants and measures
+define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
+// }}}
+// }}}
 
 // {{{ Services_Weather_checkData()
 /**
