@@ -194,13 +194,13 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         // Check result for validity
         if (Services_Weather::isError($countryLocs)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
-        } elseif(!is_array($countryLocs)) {
+        } elseif (!is_array($countryLocs)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         }
 
         // Construct the result
         $locations = array();
-        foreach($countryLocs as $location) {
+        foreach ($countryLocs as $location) {
             $locations[$location->icao] = $location->name.", ".$location->country;
         }
         asort($locations);
@@ -257,7 +257,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
             $this->_location = $location;
 
-            if($this->_cacheEnabled) {
+            if ($this->_cacheEnabled) {
                 // ...and cache it
                 $expire = constant("SERVICES_WEATHER_EXPIRES_LOCATION");
                 $this->_cache->extSave("GW-".$id, $this->_location, "", $expire, "location");
@@ -331,7 +331,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
             $this->_weather = $weather;
 
-            if($this->_cacheEnabled) {
+            if ($this->_cacheEnabled) {
                 // ...and cache it
                 $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
                 $this->_cache->extSave("GW-".$id, $this->_weather, "", $expire, "weather");
@@ -372,7 +372,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         }
         $weatherReturn["condition"]         = implode(", ", $condition);
         $layers    = array();
-        for($i = 0; $i < sizeof($this->_weather->sky->layers); $i++) {
+        for ($i = 0; $i < sizeof($this->_weather->sky->layers); $i++) {
             if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLEAR") {
                 $layers[$i]             = array();
                 $layers[$i]["amount"]   = $clouds[$this->_weather->sky->layers[$i]->extent];

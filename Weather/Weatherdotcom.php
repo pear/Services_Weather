@@ -147,9 +147,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     */
     function _checkLocationID($id)
     {
-        if(!strlen($id)) {
+        if (!strlen($id)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION);
-        } elseif(!ctype_alnum($id) || (strlen($id) > 8)) {
+        } elseif (!ctype_alnum($id) || (strlen($id) > 8)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
 
@@ -190,8 +190,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             } else {
                 // Valid data, lets get started
                 // Loop through the different sub-parts of the data fro processing
-                foreach(get_object_vars($data) as $key => $val) {
-                    switch($key) {
+                foreach (get_object_vars($data) as $key => $val) {
+                    switch ($key) {
                         case "head":
                             continue 2;
                             break;
@@ -210,7 +210,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                     }
                     // Save data in object
                     $this->{"_".$varname} = $val;
-                    if($this->_cacheEnabled) {
+                    if ($this->_cacheEnabled) {
                         // ...and cache if possible
                         $expire = constant("SERVICES_WEATHER_EXPIRES_".strtoupper($varname));
                         $this->_cache->extSave($id, $val, $userData, $expire, $varname);

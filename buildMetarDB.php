@@ -209,7 +209,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
             break;
         case "v":
             // increase verbosity
-            for($i = 1; $i < strlen($_SERVER["argv"][$c]); $i++) {
+            for ($i = 1; $i < strlen($_SERVER["argv"][$c]); $i++) {
                 if ($_SERVER["argv"][$c]{$i} == "v") {
                     $verbose++;
                 } else {

@@ -350,7 +350,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                     continue;
                 }
 
-                if(SERVICES_WEATHER_DEBUG) {
+                if (SERVICES_WEATHER_DEBUG) {
                     $tab = str_repeat("\t", 2 - floor((strlen($metar[$i]) + 2) / 8));
                     echo "\"".$metar[$i]."\"".$tab."-> ";
                 }
@@ -899,12 +899,12 @@ class Services_Weather_Metar extends Services_Weather_Common
             for($d; $d < sizeof($air); $d++) {
                 $t = $air[$d] - $query[$d];
                 $dist += pow($t, 2);
-                if($min_dist != null && $dist > $min_dist) {
+                if ($min_dist != null && $dist > $min_dist) {
                     break;
                 }
             }
 
-            if($d >= sizeof($air)) {
+            if ($d >= sizeof($air)) {
                 // Ok, current airport is one of the nearer locations
                 // add to result-array
                 $search["dist"][] = $dist;
@@ -912,7 +912,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                 // Sort array for distance
                 array_multisort($search["dist"], SORT_NUMERIC, SORT_ASC, $search["icao"], SORT_STRING, SORT_ASC);
                 // If array is larger then desired results, chop off last one
-                if(sizeof($search["dist"]) > $numResults) {
+                if (sizeof($search["dist"]) > $numResults) {
                     array_pop($search["dist"]);
                     array_pop($search["icao"]);
                 }
@@ -984,7 +984,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Result is ok, put things into object
             $this->_location = $result->fetchRow(DB_FETCHMODE_ASSOC);
 
-            if($this->_cacheEnabled) {
+            if ($this->_cacheEnabled) {
                 // ...and cache it
                 $expire = constant("SERVICES_WEATHER_EXPIRES_LOCATION");
                 $this->_cache->extSave("METAR-".$id, $this->_location, "", $expire, "location");
@@ -1004,7 +1004,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         // Stuff name-string together
         if (strlen($this->_location["state"]) && strlen($this->_location["country"])) {
             $locname = $this->_location["name"].", ".$this->_location["state"].", ".$this->_location["country"];
-        } elseif(strlen($this->_location["country"])) {
+        } elseif (strlen($this->_location["country"])) {
             $locname = $this->_location["name"].", ".$this->_location["country"];
         } else {
             $locname = $this->_location["name"];
