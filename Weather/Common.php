@@ -133,16 +133,6 @@ class Services_Weather_Common {
     */
     function Services_Weather_Common($options, &$error)
     {
-        // Ugly, but it works. Why isn't file_exists capable of searching
-        // through the include_path? *sigh*
-        $files = array("Cache.php", "XML/Unserializer.php", "SOAP/Client.php");
-        for ($i = 0; $i < sizeof($files); $i++) {
-            if(($fp = @fopen($files[$i], "r", true)) !== false) {
-                $this->{"_has".basename($files[$i], ".php")} = true;
-                fclose($fp);
-            }
-        }
-
         // Set options accordingly        
         if (isset($options["cacheType"])) {
             if (isset($options["cacheOptions"])) {
@@ -177,31 +167,31 @@ class Services_Weather_Common {
     /**
     * Enables caching the data, usage strongly recommended
     *
+    * Requires Cache to be installed
+    *
     * @param    string                      $cacheType
     * @param    array                       $cacheOptions
     * @return   PEAR_Error|bool
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_CACHE_NOT_INSTALLED
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED
     * @access   public
     */
     function setCache($cacheType = "file", $cacheOptions = array())
     {
-        if($this->_hasCache) {
-            require_once "Cache.php";
-            @$cache = new Cache($cacheType, $cacheOptions);
-            // The error handling in Cache is a bit crummy (read: not existent)
-            // so we have to do that on our own...
-            if (!is_object($cache) || get_class($cache) != "cache") {
-                $this->_cache        = null;
-                $this->_cacheEnabled = false;
-                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
-            } else {
-                $this->_cache        = $cache;
-                $this->_cacheEnabled = true;
-                return true;
-            }
-        } else {
+        // The error handling in Cache is a bit crummy (read: not existent)
+        // so we have to do that on our own...
+        @require_once "Cache.php";
+        @$cache = new Cache($cacheType, $cacheOptions);
+        if (!is_object($cache) || get_class($cache) != "cache") {
+            $this->_cache        = null;
+            $this->_cacheEnabled = false;
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
+        } else {
+            $this->_cache        = $cache;
+            $this->_cacheEnabled = true;
         }
+
+        return true;
     }
     // }}}
 

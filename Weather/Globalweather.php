@@ -73,10 +73,11 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     /**
     * Constructor
     *
+    * Requires SOAP to be installed
+    *
     * @param    array                       $options
     * @param    mixed                       $error
     * @throws   PEAR_Error
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_SOAP_NOT_INSTALLED
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @see      Science_Weather::Science_Weather
     * @access   private
@@ -90,11 +91,6 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
             return;
         }
 
-        if (!$this->_hasClient) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SOAP_NOT_INSTALLED);
-            return;
-        }
-        
         require_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl");
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
@@ -130,6 +126,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         } elseif ($this->_stationSoap->isValidCode($id) === false) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
+
         return true;
     }
     // }}}
@@ -166,6 +163,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
                 }
             }
         }
+
         return $searchReturn;
     }
     // }}}

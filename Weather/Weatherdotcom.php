@@ -80,10 +80,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Constructor
     *
+    * Requires XML_Serializer to be installed
+    *
     * @param    array                       $options
     * @param    mixed                       $error
     * @throws   PEAR_Error
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_XML_NOT_INSTALLED
     * @see      Science_Weather::Science_Weather
     * @access   private
     */
@@ -104,11 +105,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $this->setAccountData("", $options["licenseKey"]);
         }
         
-        if (!$this->_hasUnserializer) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_XML_NOT_INSTALLED);
-            return;
-        }
-
         require_once "XML/Unserializer.php";
         $unserializer = &new XML_Unserializer(array("complexType" => "object"));
         if (Services_Weather::isError($unserializer)) {
