@@ -362,8 +362,9 @@ class Services_Weather_Common {
     * @param    float                       $speed
     * @param    string                      $from
     * @param    string                      $to
-    * @return   float|bool
+    * @return   float|int|bool
     * @access   public
+    * @link     http://www.spc.noaa.gov/faq/tornado/beaufort.html
     */
     function convertSpeed($speed, $from, $to)
     {
@@ -391,16 +392,17 @@ class Services_Weather_Common {
                 )
             );
 
+            // Beaufort scale, measurements are in knots
             $beaufort = array(
                   1,   3,   6,  10, 
                  16,  21,  27,  33,
-                 40,  47,  55,  63,
-                 71,  80,  89,  99,
-                108, 118    
+                 40,  47,  55,  63    
             );
         }
         
-        if ($to == "bft") {
+        if ($from == "bft") {
+            return false;
+        } elseif ($to == "bft") {
             $speed = round($speed * $factor[$from]["kt"], 0); 
             for ($i = 0; $i < sizeof($beaufort); $i++) {
                 if ($speed <= $beaufort[$i]) {
@@ -408,8 +410,6 @@ class Services_Weather_Common {
                 }
             }
             return sizeof($beaufort);
-        } elseif ($from == "bft") {
-            return false;
         } else {
             return round($speed * $factor[$from][$to], 2);
         }
