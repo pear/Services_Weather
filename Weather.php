@@ -18,8 +18,6 @@
 //
 // $Id$
 
-require_once "PEAR.php";
-
 // {{{ constants
 // {{{ cache times
 define("SERVICES_WEATHER_EXPIRES_UNITS",      900);
@@ -173,6 +171,10 @@ class Services_Weather {
     */
     function &raiseError($code = SERVICES_WEATHER_ERROR_UNKNOWN_ERROR)
     {
+        // This should improve the performance of the script, as PEAR is only included, when
+        // really needed.
+        require_once "PEAR.php";
+
         $message = "Services_Weather: ".Services_Weather::_errorMessage($code);
 
         return PEAR::raiseError($message, $code, PEAR_ERROR_RETURN, E_USER_NOTICE, "Services_Weather_Error", null, false);
