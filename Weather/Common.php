@@ -18,6 +18,8 @@
 //
 // $Id$
 
+require_once "Services/Weather.php";
+
 require_once "PEAR/Registry.php";
 
 // {{{ constants
@@ -157,8 +159,16 @@ class Services_Weather_Common {
     {
         if($this->_registry->packageExists("Cache")) {
             require_once "Cache.php";
-            $this->_cache = new Cache($cacheType, $cacheOptions);
-            $this->_cacheEnabled = TRUE;
+            @$cache = new Cache($cacheType, $cacheOptions);
+            if (!is_object(§$cache) || !is_subclass_of($cache, "cache_container")) {
+                $this->_cache = NULL;
+                $this->_cacheEnabled = FALSE;
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
+            } else {
+                $this->_cache = $cache;
+                $this->_cacheEnabled = TRUE;
+                return TRUE;
+            }
         }
     }
     // }}}
