@@ -62,6 +62,22 @@ class Services_Weather_Metar extends Services_Weather_Common
     * @access   private
     */
     var $_db;
+    
+    /**
+    * The source METAR uses
+    *
+    * @var      string                      $_source
+    * @access   private
+    */
+    var $_source;
+
+    /**
+    * This path is used to find the METAR data
+    *
+    * @var      string                      $_sourcePath
+    * @access   private
+    */
+    var $_sourcePath;
     // }}}
 
     // {{{ constructor
@@ -93,8 +109,18 @@ class Services_Weather_Metar extends Services_Weather_Common
             return $status;
         }
         
+        if (isset($options["source"])) {
+            if (isset($options["sourcePath"])) {
+                $this->setMetarSource($options["source"], $options["sourcePath"]);
+            } else {
+                $this->setMetarSource($options["source"]);
+            }
+        } else {
+            $this->setMetarSource("http");
+        }
+        
         return true;
-   }
+    }
     // }}}
 
     // {{{ setMetarDB()
@@ -129,6 +155,40 @@ class Services_Weather_Metar extends Services_Weather_Common
     }
     // }}}
 
+    // {{{ setMetarSource()
+    /**
+    * Sets the source, where the class tries to locate the METAR data
+    *
+    * Source can be http, ftp or file.
+    * An alternate sourcepath can be provided.
+    *
+    * @param    string                      $source
+    * @param    string                      $sourcePath
+    * @access   public
+    */
+    function setMetarSource($source, $sourcePath = "")
+    {
+        if (in_array($source, array("http", "ftp", "file"))) {
+            $this->_source = $source;
+        }
+        if (strlen($sourcePath)) {
+            $this->_sourcePath = $sourcePath;
+        } else {
+            switch ($source) {
+                case "http":
+                    $this->_sourcePath = "http://weather.noaa.gov/pub/data/observations/metar/stations/";
+                    break;
+                case "ftp":
+                    $this->_sourcePath = "ftp://weather.noaa.gov/data/observations/metar/stations/";
+                    break;
+                case "file":
+                    $this->_sourcePath = "./";
+                    break;
+            }
+        }
+    }
+    // }}}
+
     // {{{ _checkLocationID()
     /**
     * Checks the id for valid values and thus prevents silly requests to METAR server
@@ -152,20 +212,18 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ _parseWeatherData()
     /**
-    * Parses the data returned by the provided URL and caches it
+    * Parses the data returned by the provided source and caches it
     *    
     * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB 18/16 A2992 RMK SLP045 T01820159
     *
-    * @param    string                      $id
-    * @param    string                      $url
+    * @param    string                      $source
     * @param    array                       $units
-    * @param    int                         $days
     * @return   PEAR_Error|array
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
     * @access   private
     */
-    function _parseWeatherData($id = "", $url, $units, $days = 0)
+    function _parseWeatherData($source, $units)
     {
         static $compass;
         static $clouds;
@@ -234,7 +292,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "type"        => "AUTO|COR",
             "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2}))?(\w{2,3})",
             "windVar"     => "(\d{3})V(\d{3})",
-            "visibility1" => "^\d$",
+            "visibility1" => "\d",
             "visibility2" => "(\d{4})|((\d{1,2}|(\d)\/(\d))(SM|KM))|(CAVOK)",
             "runway"      => "R(\d{2})(\w)?\/(P|M)?(\d{4})(FT)?(V(P|M)?(\d{4})(FT)?)?(\w)?",
             "condition"   => "(-|\+|VC)?(MI|BC|PR|TS|BL|SH|DR|FZ)?(DZ|RA|SN|SG|IC|PL|GR|GS|UP)?(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
@@ -266,7 +324,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "maintain"    => "[\$]"
         );        
 
-        $data = @file($url);
+        $data = @file($source);
 
         // Check for correct data, 2 lines in size
         if (!$data || !is_array($data) || sizeof($data) < 2) {
@@ -276,7 +334,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             // Ok, we have correct data, start with parsing the first line for the last update
             $weatherData = array();
-            $weatherData["station"] = $id;
+            $weatherData["station"] = "";
             $weatherData["update"]  = date($this->_dateFormat." ".$this->_timeFormat, strtotime(trim($data[0])) + date("Z"));
             // and prepare the second line for stepping through
             $metar = explode(" ", trim($data[1]));
@@ -289,15 +347,19 @@ class Services_Weather_Metar extends Services_Weather_Common
                 }
 
                 if(SERVICES_WEATHER_DEBUG) {
-                    $tab = str_repeat("\t", 2 - floor(strlen($metar[$i]) / 8));
-                    echo $metar[$i].$tab."-> ";
+                    $tab = str_repeat("\t", 2 - floor((strlen($metar[$i]) + 2) / 8));
+                    echo "\"".$metar[$i]."\"".$tab."-> ";
                 }
 
                 $found = false;
                 foreach ($metarCode as $key => $regexp) {
                     // Check if current code matches current metar snippet
-                    if ($found = preg_match("/^".$regexp."$/i", $metar[$i], $result)) {
+                    if (($found = preg_match("/^".$regexp."$/i", $metar[$i], $result)) == true) {
                         switch ($key) {
+                            case "station":
+                                $weatherData["station"] = $result[0];
+                                unset($metarCode["station"]);
+                                break;
                             case "wind":
                                 // Parse wind data, first the speed, convert from kt to chosen unit
                                 $weatherData["wind"] = $this->convertSpeed($result[2], strtolower($result[5]), str_replace("/", "", $units["wind"]));
@@ -928,16 +990,21 @@ class Services_Weather_Metar extends Services_Weather_Common
         $units    = $this->getUnits(null, $unitsFormat);
         $location = $this->getLocation($id);
 
-        $weatherURL = "http://weather.noaa.gov/pub/data/observations/metar/stations/".$id.".TXT";
-
         if ($this->_cacheEnabled && ($weather = $this->_cache->get("METAR-".$id, "weather"))) {
             // Wee... it was cached, let's have it...
             $weatherReturn  = $weather;
             $this->_weather = $weatherReturn;
             $weatherReturn["cache"] = "HIT";
         } else {
+            // Set the source
+            if ($this->_source == "file") {
+                $source = realpath($this->_sourcePath.$id.".TXT");
+            } else {
+                $source = $this->_sourcePath.$id.".TXT";
+            }
+
             // Download and parse weather
-            $weatherReturn  = $this->_parseWeatherData("", $weatherURL, $units, 0);
+            $weatherReturn  = $this->_parseWeatherData($source, $units);
 
             if (Services_Weather::isError($weatherReturn)) {
                 return $weatherReturn;
