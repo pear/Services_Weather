@@ -357,9 +357,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             }
             $weatherReturn["cache"] = "MISS";
         }
-        $update = implode(" ", array_slice(explode(" ", $this->_weather->lsup), 0, 3));
 
-        $weatherReturn["update"]            = date($this->_dateFormat." ".$this->_timeFormat, strtotime($update));
+        $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($this->_weather->lsup));
         $weatherReturn["station"]           = $this->_weather->obst;
         $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->tmp, "f", $units["temp"]);
         $weatherReturn["feltTemperature"]   = $this->convertTemperature($this->_weather->flik, "f", $units["temp"]);

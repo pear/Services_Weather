@@ -297,9 +297,9 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
             $weatherReturn["cache"] = "MISS";
         }
 
-        $update = trim(str_replace(array("T", "Z"), " ", $this->_weather->timestamp));
+        $update = trim(str_replace(array("T", "Z"), " ", $this->_weather->timestamp))." GMT";
 
-        $weatherReturn["update"]          = date($this->_dateFormat." ".$this->_timeFormat, strtotime($update));
+        $weatherReturn["update"]          = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update));
         if (strlen($this->_weather->station->region) && strlen($this->_weather->station->country)) {
             $locname = $this->_weather->station->name.", ".$this->_weather->station->region.", ".$this->_weather->station->country;
         } elseif (strlen($this->_weather->station->country)) {

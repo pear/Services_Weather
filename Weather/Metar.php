@@ -331,10 +331,13 @@ class Services_Weather_Metar extends Services_Weather_Common
         } elseif (sizeof($data) > 2) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION);
         } else {
+            if (SERVICES_WEATHER_DEBUG) {
+                echo $data[0].$data[1];
+            }
             // Ok, we have correct data, start with parsing the first line for the last update
             $weatherData = array();
             $weatherData["station"] = "";
-            $weatherData["update"]  = strtotime(trim($data[0])) + date("Z");
+            $weatherData["update"]  = strtotime(trim($data[0])." GMT");
             // and prepare the second line for stepping through
             $metar = explode(" ", trim($data[1]));
 
@@ -1039,7 +1042,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                     $newVal = $location["name"];
                     break;
                 case "update":
-                    $newVal = date($this->_timeFormat." ".$this->_dateFormat, $val);
+                    $newVal = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), $val);
                     break;
                 case "wind":
                 case "windGust":
