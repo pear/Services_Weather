@@ -133,12 +133,12 @@ class Services_Weather {
     /**
     * For your convenience, when I come up with changes in the API...
     *
-    * @return   float
+    * @return   string
     * @access   public
     */
    function apiVersion()
     {
-        return 1.1;
+        return "1.1";
     }
     // }}}
 
