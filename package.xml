@@ -21,12 +21,24 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.0.0RC1</version>
-        <date>2003-10-08</date>
+        <version>1.0.0RC2</version>
+        <date>2003-12-03</date>
 		<license>PHP License</license>
         <state>beta</state>
 		<notes>
-            This is the first release candidate for the first release.
+            - Weather.php:
+                o Removed ENOTICE for multiple defines
+            - Common.php, Globalweather.php, Metar.php, Weatherdotcom.php:
+                o Deprecated getUnits in all weather modules
+                o Added getUnitsFormat as replacement
+                o Added customizable unit formats
+            - Common.php:
+                o Fixed small bug in handling the options array            
+            - Metar.php:
+                o Changed RegExp for visibility2
+                o Fixed ENOTICE in handling of visibility2
+                o Moved precipitation from remark to main array
+                o Added "AT" qualifier to visibility            
 		</notes>
 		<deps>
 			<dep type="php" rel="ge">4.3.0</dep>
