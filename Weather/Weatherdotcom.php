@@ -163,13 +163,12 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $id
     * @param    string                      $url
-    * @param    int                         $days
     * @return   PEAR_Error|bool
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @throws   PEAR_Error
     * @access   private
     */
-    function _parseWeatherData($id, $url, $days = 0)
+    function _parseWeatherData($id, $url)
     {
         // Get data from URL and unserialize
         $status = $this->_unserializer->unserialize($url, true);
@@ -197,15 +196,12 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                             break;
                         case "loc":
                             $varname  = "location";
-                            $userData = "";
                             break;
                         case "cc":
                             $varname  = "weather";
-                            $userData = "";
                             break;
                         case "dayf":
                             $varname  = "forecast";
-                            $userData = $days;
                             break;
                     }
                     // Save data in object
@@ -213,7 +209,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                     if ($this->_cacheEnabled) {
                         // ...and cache if possible
                         $expire = constant("SERVICES_WEATHER_EXPIRES_".strtoupper($varname));
-                        $this->_cache->extSave($id, $val, $userData, $expire, $varname);
+                        $this->_cache->extSave($id, $val, "", $expire, $varname);
                     }
                 }
             }
@@ -357,6 +353,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             return $status;
         }
 
+        // Get other data
         $units    = $this->getUnitsFormat($unitsFormat);
 
         $weatherReturn = array();
@@ -424,13 +421,13 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $days = 2;
         }
         
-        $units = $this->getUnitsFormat($unitsFormat);
+        // Get other data
+        $units    = $this->getUnitsFormat($unitsFormat);
 
         $forecastReturn = array();
-        $forecastURL = "http://xoap.weather.com/weather/local/".$id."?dayf=".$days."&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
+        $forecastURL = "http://xoap.weather.com/weather/local/".$id."?dayf=10&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
 
-        if ($this->_cacheEnabled && ($userData = $this->_cache->getUserData($id, "forecast")) &&
-                ($days <= $userData) && ($forecast = $this->_cache->get($id, "forecast"))) {
+        if ($this->_cacheEnabled && ($forecast = $this->_cache->get($id, "forecast"))) {
             // Encore...
             $this->_forecast = $forecast;
             $forecastReturn["cache"] = "HIT";
