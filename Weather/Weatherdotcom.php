@@ -384,6 +384,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         
         $update  = str_replace("Local Time", "", $this->_weather->lsup);
         $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update));
+        $weatherReturn["updateRaw"]         = $this->_weather->lsup;
         $weatherReturn["station"]           = $this->_weather->obst;
         $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->tmp, "f", $units["temp"]);
         $weatherReturn["feltTemperature"]   = $this->convertTemperature($this->_weather->flik, "f", $units["temp"]);

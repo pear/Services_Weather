@@ -338,8 +338,9 @@ class Services_Weather_Metar extends Services_Weather_Common
             }
             // Ok, we have correct data, start with parsing the first line for the last update
             $weatherData = array();
-            $weatherData["station"] = "";
-            $weatherData["update"]  = strtotime(trim($data[0])." GMT");
+            $weatherData["station"]   = "";
+            $weatherData["update"]    = strtotime(trim($data[0])." GMT");
+            $weatherData["updateRaw"] = $data[0];
             // and prepare the second line for stepping through
             $metar = explode(" ", trim($data[1]));
 
