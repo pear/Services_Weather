@@ -717,7 +717,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         }           
         
         // Get all airports
-        $select = "SELECT icao, latitude, longitude FROM metarAirports";
+        $select = "SELECT icao, x, y, z FROM metarAirports";
         $result = $this->_db->query($select);
         if (DB::isError($result)) {
             return $result;
@@ -732,7 +732,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $search   = array("dist" => array(), "icao" => array());
         while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != null) {
             $icao = $row["icao"];
-            $air  = $this->polar2cartesian($row["latitude"], $row["longitude"]);
+            $air  = array($row["x"], $row["y"], $row["z"]);
 
             $dist = 0;
             $d = 0;
