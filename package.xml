@@ -64,7 +64,6 @@
                     <file>globalweather-basic.php</file>
                     <file>metar-basic.php</file>
                     <file>weather.com-basic.php</file>
-			        <file>weather.com-error.php</file>
 			    </dir>
 			</dir>
             <dir name="/" role="data">
