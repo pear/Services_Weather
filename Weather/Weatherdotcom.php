@@ -57,7 +57,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     * @var      string                      $_partnerID
     * @access   private
     */
-    var $_partnerID;
+    var $_partnerID = "";
 
     /**
     * License key at weather.com
@@ -65,7 +65,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     * @var      string                      $_licenseKey
     * @access   private
     */
-    var $_licenseKey;
+    var $_licenseKey = "";
 
     /**
     * XML_Unserializer, used for processing the xml
