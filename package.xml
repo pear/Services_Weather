@@ -12,21 +12,21 @@
         included, if they become available, have a usable API and are properly
         documented.
     </description>
-	<maintainers>
-		<maintainer>
-			<user>eru</user>
-			<name>Alexander Wirtz</name>
-			<email>alex@pc4p.net</email>
-			<role>lead</role>
+    <maintainers>
+        <maintainer>
+            <user>eru</user>
+            <name>Alexander Wirtz</name>
+            <email>alex@pc4p.net</email>
+            <role>lead</role>
         </maintainer>
     </maintainers>
     <release>
         <version>1.1.0</version>
         <date>2003-12-30</date>
-		<license>PHP License</license>
+        <license>PHP License</license>
         <state>stable</state>
-		<notes>
-			- Removed dependency on 4.3.0
+        <notes>
+            - Removed dependency on 4.3.0
             - Weather.php, Common.php, Globalweather.php, Metar.php, Weatherdotcom.php
                 o Changed error throwing in constructors to work actually
                 o Removed PEAR-package dependency checking
@@ -42,14 +42,14 @@
                 o Updated for proper error handling and added features
             - weather.com-error.php
                 o Erased
-		</notes>
-		<deps>
+        </notes>
+        <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.4.0">DB</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.7.5">SOAP</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
         </deps>
-		<filelist>
+        <filelist>
             <dir name="/" baseinstalldir="Services">
                 <file role="php">Weather.php</file>
                 <dir name="Weather" role="php">
@@ -64,11 +64,11 @@
                     <file>globalweather-basic.php</file>
                     <file>metar-basic.php</file>
                     <file>weather.com-basic.php</file>
-			    </dir>
-			</dir>
+                </dir>
+            </dir>
             <dir name="/" role="data">
                 <file>buildMetarDB.php</file>
             </dir>
         </filelist>
-	</release>
+    </release>
 </package>
