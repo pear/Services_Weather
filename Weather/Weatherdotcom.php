@@ -104,7 +104,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         }
         
         include_once "XML/Unserializer.php";
-        $unserializer = &new XML_Unserializer(array("complexType" => "object"));
+        $unserializer = &new XML_Unserializer(array("complexType" => "object", "keyAttribute" => "type"));
         if (Services_Weather::isError($unserializer)) {
             $error = $unserializer;
             return;
