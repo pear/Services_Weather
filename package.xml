@@ -21,20 +21,28 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.2.1</version>
-        <date>2004-02-16</date>
+        <version>1.2.2</version>
+        <date>2004-03-29</date>
         <license>PHP License</license>
         <state>stable</state>
         <notes>
+        	- Weather.php, Common.php, Metar.php
+        		o Fixed bug #896: Improvement for get_class()-usage	
+            - Ejse.php, Globalweather.php
+                o Fixed bug #1074: Set timeout for requests
+                  Added timeout parameter to WSDL-constructor
             - Weatherdotcom.php
-                o Fixed bug on receiving a weather.com originated error
-                o Changed keyAttribute in XML_Unserializer, needed for errno retrieval
+                o Fixed bug #1074: Set timeout for requests
+                  Switched to using HTTP_Request.
+            - Globalweather.php
+            	o Fixed wrong behaviour when sky->layers is a string
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.4.0">DB</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="1.2.0">HTTP_Request</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.7.5">SOAP</dep>
-            <dep optional="yes" type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="0.8.0">XML_Serializer</dep>
         </deps>
         <filelist>
             <dir name="/" baseinstalldir="Services">
