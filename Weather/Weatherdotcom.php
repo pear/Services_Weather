@@ -184,7 +184,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             } elseif ($root == "error") {
                 // We got an error back from weather.com
                 $errno  = key(get_object_vars($data));
-                return Services_Weather::raiseError($this->_errorMessage($errno), $errno);
+                return Services_Weather::raiseError($errno);
             } else {
                 // Valid data, lets get started
                 // Loop through the different sub-parts of the data fro processing
