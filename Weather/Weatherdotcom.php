@@ -140,6 +140,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $id
     * @param    string                      $url
+    * @param    string                      $unitsFormat
     * @param    int                         $days
     * @return   PEAR_Error|bool
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
