@@ -20,9 +20,6 @@
 
 require_once "Services/Weather/Common.php";
 
-require_once "XML/Parser.php";
-require_once "XML/Unserializer.php";
-
 // {{{ class Services_Weather_Weatherdotcom
 /**
 * PEAR::Services_Weather_Weatherdotcom
@@ -88,6 +85,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function Services_Weather_Weatherdotcom()
     {
         $this->Services_Weather_Common();
+        if (!$this->_hasUnserializer) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_XML_NOT_INSTALLED);
+        }
+        
+        require_once "XML/Unserializer.php";
         $this->_unserializer = &new XML_Unserializer(array("complexType" => "object"));
     }
     // }}}

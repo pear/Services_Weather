@@ -133,7 +133,7 @@ class Services_Weather_Common {
     {
         // Ugly, but it works. Why isn't file_exists capable of searching
         // through the include_path? *sigh*
-        $files = array("Cache.php");
+        $files = array("Cache.php", "XML/Unserializer.php", "SOAP/Client.php");
         for ($i = 0; $i < sizeof($files); $i++) {
             if(($fp = @fopen($files[$i], "r", true)) !== false) {
                 $this->{"_has".basename($files[$i], ".php")} = true;
