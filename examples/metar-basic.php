@@ -41,11 +41,12 @@ if (Services_Weather::isError($metar)) {
 */
 
 $metar->setUnitsFormat("custom", array(
-    "wind" => "kt",
-    "vis" => "km",
-    "temp" => "c",
-    "pres" => "hpa",
-    "rain" => "in"));
+    "wind"   => "kt",
+    "vis"    => "km",
+    "height" => "ft",
+    "temp"   => "c",
+    "pres"   => "hpa",
+    "rain"   => "in"));
 $metar->setDateTimeFormat("d.m.Y", "H:i");
 
 // First get code for location
