@@ -25,7 +25,7 @@
  * from the metar-block which can be found within the Horde Framework,
  * courtesy of Rick Emery - creative pixelshoving isn't my domain :-P
  * I've used a Firefox for checking the design, so don't be too
- * disappointed, if the page looks shabby with with the IE, not that I care
+ * disappointed, if the page looks shabby with the IE, not that I care
  * very much anyway ;-)
  * Have fun!
 */
@@ -33,16 +33,16 @@
 //-------------------------------------------------------------------------
 // This is the area, where you can customize the script
 //-------------------------------------------------------------------------
-$location    = "Kennedy International Airport"; // The city we want to fetch the data for.
-//$location    = "Bonn, Germany"; // The city we want to fetch the data for.
+//$location    = "Kennedy International Airport"; // The city we want to fetch the data for.
+$location    = "Bonn, Germany"; // The city we want to fetch the data for.
                                 // Where the search function will look for
                                 // the ICAO database (generated with the
                                 // buildMetarDB.php script)
 $dsn         = "sqlite://localhost//usr/local/lib/php/data/Services_Weather/servicesWeatherDB"; 
-$sourceMetar = "file";          // This script will pull the data via http
-$sourceTaf   = "file";          // This script will pull the data via http
-$sourcePathMetar = "/mnt/E/noaa/metar";
-$sourcePathTaf   = "/mnt/E/noaa/taf";
+$sourceMetar = "http";          // This script will pull the METAR data via http
+$sourceTaf   = "http";          //                           TAF
+$sourcePathMetar = "";          // Only needed when non-standard access is used
+$sourcePathTaf   = "";          //
 $cacheType   = "";              // Set a type (file, db, mdb, ...) to
                                 // enable caching.
 $cacheOpt    = array();         // Cache needs various options, depending
@@ -51,11 +51,13 @@ $cacheOpt    = array();         // Cache needs various options, depending
 $unitsFormat = "metric";        // The format the units are displayed in -
                                 // metric, standard or some customization.
 $dateFormat  = "j. M Y";        // Set the format the date is displayed in
-$timeFormat  = "H:i";           // Set the format the time is displayed in
+$timeFormat  = "H:i";           //                    time
 //-------------------------------------------------------------------------
 
 // Load the Weather class
 require_once "Services/Weather.php";
+// Load the scripts needed for sunrise/-set calculation
+include_once "php_sunrise_sunset.php";
 
 // Object initialization - error checking is important, because of
 // handling exceptions such as missing PEAR modules
@@ -115,6 +117,12 @@ foreach ($fetch as $variable => $function) {
     }
 }
 
+// Calculate sunrise/-set for our location - UTC is used here!
+$gmt_offset = 0;
+$timestamp  = gmmktime();
+$location["sunrise"] = date_sunrise($timestamp, "", $location["latitude"], $location["longitude"], "", $gmt_offset);
+$location["sunset"]  = date_sunset($timestamp, "", $location["latitude"], $location["longitude"], "", $gmt_offset);
+
 // Now we output all the data, please don't expect extensive comments here, this is basic
 // HTML/CSS stuff. Also this isn't a very fancy design, it's just to show you, what
 // the script is able to do (and more ;-))...
@@ -158,8 +166,8 @@ if (isset($_GET["debug"])) {
             <td colspan="4" style="border-bottom: 2px solid #abada2"><span class="bold"><?=$location["name"]?> (<?=$search?>)</span></td>
         </tr>
         <tr>
-            <td colspan="2" nowrap><span class="bold">Last updated:</span> <?=$weather["update"]?><br>&nbsp;</td>
-            <td>&nbsp;</td>
+            <td><span class="bold">Sunrise:</span> <img style="width: 28px; height: 13px; vertical-align: baseline" alt="Sunrise" src="images/sunrise.gif"> <?=$location["sunrise"]?></td>
+            <td colspan="2"><span class="bold">Sunset:</span> <img style="width: 30px; height: 15px; vertical-align: baseline" alt="Sunset" src="images/sunset.gif"> <?=$location["sunset"]?></td>
             <td>&nbsp;</td>
         </tr>
         <tr style="height: 15px">
@@ -170,16 +178,22 @@ if (isset($_GET["debug"])) {
                 <span class="bold">Trend:</span><br>
 <?php
 if (isset($weather["trend"]) && sizeof($weather["trend"])) {
+    // Output the trends, loop through the arrays,
+    // convert the stuff to nice looking design, jadda, jadda...
     foreach ($weather["trend"] as $trend) {
         foreach ($trend as $key => $val) {
             switch ($key) {
                 case "type":
-                    if ($val == "NOSIG") {
-                        $string = "No significant weather";
-                    } elseif ($val == "TEMPO") {
-                        $string = "Temporary weather";
-                    } elseif ($val == "BECMG") {
-                        $string = "Weather becoming";
+                    switch ($val) {
+                        case "NOSIG":
+                            $string = "No significant weather";
+                            break;
+                        case "TEMPO":
+                            $string = "Temporary weather";
+                            break;
+                        case "BECMG":
+                            $string = "Weather becoming";
+                            break;
                     }
                     $value  = "";
                     foreach (array("from", "to", "at") as $time) {
@@ -257,6 +271,7 @@ if (isset($weather["trend"]) && sizeof($weather["trend"])) {
                 <span class="bold">Remarks:</span><br>
 <?php
 if (isset($weather["remark"]) && sizeof($weather["remark"])) {
+    // Same for the remarks, even less spectacular...
     foreach($weather["remark"] as $key => $val) {
         switch ($key) {
             case "autostation":
@@ -331,8 +346,8 @@ if (isset($weather["remark"]) && sizeof($weather["remark"])) {
             </td>
         </tr>
         <tr style="height: 15px">
-            <td colspan="2" nowrap><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1).$units["pres"]?></td>
-            <td nowrap><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
+            <td colspan="2" style="width: 310px" nowrap><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1).$units["pres"]?></td>
+            <td style="width: 190px" nowrap><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
         </tr>
         <tr style="height: 15px">
             <td colspan="2" nowrap>
@@ -358,6 +373,8 @@ if (isset($weather["windGust"])) {
                 <?=isset($weather["condition"]) ? ucwords($weather["condition"]) : "No Significant Weather"?>
 <?php
 if (isset($weather["precipitation"]) && sizeof($weather["precipitation"])) {
+    // Output a line for each type of precipitation,
+    // distinguish between string and numeric values
 ?>
                 <br><span class="bold">Precipitation:</span><br>
 <?php
@@ -375,6 +392,7 @@ if (isset($weather["precipitation"]) && sizeof($weather["precipitation"])) {
                 <span class="bold">Clouds:</span><br>
 <?php
 if (isset($weather["clouds"]) && sizeof($weather["clouds"])) {
+    // Yeah, clouds... same as in the trend handling...
     for ($i = 0; $i < sizeof($weather["clouds"]); $i++) {
         $cloud = ucwords($weather["clouds"][$i]["amount"]);
         if (isset($weather["clouds"][$i]["type"])) {
@@ -402,36 +420,167 @@ if (isset($weather["clouds"]) && sizeof($weather["clouds"])) {
     <td>
         <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0; width: 100%">
         <tr class="bgkhaki">
-            <td align="center" style="border-bottom: 2px solid #abada2"><span class="bold">Forecast (TAF)</span></td>
+            <td colspan="3" align="center" style="border-bottom: 2px solid #abada2"><span class="bold">Forecast (TAF)</span><br>valid from <span class="bold"><?=$forecast["validFrom"]?></span> to <span class="bold"><?=$forecast["validTo"]?></span></td>
         </tr>
         <tr valign="top">
-            <td>
-                <table class="bgkhaki" style="border-top: 2px solid #d8d8c0; border-bottom: 2px solid #d8d8c0; border-left: 2px solid #d8d8c0; border-right: 2px solid #8b87a0; width: 100%">
+            <td colspan="3">
+                <table style="width: 100%">
                 <tr>
-                    <td align="center" style="height: 15px">&nbsp;</td>
-                <tr>
-                    <td align="center" style="height: 45px"><span class="bold">Temperature</span> <span class="redbold">High</span> / <span class="bluebold">Low</span></td>
+                    <td align="center" class="bgkhaki" style="height: 15px; border-top: 2px solid #d8d8c0; border-right: 2px solid #8b87a0; border-left: 2px solid #d8d8c0">&nbsp;</td>
+                    <td align="center" style="width: 18%"><span class="bold">Meteorological Conditions</span></td>
+                    <td align="center" style="width: 18%" class="bggrey"><span class="bold">Wind</span></td>
+                    <td align="center" style="width: 18%"><span class="bold">Visibility</span></td>
+                    <td align="center" style="width: 18%" class="bggrey"><span class="bold">Clouds</span></td>
+                    <td align="center" style="width: 18%"><span class="bold">Condition</span></td>
+                </tr>
+<?php
+$times = array_keys($forecast["time"]);
+$preclouds = "";
+$precond   = "";
+// Ok, the forecast is a bit more interesting, as I'm taking a few
+// precautions here so that the table isn't filled up to the max.
+// o If a value is repeated in the next major timeslot (not when
+//   significant weather changes are processed), it's not printed
+// o Significant weather gets its own rows, with times printed normal
+//   as in opposition to bold print for major timeslots
+// o The while($row)-construct below is for handling the significant
+//   weather, as I point $row to $row["fmc"] afterwards, where the
+//   smaller changes are mentioned
+for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
+    $row = $forecast["time"][$times[$i]];
+    if ($i > 0) {
+        $prerow = $forecast["time"][$times[$i - 1]];
+    }
+
+    // Create timestamp
+    $start = $times[$i];
+    if ($i + 1 < sizeof($forecast["time"])) {
+        $end = $times[$i + 1];
+    } else {
+        $end = substr($forecast["validRaw"], -2).":00";
+        $end = ($end == "24:00") ? "00:00" : $end;
+    }
+    $time    = $start." - ".$end;
+    $class   = ' class="bold"';
+    // This is for outputting "Becoming", "Temporary" and such
+    $fmctype = "";
+    $fmccnt  = 0;
+
+    while ($row) {
+?>
+                <tr class="bgkhaki">
+                    <td style="height: 1px; empty-cells: show; border-right: 2px solid #8b87a0; border-left: 2px solid #d8d8c0"></td>
+                    <td style="height: 1px" colspan="5"></td>
                 </tr>
                 <tr>
-                    <td align="center" style="height: 15px">&nbsp;</td>
+                    <td align="center" class="bgkhaki" style="border-right: 2px solid #8b87a0; border-left: 2px solid #d8d8c0" nowrap><span<?=$class?>><?=$time?></span></td>
+                    <td align="center"><?=$fmctype?></td>
+<?php
+        // This loops through the available data and processes it
+        // for output, the different methods were already used above
+        // (Only difference is the checking for the pre-values.)
+        foreach(array("wind", "vis", "clouds", "cond") as $val) {
+            switch ($val) {
+                case "wind":
+                    if (!isset($row["windDirection"]) || (isset($prerow) && $prerow["windDegrees"] == $row["windDegrees"] && $prerow["wind"] == $row["wind"])) {
+                        $string = "&nbsp;";
+                    } else {
+                        $string = strtolower($row["windDirection"]) == "calm" ? "Calm" : "From the ".$row["windDirection"]." (".$row["windDegrees"]."&deg;)<br>at ".round($row["wind"], 1).$units["wind"];
+                    }
+                    $class = ' class="bggrey"';
+                    break;
+                case "vis":
+                    if (!isset($row["visibility"]) || (isset($prerow) && $prerow["visibility"] == $row["visibility"] && $prerow["visQualifier"] == $row["visQualifier"])) {
+                        $string = "&nbsp;";
+                    } else {
+                        $string = strtolower($row["visQualifier"])." ".round($row["visibility"], 1).$units["vis"];
+                    }
+                    $class = '';
+                    break;
+                case "clouds":
+                    if (!isset($row["clouds"])) {
+                        $string = "&nbsp;";
+                    } else { 
+                        $clouds  = "";
+                        for ($j = 0; $j < sizeof($row["clouds"]); $j++) {
+                            $cloud = ucwords($row["clouds"][$j]["amount"]);
+                            if (isset($val[$j]["type"])) {
+                                $cloud .= " ".$row["clouds"][$j]["type"];
+                            }
+                            if (isset($row["clouds"][$j]["height"])) {
+                                $cloud .= " at ".$row["clouds"][$j]["height"].$units["height"];
+                            }
+                            $clouds .= $cloud."<br>";
+                        }
+                        if ($clouds == $preclouds) {
+                            $string = "&nbsp;";
+                        } else {
+                            $string    = $clouds;
+                            $preclouds = $clouds;
+                        }
+                    }
+                    $class = ' class="bggrey"';
+                    break;
+                case "cond":
+                    if (!isset($row["condition"]) || (isset($prerow) && $prerow["condition"] == $row["condition"])) {
+                        $string = "&nbsp;";
+                    } else {
+                        $string = ucwords($row["condition"]);
+                    }
+                    $class = '';
+            }
+?>
+                    <td valign="top"<?=$class?>><?=$string?></td>
+<?php
+        }
+?>                    
                 </tr>
+<?php
+        // Now check for significant weather changes and move
+        // the row accordingly... maybe ugly coding, but this
+        // is for showing design, not for fany programming ;-)
+        if (isset($row["fmc"]) && $fmccnt < sizeof($row["fmc"])) {
+            $row     = $row["fmc"][$fmccnt];
+            $fmccnt++;
+            $fmctype = $row["type"];
+            // Check if we have a timestamp, don't output if it's
+            // the same as the major-timeslot
+            if (!isset($row["from"]) || $row["from"]." - ".$row["to"] == $time) {
+                $time = "&nbsp;";
+            } else {
+                $time    = $row["from"]." - ".$row["to"];
+            }
+            switch ($row["type"]) {
+                case "PROB":
+                    $fmctype = "";
+                    break;
+                case "TEMPO":
+                    $fmctype = "Temporary";
+                    break;
+                case "BECMG":
+                    $fmctype = "Becoming";
+                    break;
+            }
+            if (isset($row["probability"])) {
+                $fmctype .= " (".$row["probability"]."%&nbsp;prob.)";
+            }
+        } else {
+            $row = false;
+        }
+    }
+}
+?>                
                 <tr>
-                    <td align="center" style="height: 75px"><span class="bold">Condition</span></td>
-                </tr>
-                <tr>
-                    <td align="center" style="height: 45px"><span class="bold">Precipitation probability</span></td>
-                </tr>            
-                <tr>
-                    <td align="center" style="height: 45px"><span class="bold">Wind</span></td>
-                </tr>
-                <tr>
-                    <td align="center" style="height: 15px"><span class="bold">Humidity</span></td>
+                    <td class="bgkhaki" style="height: 1px; empty-cells: show; border-bottom: 2px solid #d8d8c0; border-left: 2px solid #d8d8c0; border-right: 2px solid #8b87a0"></td>
+                    <td style="height: 1px" colspan="5"></td>
                 </tr>
                 </table>
             </td>
         </tr>
         <tr class="bgkhaki">
-    	    <td style="border-top: 2px solid #abada2">&nbsp;</td>
+    	    <td style="width: 93px; border-top: 2px solid #abada2">&nbsp;</td>
+            <td style="border-top: 2px solid #abada2">Updated: (<?=substr($weather["update"], -5)?>&nbsp;/&nbsp;<?=substr($forecast["update"], -5)?>)</td>
+            <td style="border-top: 2px solid #abada2" align="right">All times UTC</td>
         </tr>
         </table>
     </td>
