@@ -34,14 +34,15 @@
 // This is the area, where you can customize the script
 //-------------------------------------------------------------------------
 $location    = "Kennedy International Airport"; // The city we want to fetch the data for.
+//$location    = "Bonn, Germany"; // The city we want to fetch the data for.
                                 // Where the search function will look for
                                 // the ICAO database (generated with the
                                 // buildMetarDB.php script)
-$dsn         = "sqlite://localhost/D:/php/pear/data/Services_Weather/servicesWeatherDB"; 
+$dsn         = "sqlite://localhost//usr/local/lib/php/data/Services_Weather/servicesWeatherDB"; 
 $sourceMetar = "file";          // This script will pull the data via http
 $sourceTaf   = "file";          // This script will pull the data via http
-$sourcePathMetar = "E:/noaa/metar/";
-$sourcePathTaf   = "E:/noaa/taf/";
+$sourcePathMetar = "/mnt/E/noaa/metar";
+$sourcePathTaf   = "/mnt/E/noaa/taf";
 $cacheType   = "";              // Set a type (file, db, mdb, ...) to
                                 // enable caching.
 $cacheOpt    = array();         // Cache needs various options, depending
@@ -149,41 +150,126 @@ if (isset($_GET["debug"])) {
 } 
 ?>
 <span class="bluebold" style="font-size: 13pt">Weather Forecast</span> created with <a style="font-size: 13pt" href="http://pear.php.net/">PEARs</a> <a style="font-size: 13pt" href="http://pear.php.net/package/Services_Weather/">Services_Weather</a><br>
-<table width="100%">
+<table style="width: 100%">
 <tr>
     <td>
-        <table border="1" style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0" width="100%">
+        <table border="0" style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0; width: 100%">
         <tr class="bgkhaki">
             <td colspan="4" style="border-bottom: 2px solid #abada2"><span class="bold"><?=$location["name"]?> (<?=$search?>)</span></td>
         </tr>
         <tr>
-            <td colspan="2" width="270"><span class="bold">Last updated:</span> <?=$weather["update"]?><br>&nbsp;</td>
-            <td width="170">&nbsp;</td>
+            <td colspan="2" nowrap><span class="bold">Last updated:</span> <?=$weather["update"]?><br>&nbsp;</td>
+            <td>&nbsp;</td>
             <td>&nbsp;</td>
         </tr>
-        <tr>
-            <td><span class="bold">Temperature:</span> <?=round($weather["temperature"], 1).$units["temp"]?></td>
-            <td><span class="bold">Dew point:</span> <?=round($weather["dewPoint"], 1).$units["temp"]?></td>
-            <td><span class="bold">Felt temperature:</span> <?=round($weather["feltTemperature"], 1).$units["temp"]?></td>
+        <tr style="height: 15px">
+            <td nowrap><span class="bold">Temperature:</span> <?=round($weather["temperature"], 1).$units["temp"]?></td>
+            <td nowrap><span class="bold">Dew point:</span> <?=round($weather["dewPoint"], 1).$units["temp"]?></td>
+            <td nowrap><span class="bold">Felt temperature:</span> <?=round($weather["feltTemperature"], 1).$units["temp"]?></td>
             <td rowspan="4" valign="top">
+                <span class="bold">Trend:</span><br>
+<?php
+if (isset($weather["trend"]) && sizeof($weather["trend"])) {
+    foreach ($weather["trend"] as $trend) {
+        foreach ($trend as $key => $val) {
+            switch ($key) {
+                case "type":
+                    if ($val == "NOSIG") {
+                        $string = "No significant weather";
+                    } elseif ($val == "TEMPO") {
+                        $string = "Temporary weather";
+                    } elseif ($val == "BECMG") {
+                        $string = "Weather becoming";
+                    }
+                    $value  = "";
+                    foreach (array("from", "to", "at") as $time) {
+                        if (isset($trend[$time])) {
+                            $value .= " ".$time." ".$trend[$time];
+                        }
+                    }
+                    ($value != "") ? $value  = trim($value).":":"";
+                    $string = '<span class="italic">'.$string.'</span>';
+                    $value  = '<span class="italic">'.$value.'</span>';
+                    break;
+                case "wind":
+                    $string = "Wind:";
+                    $value  = (strtolower($trend["windDirection"]) == "calm") ? "Calm" : "From the ".$trend["windDirection"]." (".$trend["windDegrees"]."&deg;) at ".round($trend["wind"], 1).$units["wind"];
+                    if (isset($trend["windVariability"])) {
+                        $value .= ", variable from ".$trend["windVariability"]["from"]."&deg; to ".$trend["windVariability"]["to"]."&deg;";
+                    }
+                    if (isset($trend["windGust"])) {
+                        $value .= ", with gusts up to ".round($trend["windGust"], 1).$units["wind"];
+                    }
+                    break;
+                case "visibility":
+                    $string = "Visibility:";
+                    $value  = strtolower($trend["visQualifier"])." ".round($trend["visibility"], 1).$units["vis"];
+                    break;
+                case "clouds":
+                    $string = "Clouds:";
+                    $value  = "";
+                    for ($i = 0; $i < sizeof($val); $i++) {
+                        $cloud = ucwords($val[$i]["amount"]);
+                        if (isset($val[$i]["type"])) {
+                            $cloud .= " ".$val[$i]["type"];
+                        }
+                        if (isset($val[$i]["height"])) {
+                            $cloud .= " at ".$val[$i]["height"].$units["height"];
+                        }
+                        $value .= $cloud." ";
+                    }
+                    break;
+                case "condition":
+                    $string = "Condition:";
+                    $value  = ucwords($val);
+                    break;
+                case "pressure":
+                    $string = "Pressure:";
+                    $value  = round($val, 1).$units["pres"];
+                    break;
+                case "from":
+                case "to":
+                case "at":
+                case "windDirection":
+                case "windDegrees":
+                case "windVariability":
+                case "windGust":
+                case "visQualifier":
+                    continue(2);
+                    break;
+                default:
+                    $string = ""; $value = "";
+                    var_dump($key, $val);
+                    break;
+            }
+?>
+                <?=$string?> <?=$value?><br>
+<?php
+        }
+
+    }
+} else {
+?>
+                none<br>
+<?php
+}
+?>
+                <span class="bold">Remarks:</span><br>
 <?php
 if (isset($weather["remark"]) && sizeof($weather["remark"])) {
-?>
-            <span class="bold">Remarks:</span><br>
-<?php
     foreach($weather["remark"] as $key => $val) {
         switch ($key) {
             case "autostation":
+            case "presschg":
+            case "nospeci":
+            case "sunduration":
+            case "maintain":
                 $string = "";
                 $value  = $val;
                 break;
             case "seapressure":
                 $string = "Pressure at sealevel:";
                 $value  = round($val, 1).$units["pres"];
-                break;
-            case "presschg":
-                $string = "";
-                $value  = $val;
                 break;
             case "1htemp":
                 $string = "Temperature for last hour:";
@@ -193,24 +279,78 @@ if (isset($weather["remark"]) && sizeof($weather["remark"])) {
                 $string = "Dew Point for last hour:";
                 $value  = round($val, 1).$units["temp"];
                 break;
+            case "6hmaxtemp":
+            case "6hmintemp":
+                if (!isset($weather["remark"]["6hmaxtemp"]) && !isset($weather["remark"]["6hmintemp"])) {
+                    continue(2);
+                }
+                $string = "Max/Min Temp for last 6 hours:";
+                $value  = (isset($weather["remark"]["6hmaxtemp"])) ? round($weather["remark"]["6hmaxtemp"], 1).$units["temp"] : "-";
+                $value .= "/";
+                $value .= (isset($weather["remark"]["6hmintemp"])) ? round($weather["remark"]["6hmintemp"], 1).$units["temp"] : "-";
+                unset($weather["remark"]["6hmaxtemp"]); unset($weather["remark"]["6hmintemp"]);
+                break;
+            case "24hmaxtemp":
+            case "24hmintemp":
+                if (!isset($weather["remark"]["24hmaxtemp"]) && !isset($weather["remark"]["24hmintemp"])) {
+                    continue(2);
+                }
+                $string = "Max/Min Temp for last 24 hours:";
+                $value  = (isset($weather["remark"]["24hmaxtemp"])) ? round($weather["remark"]["24hmaxtemp"], 1).$units["temp"] : "-";
+                $value .= "/";
+                $value .= (isset($weather["remark"]["24hmintemp"])) ? round($weather["remark"]["24hmintemp"], 1).$units["temp"] : "-";
+                unset($weather["remark"]["24hmaxtemp"]); unset($weather["remark"]["24hmintemp"]);
+                break;
+            case "snowdepth":
+                $string = "Snow depth:";
+                $value  = $val.$units["rain"];
+                break;
+            case "snowequiv":
+                $string = "Water equivalent of snow:";
+                $value  = $val.$units["rain"];
+                break;
+            case "sensors":
+                $string = "";
+                $value  = implode("<br>", $val);
+                break;
             default:
+                $string = ""; $value = "";
                 var_dump($key, $val);
                 break;
         }
 ?>
-            <?=$string?> <?=$value?><br>
+                <?=$string?> <?=$value?><br>
 <?php
     }
+} else {
+?>
+                none<br>
+<?php
+}
 ?>
             </td>
         </tr>
-        <tr>
-            <td colspan="2"><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1).$units["pres"]?></td>
-            <td><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
+        <tr style="height: 15px">
+            <td colspan="2" nowrap><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1).$units["pres"]?></td>
+            <td nowrap><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
         </tr>
-        <tr>
-            <td colspan="2"><span class="bold">Wind:</span> <?=strtolower($weather["windDirection"]) == "calm" ? "Calm" : "From the ".$weather["windDirection"]." (".$weather["windDegrees"]."&deg;) at ".round($weather["wind"], 1).$units["wind"]?></td>
-            <td><span class="bold">Visibility:</span> <?=strtolower($weather["visQualifier"])?> <?=round($weather["visibility"], 1).$units["vis"]?></td>
+        <tr style="height: 15px">
+            <td colspan="2" nowrap>
+                <span class="bold">Wind:</span> <?=strtolower($weather["windDirection"]) == "calm" ? "Calm" : "From the ".$weather["windDirection"]." (".$weather["windDegrees"]."&deg;) at ".round($weather["wind"], 1).$units["wind"]?>
+<?php
+if (isset($weather["windVariability"])) {
+?>
+                <br>variable from <?=$weather["windVariability"]["from"]?>&deg; to <?=$weather["windVariability"]["to"]?>&deg;
+<?php
+}
+if (isset($weather["windGust"])) {
+?>
+                <br>with gusts up to <?=round($weather["windGust"], 1).$units["wind"]?>
+<?php
+}
+?>
+            </td>
+            <td valign="top" nowrap><span class="bold">Visibility:</span> <?=strtolower($weather["visQualifier"])?> <?=round($weather["visibility"], 1).$units["vis"]?></td>
         </tr>
         <tr>
             <td colspan="2" valign="top">
@@ -221,11 +361,11 @@ if (isset($weather["precipitation"]) && sizeof($weather["precipitation"])) {
 ?>
                 <br><span class="bold">Precipitation:</span><br>
 <?php
-    $precip = "last";
     for ($i = 0; $i < sizeof($weather["precipitation"]); $i++) {
-        $precip .= " ".$weather["precipitation"][$i]["hours"]."h: ".$weather["precipitation"][$i]["amount"].$units["rain"];
+        $precip = "last ".$weather["precipitation"][$i]["hours"]."h: ".$weather["precipitation"][$i]["amount"];
+        $precip .= (ctype_alpha($weather["precipitation"][$i]["amount"])) ? "" : $units["rain"];
 ?>
-            <?=$precip?>
+                <?=$precip?><br>
 <?php
     }
 }
@@ -260,32 +400,32 @@ if (isset($weather["clouds"]) && sizeof($weather["clouds"])) {
 </tr>
 <tr>
     <td>
-        <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0" width="100%">
+        <table style="border-top: 2px solid #524b98; border-bottom: 2px solid #e0e3ce; border-left: 2px solid #b8b6c1; border-right: 2px solid #8b87a0; width: 100%">
         <tr class="bgkhaki">
             <td align="center" style="border-bottom: 2px solid #abada2"><span class="bold">Forecast (TAF)</span></td>
         </tr>
         <tr valign="top">
             <td>
-                <table width="100%" class="bgkhaki" style="border-top: 2px solid #d8d8c0; border-bottom: 2px solid #d8d8c0; border-left: 2px solid #d8d8c0; border-right: 2px solid #8b87a0">
+                <table class="bgkhaki" style="border-top: 2px solid #d8d8c0; border-bottom: 2px solid #d8d8c0; border-left: 2px solid #d8d8c0; border-right: 2px solid #8b87a0; width: 100%">
                 <tr>
-                    <td align="center" style="height:15px">&nbsp;</td>
+                    <td align="center" style="height: 15px">&nbsp;</td>
                 <tr>
-                    <td align="center" style="height:45px"><span class="bold">Temperature</span> <span class="redbold">High</span> / <span class="bluebold">Low</span></td>
+                    <td align="center" style="height: 45px"><span class="bold">Temperature</span> <span class="redbold">High</span> / <span class="bluebold">Low</span></td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:15px">&nbsp;</td>
+                    <td align="center" style="height: 15px">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:75px"><span class="bold">Condition</span></td>
+                    <td align="center" style="height: 75px"><span class="bold">Condition</span></td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:45px"><span class="bold">Precipitation probability</span></td>
+                    <td align="center" style="height: 45px"><span class="bold">Precipitation probability</span></td>
                 </tr>            
                 <tr>
-                    <td align="center" style="height:45px"><span class="bold">Wind</span></td>
+                    <td align="center" style="height: 45px"><span class="bold">Wind</span></td>
                 </tr>
                 <tr>
-                    <td align="center" style="height:15px"><span class="bold">Humidity</span></td>
+                    <td align="center" style="height: 15px"><span class="bold">Humidity</span></td>
                 </tr>
                 </table>
             </td>
