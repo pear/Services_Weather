@@ -59,7 +59,7 @@ define("SERVICES_WEATHER_ERROR_INVALID_LICENSE_KEY",    102);
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
-* @version      1.0
+* @version      1.1
 */
 class Services_Weather {
 
@@ -131,14 +131,14 @@ class Services_Weather {
 
     // {{{ apiVersion()
     /**
-    * For your convenience, when I come up with a new API...
+    * For your convenience, when I come up with changes in the API...
     *
-    * @return   int
+    * @return   float
     * @access   public
     */
    function apiVersion()
     {
-        return 1;
+        return 1.1;
     }
     // }}}
 

@@ -42,7 +42,7 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://weather.noaa.gov/tg/site.shtml
 * @package      Services_Weather
-* @version      1.0
+* @version      1.1
 */
 
 // {{{ Services_Weather_checkData()

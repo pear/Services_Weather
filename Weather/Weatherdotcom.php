@@ -46,7 +46,7 @@ require_once "Services/Weather/Common.php";
 * @example      docs/Services_Weather/examples/weather.com-error.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
-* @version      1.0
+* @version      1.1
 */
 class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
