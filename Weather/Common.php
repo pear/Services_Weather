@@ -131,17 +131,15 @@ class Services_Weather_Common {
     */
     function Services_Weather_Common()
     {
+        // Ugly, but it works. Why isn't file_exists capable of searching
+        // through the include_path? *sigh*
         $files = array("Cache.php");
-        $incPath = get_include_path();
-        $incPath = strpos($incPath, ";") ? explode(";", $incPath) : explode(":", $incPath);
         for ($i = 0; $i < sizeof($files); $i++) {
-            for ($j = 0; $j < sizeof($incPath); $j++) {
-                if (file_exists($incPath[$j]."/".$files[$i])) {
-                    $this->{"_has".basename($files[$i], ".php")} = true;
-                    break;
-                }
+            if(($fp = @fopen($files[$i], "r", true)) !== false) {
+                $this->{"_has".basename($files[$i], ".php")} = true;
+                fclose($fp);
             }
-        }   
+        }        
     }
     // }}}
 
