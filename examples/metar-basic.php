@@ -34,9 +34,9 @@ if (Services_Weather::isError($metar)) {
 }
 
 /* Erase comments to enable caching
-$metar->setCache("file", array("cache_dir" => "/tmp/cache/"));
-if (Services_Weather::isError($metar)) {
-    echo "Error: ".$metar->getMessage()."\n";
+$status = $metar->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($status)) {
+    echo "Error: ".$status->getMessage()."\n";
 }
 */
 

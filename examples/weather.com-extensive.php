@@ -73,9 +73,9 @@ $weatherDotCom->setAccountData($partnerID, $licenseKey);
 
 // Initialize caching
 if (strlen($cacheType)) {
-    $weatherDotCom->setCache($cacheType, $cacheOpt);
-    if (Services_Weather::isError($weatherDotCom)) {
-        echo "Error: ".$weatherDotCom->getMessage()."\n";
+    $status = $weatherDotCom->setCache($cacheType, $cacheOpt);
+    if (Services_Weather::isError($status)) {
+        echo "Error: ".$status->getMessage()."\n";
     }
 }
 

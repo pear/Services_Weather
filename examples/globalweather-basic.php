@@ -28,9 +28,9 @@ if (Services_Weather::isError($globalweather)) {
 }
 
 /* Erase comments to enable caching
-$globalweather->setCache("file", array("cache_dir" => "/tmp/cache/"));
-if (Services_Weather::isError($globalweather)) {
-    echo "Error: ".$globalweather->getMessage()."\n";
+$status = $globalweather->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($status)) {
+    echo "Error: ".$status->getMessage()."\n";
 }
 */
 

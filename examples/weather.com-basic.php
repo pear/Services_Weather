@@ -31,9 +31,9 @@ if (Services_Weather::isError($weatherDotCom)) {
 $weatherDotCom->setAccountData("<PartnerID>", "<LicenseKey>");
 
 /* Erase comments to enable caching
-$weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));
-if (Services_Weather::isError($weatherDotCom)) {
-    echo "Error: ".$weatherDotCom->getMessage()."\n";
+$status = $weatherDotCom->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($status)) {
+    echo "Error: ".$status->getMessage()."\n";
 }
 */
 

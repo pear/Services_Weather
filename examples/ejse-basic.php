@@ -28,9 +28,9 @@ if (Services_Weather::isError($ejse)) {
 }
 
 /* Erase comments to enable caching
-$ejse->setCache("file", array("cache_dir" => "/tmp/cache/"));
-if (Services_Weather::isError($ejse)) {
-    echo "Error: ".$ejse->getMessage()."\n";
+$status = $ejse->setCache("file", array("cache_dir" => "/tmp/cache/"));
+if (Services_Weather::isError($status)) {
+    echo "Error: ".$status->getMessage()."\n";
 }
 */
 
