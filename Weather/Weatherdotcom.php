@@ -85,7 +85,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function Services_Weather_Weatherdotcom()
     {
         $this->Services_Weather_Common();
-        $this->_unserializer = &new XML_Unserializer(array("complexType" => "object", "keyAttribute" => "type"));
+        $this->_unserializer = &new XML_Unserializer(array("complexType" => "object"));
     }
     // }}}
 
@@ -161,7 +161,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
             } elseif ($root == "error") {
                 $errno  = key(get_object_vars($data));
-                return Services_Weather::raiseError($this->errorMessage($errno), $errno);
+                return Services_Weather::raiseError($this->_errorMessage($errno), $errno);
             } else {
                 foreach(get_object_vars($data) as $key => $val) {
                     switch($key) {
@@ -426,6 +426,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             }
             $forecastReturn["cache"] = "MISS";
         }
+
         $update = implode(" ", array_slice(explode(" ", $this->_forecast->lsup ), 0, 3));
 
         $forecastReturn["update"] = date($this->_dateFormat." ".$this->_timeFormat, strtotime($update));

@@ -156,7 +156,7 @@ class Services_Weather {
     */
     function &raiseError($code = SERVICES_WEATHER_ERROR_UNKNOWN_ERROR)
     {
-        $message = "Services_Weather: ".$this->errorMessages($code);
+        $message = "Services_Weather: ".$this->_errorMessage($code);
 
         return PEAR::raiseError($message, $code, PEAR_ERROR_RETURN, E_USER_NOTICE, "Services_Weather_Error", null, false);
     }
