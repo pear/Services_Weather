@@ -127,9 +127,13 @@ class Services_Weather_Common {
     /**
     * Constructor
     *
+    * @param    array                       $options
+    * @return   PEAR_Error|bool
+    * @throws   PEAR_Error
+    * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Common()
+    function Services_Weather_Common($options)
     {
         // Ugly, but it works. Why isn't file_exists capable of searching
         // through the include_path? *sigh*
@@ -139,7 +143,32 @@ class Services_Weather_Common {
                 $this->{"_has".basename($files[$i], ".php")} = true;
                 fclose($fp);
             }
-        }        
+        }
+
+        // Set options accordingly        
+        if (isset($options["cacheType"])) {
+            if (isset($options["cacheOptions"])) {
+                $status = $this->setCache($options["cacheType"], $options["cacheOptions"]);
+            } else {
+                $status = $this->setCache($options["cacheType"]);
+            }
+        }
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+
+        if (isset($options["unitsFormat"])) {
+            $this->setUnitsFormat($options["unitsFormat"]);
+        }
+        
+        if (isset($options["dateFormat"])) {
+            $this->setDateTimeFormat($options["dateFormat"]);
+        }
+        if (isset($options["timeFormat"])) {
+            $this->setDateTimeFormat($options["timeFormat"]);
+        }
+        
+        return true;
     }
     // }}}
 

@@ -70,9 +70,27 @@ class Services_Weather {
     /**
     * Factory for creating the services-objects
     *
+    * Usable keys for the options array are:
+    * o debug           enables debugging output
+    * --- Common Options
+    * o cacheType       defines what type of cache to use
+    * o cacheOptions    passes cache options
+    * o unitsFormat     use (US)-standard or metric units
+    * o dateFormat      string to use for date output
+    * o timeFormat      string to use for time output
+    * --- GlobalWeather Options
+    * none
+    * --- METAR Options
+    * o dsn             String for defining the DB connection
+    * o dbOptions       passes DB options
+    * --- weather.com Options
+    * o partnerID       You'll receive these keys after registering
+    * o licenseKey      with the weather.com XML-service
+    *
     * @param    string                      $service
     * @param    array                       $options
     * @return   PEAR_Error|object
+    * @throws   PEAR_Error
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND
     * @access   public
     */
@@ -96,7 +114,7 @@ class Services_Weather {
         }
 
         // Create service and return
-        @$obj = &new $classname;
+        @$obj = &new $classname($options);
 
         return $obj;
     }

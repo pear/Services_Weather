@@ -73,14 +73,21 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     /**
     * Constructor
     *
-    * @return   PEAR_Error
+    * @param    array                       $options
+    * @return   PEAR_Error|bool
+    * @throws   PEAR_Error
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_SOAP_NOT_INSTALLED
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+    * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Globalweather()
+    function Services_Weather_Globalweather($options)
     {
-        $this->Services_Weather_Common();
+        $status = $this->Services_Weather_Common($options);
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+
         if (!$this->_hasClient) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SOAP_NOT_INSTALLED);
         }
@@ -90,9 +97,16 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         if (Services_Weather::isError($this->_wsdl)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
         }
+
         eval($this->_wsdl->generateAllProxies());
+        if (!class_exists("WebService_GlobalWeather_StationInfo") || !class_exists("WebService_GlobalWeather_GlobalWeather")) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+        }
+
         $this->_stationSoap = &new WebService_GlobalWeather_StationInfo;
         $this->_weatherSoap = &new WebService_GlobalWeather_GlobalWeather;
+        
+        return true;
     }
     // }}}
 

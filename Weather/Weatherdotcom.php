@@ -80,17 +80,40 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Constructor
     *
+    * @param    array                       $options
+    * @return   PEAR_Error|bool
+    * @throws   PEAR_Error
+    * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Weatherdotcom()
+    function Services_Weather_Weatherdotcom($options)
     {
-        $this->Services_Weather_Common();
+        $status = $this->Services_Weather_Common($options);
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+
         if (!$this->_hasUnserializer) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_XML_NOT_INSTALLED);
         }
+
+        // Set options accordingly
+        if (isset($options["partnerID"])) {
+            $this->setAccountData($options["partnerID"]);
+        }
+        if (isset($options["licenseKey"])) {
+            $this->setAccountData("", $options["licenseKey"]);
+        }
         
         require_once "XML/Unserializer.php";
-        $this->_unserializer = &new XML_Unserializer(array("complexType" => "object"));
+        $unserializer = &new XML_Unserializer(array("complexType" => "object"));
+        if (Services_Weather::isError($unserializer)) {
+            return $unserializer;
+        } else {
+            $this->_unserializer = $unserializer;
+        }
+        
+        return true;
     }
     // }}}
 

@@ -68,12 +68,33 @@ class Services_Weather_Metar extends Services_Weather_Common
     /**
     * Constructor
     *
+    * @param    array                       $options
+    * @return   PEAR_Error|bool
+    * @throws   PEAR_Error
+    * @see      Science_Weather::Science_Weather
     * @access   private
     */
-    function Services_Weather_Metar()
+    function Services_Weather_Metar($options)
     {
-        $this->Services_Weather_Common();
-    }
+        $status = $this->Services_Weather_Common($options);
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+        
+        // Set options accordingly        
+        if (isset($options["dsn"])) {
+            if (isset($options["dbOptions"])) {
+                $status = $this->setMetarDB($options["dsn"], $options["dbOptions"]);
+            } else {
+                $status = $this->setMetarDB($options["dsn"]);
+            }
+        }
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+        
+        return true;
+   }
     // }}}
 
     // {{{ setMetarDB()
@@ -84,13 +105,13 @@ class Services_Weather_Metar extends Services_Weather_Common
     * NOAA-website.
     *
     * @param    string                      $dsn
-    * @param    array                       $options
+    * @param    array                       $dbOptions
     * @return   DB_Error|bool
     * @throws   DB_Error
     * @see      DB::parseDSN
     * @access   public
     */
-    function setMetarDB($dsn, $options = array())
+    function setMetarDB($dsn, $dbOptions = array())
     {
         $dsninfo = DB::parseDSN($dsn);
         if (is_array($dsninfo) && !isset($dsninfo["mode"])) {
@@ -98,7 +119,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         }
         
         // Initialize connection to DB and store in object if successful
-        $db =  DB::connect($dsninfo, $options);
+        $db =  DB::connect($dsninfo, $dbOptions);
         if (DB::isError($db)) {
             return $db;
         }
