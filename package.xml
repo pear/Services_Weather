@@ -34,12 +34,16 @@
                 o Added trend handling to METAR
                 o Rewrote visibility regexp in METAR decoding
                 o Rewrote condition regexp in METAR decoding
+                o Rewrote precipitation regexp in remarks decoding
                 o Fixed parsing of presschg in remarks decoding
                 o Fixed parsing of sensors in remarks decoding
+                o Fixed faulty conversion of precipitation
                 o Improved path-checking when files are used as source
             - Weatherdotcom.php
                 o Added functionality for fetching the mandatory
                   promotional links
+                o Fixed still broken update calculation to adjust
+                  for inconsistent weather.com behaviour
                 o Switched update in forecastReturn to GMT,
                   to mirror behaviour in weatherReturn
                 o Added updateRaw to weatherForecast-array
