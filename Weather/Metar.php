@@ -1047,6 +1047,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                     $from = $lresult[1].":00";
                                     $to   = $lresult[2].":00";
+                                    $to   = ($to == "24:00") ? "00:00" : $to;
                                     // Same as above, we have a time for this FMC from our TAF, 
                                     // increase field-counter
                                     $i++;
