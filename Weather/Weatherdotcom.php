@@ -136,9 +136,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     * @param    string                      $id
     * @param    string                      $url
     * @param    int                         $days
-    * @return   PHP_Error|bool
-    * @throws   PHP_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws	PHP_Error
+    * @return   PEAR_Error|bool
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+    * @throws   PEAR_Error
     * @access   private
     */
     function _parseWeatherData($id, $url, $unitsFormat = "", $days = 0)
@@ -200,9 +200,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $location
     * @param    bool                        $useFirst       If set, first ID of result-array is returned
-    * @return   PHP_Error|array|string
-    * @throws   PHP_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws   PHP_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+    * @return   PEAR_Error|array|string
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
     * @access   public
     */
     function searchLocation($location, $useFirst = FALSE)
@@ -237,8 +237,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $id
     * @param    string                      $unitsFormat
-    * @return   PHP_Error|array
-    * @throws   PHP_Error
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error
     * @access   public
     */
     function getUnits($id = "", $unitsFormat = "")
@@ -285,8 +285,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     * Returns the data for the location belonging to the ID
     *
     * @param    string                      $id
-    * @return   PHP_Error|array
-    * @throws   PHP_Error
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error
     * @access   public
     */
     function getLocation($id = "")
@@ -329,8 +329,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     *
     * @param    string                      $id
     * @param    string                      $unitsFormat
-    * @return   PHP_Error|array
-    * @throws   PHP_Error
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error
     * @access   public
     */
     function getWeather($id = "", $unitsFormat = "")
@@ -391,8 +391,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     * @param    string                      $id
     * @param    int                         $days           Values between 1 and 10
     * @param    string      $unitsFormat
-    * @return   PHP_Error|array
-    * @throws   PHP_Error
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error
     * @access   public
     */
     function getForecast($id = "", $days = 2, $unitsFormat = "")
