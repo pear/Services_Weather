@@ -387,7 +387,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         }
         $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->temperature->ambient, "c", $units["temp"]);
         $feltTemperature = $this->calculateWindChill($this->convertTemperature($weatherReturn["temperature"], $units["temp"], "f"), $this->convertSpeed($weatherReturn["wind"], $units["wind"], "mph"));
-        $weatherReturn["feltTemperature"]   = $this->convertTemperature($feltTemperature, "f", strtolower($units["temp"]));
+        $weatherReturn["feltTemperature"]   = $this->convertTemperature($feltTemperature, "f", $units["temp"]);
         $weatherReturn["dewPoint"]          = $this->convertTemperature($this->_weather->temperature->dewpoint, "c", $units["temp"]);
         $weatherReturn["humidity"]          = $this->_weather->temperature->relative_humidity;
         $weatherReturn["pressure"]          = $this->convertPressure($this->_weather->pressure->altimeter, "hpa", $units["pres"]);
