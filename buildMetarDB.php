@@ -19,7 +19,6 @@
 //
 // $Id$
 
-require_once "PEAR.php";
 require_once "DB.php";
 
 // {{{ constants
