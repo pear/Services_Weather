@@ -186,13 +186,13 @@ if (isset($weather["trend"]) && sizeof($weather["trend"])) {
                 case "type":
                     switch ($val) {
                         case "NOSIG":
-                            $string = "No significant weather";
+                            $string = "No Significant Weather";
                             break;
                         case "TEMPO":
-                            $string = "Temporary weather";
+                            $string = "Temporary Weather";
                             break;
                         case "BECMG":
-                            $string = "Weather becoming";
+                            $string = "Weather Becoming";
                             break;
                     }
                     $value  = "";
