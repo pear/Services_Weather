@@ -68,31 +68,22 @@ class Services_Weather_Metar extends Services_Weather_Common
     * tool buildMetarDB first, it fetches the locations and airports from a
     * NOAA-website.
     *
-    * @param    string                      $dbType
-    * @param    string                      $dbUser
-    * @param    string                      $dbPass
-    * @param    string                      $dbHost
-    * @param    string                      $dbName
-    * @param    array                       $dbOptions
+    * @param    string                      $dsn
+    * @param    array                       $options
     * @return   DB_Error|bool
     * @throws   DB_Error
-    * @see      DB
+    * @see      DB::parseDSN
     * @access   public
     */
-    function setMetarDB($dbType, $dbUser, $dbPass, $dbHost, $dbName, $dbOptions)
+    function setMetarDB($dsn, $options)
     {
-        $dsn     = $dbType."://".$dbUser.":".$dbPass."@".$dbHost."/".$dbName;
-        $dsninfo = array(
-            "phptype"  => $dbType,
-            "username" => $dbUser,
-            "password" => $dbPass,
-            "hostspec" => $dbHost,
-            "database" => $dbName,
-            "mode"     => 0644
-        );
+        $dsninfo = DB::parseDSN($dsn);
+        if (is_array($dsninfo) && !isset($dsninfo["mode"])) {
+            $dsninfo["mode"]= 0644;
+        }
         
         // Initialize connection to DB and store in object if successful
-        $db =  DB::connect($dsninfo, $dbOptions);
+        $db =  DB::connect($dsninfo, $options);
         if (DB::isError($db)) {
             return $db;
         }
