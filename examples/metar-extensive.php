@@ -33,7 +33,6 @@
 //-------------------------------------------------------------------------
 // This is the area, where you can customize the script
 //-------------------------------------------------------------------------
-//$location    = "Kennedy International Airport"; // The city we want to fetch the data for.
 $location    = "Bonn, Germany"; // The city we want to fetch the data for.
                                 // Where the search function will look for
                                 // the ICAO database (generated with the
@@ -463,6 +462,7 @@ for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
     $time    = $start." - ".$end;
     $class   = ' class="bold"';
     // This is for outputting "Becoming", "Temporary" and such
+    $fmc     = isset($row["fmc"]) ? $row["fmc"] : false; 
     $fmctype = "";
     $fmccnt  = 0;
 
@@ -504,7 +504,7 @@ for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
                         $clouds  = "";
                         for ($j = 0; $j < sizeof($row["clouds"]); $j++) {
                             $cloud = ucwords($row["clouds"][$j]["amount"]);
-                            if (isset($val[$j]["type"])) {
+                            if (isset($row["clouds"][$j]["type"])) {
                                 $cloud .= " ".$row["clouds"][$j]["type"];
                             }
                             if (isset($row["clouds"][$j]["height"])) {
@@ -539,8 +539,8 @@ for ($i = 0; $i < sizeof($forecast["time"]); $i++) {
         // Now check for significant weather changes and move
         // the row accordingly... maybe ugly coding, but this
         // is for showing design, not for fany programming ;-)
-        if (isset($row["fmc"]) && $fmccnt < sizeof($row["fmc"])) {
-            $row     = $row["fmc"][$fmccnt];
+        if ($fmc && $fmccnt < sizeof($fmc)) {
+            $row     = $fmc[$fmccnt];
             $fmccnt++;
             $fmctype = $row["type"];
             // Check if we have a timestamp, don't output if it's
