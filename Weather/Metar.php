@@ -548,8 +548,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $weatherData["precipitation"] = array();
                                 }
                                 if (!is_numeric($result[1])) {
-                                    $precip = "indetermindable";
-                                } elseif ($result[1] == 0) {
+                                    $precip = "indeterminable";
+                                } elseif ($result[1] == "0000") {
                                     $precip = "traceable";
                                 }else {
                                     $precip = $result[1] / 100;
@@ -567,8 +567,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $weatherData["precipitation"] = array();
                                 }
                                 if (!is_numeric($result[1])) {
-                                    $precip = "indetermindable";
-                                } elseif ($result[1] == 0) {
+                                    $precip = "indeterminable";
+                                } elseif ($result[1] == "0000") {
                                     $precip = "traceable";
                                 }else {
                                     $precip = $result[1] / 100;
@@ -585,8 +585,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $weatherData["precipitation"] = array();
                                 }
                                 if (!is_numeric($result[1])) {
-                                    $precip = "indetermindable";
-                                } elseif ($result[1] == 0) {
+                                    $precip = "indeterminable";
+                                } elseif ($result[1] == "0000") {
                                     $precip = "traceable";
                                 }else {
                                     $precip = $result[1] / 100;
@@ -1055,7 +1055,11 @@ class Services_Weather_Metar extends Services_Weather_Common
                     $newVal = array();
                     for ($p = 0; $p < sizeof($val); $p++) {
                         $newVal[$p] = array();
-                        $newVal[$p]["amount"] = $this->convertPressure($val[$p]["amount"], "in", $units["rain"]);
+                        if (is_numeric($val[$p]["amount"])) {
+                            $newVal[$p]["amount"] = $this->convertPressure($val[$p]["amount"], "in", $units["rain"]);
+                        } else {
+                            $newVal[$p]["amount"] = $val[$p]["amount"];
+                        }
                         $newVal[$p]["hours"]  = $val[$p]["hours"];
                     }
                     break;
