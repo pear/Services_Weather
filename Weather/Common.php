@@ -64,11 +64,12 @@ class Services_Weather_Common {
     * @access   private
     */
     var $_customUnitsFormat = array(
-        "temp"  => "f",
-        "vis"   => "sm",
-        "wind"  => "mph",
-        "pres"  => "in",
-        "rain"  => "in"
+        "temp"   => "f",
+        "vis"    => "sm",
+        "height" => "ft",
+        "wind"   => "mph",
+        "pres"   => "in",
+        "rain"   => "in"
     );
 
 	/**
@@ -226,11 +227,12 @@ class Services_Weather_Common {
         static $acceptedFormats;
         if (!isset($acceptedFormats)) {
             $acceptedFormats = array(
-                "temp"  => array("c", "f"),
-                "vis"   => array("km", "ft", "sm"),
-                "wind"  => array("mph", "kmh", "kt", "mps", "fps"),
-                "pres"  => array("in", "hpa", "mb", "mm", "atm"),
-                "rain"  => array("in", "mm")
+                "temp"   => array("c", "f"),
+                "vis"    => array("m", "km", "ft", "sm"),
+                "height" => array("m", "ft"),
+                "wind"   => array("mph", "kmh", "kt", "mps", "fps"),
+                "pres"   => array("in", "hpa", "mb", "mm", "atm"),
+                "rain"   => array("in", "mm")
             );
         }
         
@@ -283,18 +285,20 @@ class Services_Weather_Common {
 
         $c = $this->_customUnitsFormat;
         $m = array(
-            "temp"  => "c",
-            "vis"   => "km",
-            "wind"  => "kmh",
-            "pres"  => "mb",
-            "rain"  => "mm"
+            "temp"   => "c",
+            "vis"    => "km",
+            "height" => "m",
+            "wind"   => "kmh",
+            "pres"   => "mb",
+            "rain"   => "mm"
         );
         $s = array(
-            "temp"  => "f",
-            "vis"   => "sm",
-            "wind"  => "mph",
-            "pres"  => "in",
-            "rain"  => "in"
+            "temp"   => "f",
+            "vis"    => "sm",
+            "height" => "ft",
+            "wind"   => "mph",
+            "pres"   => "in",
+            "rain"   => "in"
         );
 
         return ${$unitsFormat};
@@ -446,14 +450,17 @@ class Services_Weather_Common {
         static $factor;
         if (!isset($factor)) {
             $factor = array(
+                "m" => array(
+                    "m" => 1,            "km" => 1000,      "ft" => 3.280839895, "sm" => 0.0006213699
+                ),
                 "km" => array(
-                    "km" => 1,         "ft" => 3280.839895, "sm" => 0.6213699
+                    "m" => 0.001,        "km" => 1,         "ft" => 3280.839895, "sm" => 0.6213699
                 ),
                 "ft" => array(
-                    "km" => 0.0003048, "ft" => 1,           "sm" => 0.0001894
+                    "m" => 0.3048,       "km" => 0.0003048, "ft" => 1,           "sm" => 0.0001894
                 ),
                 "sm" => array(
-                    "km" => 1.6093472, "ft" => 5280.0106,   "sm" => 1
+                    "m" => 0.0016093472, "km" => 1.6093472, "ft" => 5280.0106,   "sm" => 1
                 )
             );
         }

@@ -370,7 +370,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 	            if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLEAR") {
 	                $layers[$i]             = array();
 	                $layers[$i]["amount"]   = $clouds[$this->_weather->sky->layers[$i]->extent];
-	                $layers[$i]["height"]   = $this->convertDistance($this->_weather->sky->layers[$i]->altitude / 1000, "km", "ft");
+	                $layers[$i]["height"]   = $this->convertDistance($this->_weather->sky->layers[$i]->altitude, "m", $units["height"]);
 	                if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLOUD") {
 	                    $layers[$i]["type"] = ucwords(str_replace("_", "", $this->_weather->sky->layers[$i]->type));
 	                }

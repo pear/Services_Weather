@@ -1068,6 +1068,9 @@ class Services_Weather_Metar extends Services_Weather_Common
                         case "visibility":
                             $newVal = $this->convertDistance($val, "sm", $units["vis"]);
                             break;
+                        case "height":
+                            $newVal = $this->convertDistance($val, "ft", $units["height"]);
+                            break;
                         case "temperature":
                         case "dewPoint":
                         case "feltTemperature":
