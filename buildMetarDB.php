@@ -85,6 +85,26 @@ function Services_Weather_checkData($data, $dataOrder)
 }
 // }}}
 
+// {{{ Services_Weather_getNextArg()
+/**
+* Services_Weather_getNextArg
+*
+* Checks, if the next argument is a parameter to a predecessing option.
+* Returns either that parameter or false, if the next argument is an option
+*
+* @param    int                             $c              Internal argument counter
+* @return   string|bool
+*/
+function Services_Weather_getNextArg(&$c)
+{
+    if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
+        $c++;
+        return $_SERVER["argv"][$c];
+    } else {
+        return false;
+    }    
+}
+// }}}
 
 // First set a few variables for processing the options
 $modeSet   = false;
@@ -128,10 +148,7 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
             break;
         case "f":
             // file-flag was provided, check if next argument is a string
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $userFile  = $_SERVER["argv"][$c + 1];
-                $c++;
-            } else {
+            if (($userFile = Services_Weather_getNextArg($c)) === false) {
                 $printHelp = true;
             }
             break;
@@ -141,70 +158,50 @@ for ($c = 1; $c < $_SERVER["argc"]; $c++) {
             break;
         case "t":
             // The type of the DB to be used
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $dbType    = $_SERVER["argv"][$c + 1];
-                $c++;
-            } else {
+            if (($dbType = Services_Weather_getNextArg($c)) === false) {
                 $printHelp = true;
             }
             break;
         case "r":
             // The protocol of the DB to be used
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $dbProt    = $_SERVER["argv"][$c + 1];
-                $c++;
-            } else {
-               $printHelp  = true;
+            if (($dbProt = Services_Weather_getNextArg($c)) === false) {
+                $printHelp = true;
             }
             break;
         case "d":
             // The name of the DB to be used
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $dbName    = $_SERVER["argv"][$c + 1];
-                $c++;
-            } else {
+            if (($dbName = Services_Weather_getNextArg($c)) === false) {
                 $printHelp = true;
             }
             break;
         case "u":
             // The user of the DB to be used
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $dbUser    = $_SERVER["argv"][$c + 1];
-                $c++;
-            } else {
+            if (($dbUser = Services_Weather_getNextArg($c)) === false) {
                 $printHelp = true;
             }
             break;
         case "p":
             // The password of the DB to be used
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $dbPass    = $_SERVER["argv"][$c + 1];
-                $c++;
-            } else {
+            if (($dbPass = Services_Weather_getNextArg($c)) === false) {
                 $printHelp = true;
             }
             break;
         case "h":
             // The host of the DB to be used
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $dbHost    = $_SERVER["argv"][$c + 1];
-                $c++;
-            } else {
+            if (($dbHost = Services_Weather_getNextArg($c)) === false) {
                 $printHelp = true;
             }
             break;
         case "o":
             // Options for the DB
-            if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {
-                $options   = $_SERVER["argv"][$c + 1];
+            if (($options = Services_Weather_getNextArg($c)) === false) {
+                $printHelp = true;
+            } else {
                 $options   = explode(",", $options);
                 foreach ($options as $option) {
                     $optPair = explode("=", $option);
                     $dbOptions[$optPair[0]] = $optPair[1];
                 }
-                $c++;
-            } else {
-                $printHelp = true;
             }
             break;
         case "v":
