@@ -5,10 +5,12 @@
         This class acts as an interface to various online weather-services.
     </summary>
     <description>
-        Services_Weather searches for given locations and retrieves current weather data
-        and, dependant on the used service, also forecasts. Up to now, GlobalWeather-SOAP,
-        weather.com-XML and METAR from noaa.gov are supported, further services will get
-        included, if they become available, have a usable API and are properly documented.
+        Services_Weather searches for given locations and retrieves current
+        weather data and, dependant on the used service, also forecasts. Up to
+        now, GlobalWeather from CapeScience, a XML service from weather.com
+        and METAR from noaa.gov are supported, further services will get
+        included, if they become available, have a usable API and are properly
+        documented.
     </description>
 	<maintainers>
 		<maintainer>
@@ -20,11 +22,11 @@
     </maintainers>
     <release>
         <version>1.0.0RC1</version>
-        <date>2003-10-09</date>
+        <date>2003-10-08</date>
 		<license>PHP License</license>
         <state>beta</state>
 		<notes>
-			This is the first release.
+            This is the first release candidate for the first release.
 		</notes>
 		<deps>
 			<dep type="php" rel="ge">4.3.0</dep>
