@@ -24,14 +24,14 @@
         <version>1.3.0</version>
         <date>2004-07-12</date>
         <license>PHP License</license>
-        <state>beta</state>
+        <state>stable</state>
         <notes>
+            - Weather.php, Metar.php
+                o Introduced TAF as source for forecasts            
             - metar-extensive.php, weather.com-extensive.php
                 o Created two example pages for showing off...
                   they feature (almost) everything those classes
                   have available. 
-            - Weather.php, Metar.php
-                o Introduced TAF as source for forecasts            
             - Common.php, Globalweather.php, Metar.php
                 o Added height as unit for cloudlayers
             - Metar.php
