@@ -26,6 +26,7 @@ require_once "XML/Unserializer.php";
 // {{{ class Services_Weather_Weatherdotcom
 /**
 * PEAR::Services_Weather_Weatherdotcom
+*
 * This class acts as an interface to the xml service of weather.com. It searches for given
 * locations and retrieves current weather data as well as forecast for up to 10 days.
 *
@@ -53,7 +54,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Partner-ID at weather.com
     *
-    * @var      string      $_partnerID;
+    * @var      string                      $_partnerID;
     * @access   private
     */
     var $_partnerID;
@@ -61,7 +62,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * License key at weather.com
     *
-    * @var      string      $_licenseKey
+    * @var      string                      $_licenseKey
     * @access   private
     */
     var $_licenseKey;
@@ -69,7 +70,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * XML_Unserializer, used for processing the xml
     *
-    * @var      object XML_Unserializer $_unserializer
+    * @var      object XML_Unserializer     $_unserializer
     * @access   private
     */
     var $_unserializer;
@@ -92,8 +93,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Sets the neccessary account-information for weather.com, you'll receive them after registering for the XML-stream
     *
-    * @param    string      $partnerID
-    * @param    string      $licenseKey
+    * @param    string                      $partnerID
+    * @param    string                      $licenseKey
     * @access   public
     */
     function setAccountData($partnerID, $licenseKey)
@@ -111,7 +112,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Checks the id for valid values and thus prevents silly requests to weather.com server
     *
-    * @param    string      $id
+    * @param    string                      $id
     * @return   PEAR_Error|bool
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
@@ -132,9 +133,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Parses the data returned by the provided URL and caches it
     *
-    * @param    string      $id
-    * @param    string      $url
-    * @param    int         $days
+    * @param    string                      $id
+    * @param    string                      $url
+    * @param    int                         $days
     * @return   PHP_Error|bool
     * @throws   PHP_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @throws	PHP_Error
@@ -197,8 +198,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Searches IDs for given location, returns array of possible locations or single ID
     *
-    * @param    string      $location
-    * @param    bool        $useFirst           If set, first ID of result-array is returned
+    * @param    string                      $location
+    * @param    bool                        $useFirst       If set, first ID of result-array is returned
     * @return   PHP_Error|array|string
     * @throws   PHP_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @throws   PHP_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
@@ -234,8 +235,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Returns the units for the current query
     *
-    * @param    string      $id
-    * @param    string      $unitsFormat
+    * @param    string                      $id
+    * @param    string                      $unitsFormat
     * @return   PHP_Error|array
     * @throws   PHP_Error
     * @access   public
@@ -283,7 +284,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Returns the data for the location belonging to the ID
     *
-    * @param    string      $id
+    * @param    string                      $id
     * @return   PHP_Error|array
     * @throws   PHP_Error
     * @access   public
@@ -326,8 +327,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Returns the weather-data for the supplied location
     *
-    * @param    string      $id
-    * @param    string      $unitsFormat
+    * @param    string                      $id
+    * @param    string                      $unitsFormat
     * @return   PHP_Error|array
     * @throws   PHP_Error
     * @access   public
@@ -387,8 +388,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     /**
     * Get the forecast for the next days
     *
-    * @param    string      $id
-    * @param    int         $days               Values between 1 and 10
+    * @param    string                      $id
+    * @param    int                         $days           Values between 1 and 10
     * @param    string      $unitsFormat
     * @return   PHP_Error|array
     * @throws   PHP_Error
