@@ -356,10 +356,13 @@ class Services_Weather_Common {
     /**
     * Convert speed between mph, kmh, kt, mps, fps and bft
     *
+    * Function will return "false" when trying to convert from
+    * Beaufort, as it is a scale and not a true measurement
+    *
     * @param    float                       $speed
     * @param    string                      $from
     * @param    string                      $to
-    * @return   float
+    * @return   float|bool
     * @access   public
     */
     function convertSpeed($speed, $from, $to)
@@ -405,6 +408,8 @@ class Services_Weather_Common {
                 }
             }
             return sizeof($beaufort);
+        } elseif ($from == "bft") {
+            return false;
         } else {
             return round($speed * $factor[$from][$to], 2);
         }
