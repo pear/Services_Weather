@@ -27,22 +27,22 @@
         <state>stable</state>
         <notes>
         	- Weather.php, Common.php, Metar.php
-        		o Fixed bug #896: Improvement for get_class()-usage	
-            - Ejse.php, Globalweather.php
+        		o Fixed bug #896: Improvement for get_class()-usage
+        	- Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php 	
                 o Fixed bug #1074: Set timeout for requests
-                  Added timeout parameter to WSDL-constructor
-            - Weatherdotcom.php
-                o Fixed bug #1074: Set timeout for requests
-                  Switched to using HTTP_Request.
+                  Added $_httpTimeout and setHttpTimeout() to Common.php
+                  Added documentation of httpTimeout option in Weather.php
+                  Added timeout parameter to WSDL-constructors in Ejse.php and Globalweather.php
+                  Switched to using HTTP_Request in Weatherdotcom.php
             - Globalweather.php
             	o Fixed wrong behaviour when sky->layers is a string
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
-            <dep optional="yes" type="pkg" rel="ge" version="1.4.0">DB</dep>
-            <dep optional="yes" type="pkg" rel="ge" version="1.2.0">HTTP_Request</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="1.4">DB</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="1.2">HTTP_Request</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.7.5">SOAP</dep>
-            <dep optional="yes" type="pkg" rel="ge" version="0.8.0">XML_Serializer</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
         </deps>
         <filelist>
             <dir name="/" baseinstalldir="Services">
