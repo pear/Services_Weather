@@ -1032,7 +1032,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 break;
                             case "tempmin":
                                 // Parse max/min temperature
-                                $forecastData["temperatureLow"]  = $this->convertTemperature($result[4], "c", "f");
+                                $forecastData["temperatureLow"]  = $this->convertTemperature($result[1], "c", "f");
                                 break;
                             case "tempmaxmin":
                                 $forecastData["temperatureHigh"] = $this->convertTemperature($result[1], "c", "f");
