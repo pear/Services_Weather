@@ -448,10 +448,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $forecastReturn["cache"] = "MISS";
         }
 
-        $update = implode(" ", array_slice(explode(" ", $this->_forecast->lsup ), 0, 3));
+        $update = str_replace("Local Time", "", $this->_forecast->lsup);
 
-        $forecastReturn["update"] = date($this->_dateFormat." ".$this->_timeFormat, strtotime($update));
-        $forecastReturn["days"]   = array();
+        $forecastReturn["update"]    = gmdate($this->_dateFormat." ".$this->_timeFormat, strtotime($update));
+        $forecastReturn["updateRaw"] = $this->_forecast->lsup;
+        $forecastReturn["days"]      = array();
 
         for ($i = 0; $i < $days; $i++) {
             $day = array(
