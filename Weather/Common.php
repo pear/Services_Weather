@@ -181,7 +181,7 @@ class Services_Weather_Common {
         // so we have to do that on our own...
         @include_once "Cache.php";
         @$cache = new Cache($cacheType, $cacheOptions);
-        if (!is_object($cache) || is_a("cache")) {
+        if (!is_object($cache) || is_a($cache, "cache")) {
             $this->_cache        = null;
             $this->_cacheEnabled = false;
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED);
