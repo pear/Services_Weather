@@ -252,23 +252,26 @@ class Services_Weather_Common {
         $from = strtolower($from);
         $to   = strtolower($to);
 
-        $factor = array(
-            "mph" => array(
-                "mph" => 1,         "kmh" => 1.609344, "kt" => 0.8689762, "mps" => 0.44704,   "fps" => 1.4666667
-            ),
-            "kmh" => array(
-                "mph" => 0.6213712, "kmh" => 1,        "kt" => 0.5399568, "mps" => 0.2777778, "fps" => 0.9113444
-            ),
-            "kt"  => array(
-                "mph" => 1.1507794, "kmh" => 1.852,    "kt" => 1,         "mps" => 0.5144444, "fps" => 1.6878099
-            ),
-            "mps" => array(
-                "mph" => 2.2369363, "kmh" => 3.6,      "kt" => 1.9438445, "mps" => 1,         "fps" => 3.2808399
-            ),
-            "fps" => array(
-                "mph" => 0.6818182, "kmh" => 1.09728,  "kt" => 0.5924838, "mps" => 0.3048,    "fps" => 1
-            )
-        );
+        static $factor;
+        if (!isset($factor)) {
+            $factor = array(
+                "mph" => array(
+                    "mph" => 1,         "kmh" => 1.609344, "kt" => 0.8689762, "mps" => 0.44704,   "fps" => 1.4666667
+                ),
+                "kmh" => array(
+                    "mph" => 0.6213712, "kmh" => 1,        "kt" => 0.5399568, "mps" => 0.2777778, "fps" => 0.9113444
+                ),
+                "kt"  => array(
+                    "mph" => 1.1507794, "kmh" => 1.852,    "kt" => 1,         "mps" => 0.5144444, "fps" => 1.6878099
+                ),
+                "mps" => array(
+                    "mph" => 2.2369363, "kmh" => 3.6,      "kt" => 1.9438445, "mps" => 1,         "fps" => 3.2808399
+                ),
+                "fps" => array(
+                    "mph" => 0.6818182, "kmh" => 1.09728,  "kt" => 0.5924838, "mps" => 0.3048,    "fps" => 1
+                )
+            );
+        }
 
         return round($speed * $factor[$from][$to], 2);
     }
@@ -289,23 +292,26 @@ class Services_Weather_Common {
         $from = strtolower($from);
         $to   = strtolower($to);
 
-        $factor = array(
-            "in"   => array(
-                "in" => 1,         "hpa" => 33.863887, "mb" => 33.863887, "mm" => 25.4,      "atm" => 0.0334213
-            ),
-            "hpa"  => array(
-                "in" => 0.02953,   "hpa" => 1,         "mb" => 1,         "mm" => 0.7500616, "atm" => 0.0009869
-            ),
-            "mb"   => array(
-                "in" => 0.02953,   "hpa" => 1,         "mb" => 1,         "mm" => 0.7500616, "atm" => 0.0009869
-            ),
-            "mm"   => array(
-                "in" => 0.0393701, "hpa" => 1.3332239, "mb" => 1.3332239, "mm" => 1,         "atm" => 0.0013158
-            ),
-            "atm"  => array(
-                "in" => 29,921258, "hpa" => 1013.2501, "mb" => 1013.2501, "mm" => 759.999952, "atm" => 1
-            )
-        );
+        static $factor;
+        if (!isset($factor)) {
+            $factor = array(
+                "in"   => array(
+                    "in" => 1,         "hpa" => 33.863887, "mb" => 33.863887, "mm" => 25.4,      "atm" => 0.0334213
+                ),
+                "hpa"  => array(
+                    "in" => 0.02953,   "hpa" => 1,         "mb" => 1,         "mm" => 0.7500616, "atm" => 0.0009869
+                ),
+                "mb"   => array(
+                    "in" => 0.02953,   "hpa" => 1,         "mb" => 1,         "mm" => 0.7500616, "atm" => 0.0009869
+                ),
+                "mm"   => array(
+                    "in" => 0.0393701, "hpa" => 1.3332239, "mb" => 1.3332239, "mm" => 1,         "atm" => 0.0013158
+                ),
+                "atm"  => array(
+                    "in" => 29,921258, "hpa" => 1013.2501, "mb" => 1013.2501, "mm" => 759.999952, "atm" => 1
+                )
+            );
+        }
 
         return round($pressure * $factor[$from][$to], 2);
     }
@@ -326,17 +332,20 @@ class Services_Weather_Common {
         $to   = strtolower($to);
         $from = strtolower($from);
 
-        $factor = array(
-            "km" => array(
-                "km" => 1,         "ft" => 3280.839895, "sm" => 0.6213699
-            ),
-            "ft" => array(
-                "km" => 0.0003048, "ft" => 1,           "sm" => 0.0001894
-            ),
-            "sm" => array(
-                "km" => 1.6093472, "ft" => 5280.0106,   "sm" => 1
-            )
-        );
+        static $factor;
+        if (!isset($factor)) {
+            $factor = array(
+                "km" => array(
+                    "km" => 1,         "ft" => 3280.839895, "sm" => 0.6213699
+                ),
+                "ft" => array(
+                    "km" => 0.0003048, "ft" => 1,           "sm" => 0.0001894
+                ),
+                "sm" => array(
+                    "km" => 1.6093472, "ft" => 5280.0106,   "sm" => 1
+                )
+            );
+        }
 
         return round($distance * $factor[$from][$to], 2);
     }
