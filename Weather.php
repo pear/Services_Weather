@@ -33,6 +33,8 @@ define("SERVICES_WEATHER_EXPIRES_LINKS",    43200);
 define("SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND",  10);
 define("SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION",   11);
 define("SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA",  12);
+define("SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED",  13);
+define("SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED",   14);
 // }}}
 
 // {{{ error codes defined by weather.com
@@ -117,6 +119,8 @@ class Services_Weather {
                 SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND         => "Requested service could not be found.",
                 SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION          => "Unknown location provided.",
                 SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA         => "Server data wrong or not available.",
+                SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED         => "Cache init was not completed.",
+                SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED          => "MetarDB is not connected.",
                 SERVICES_WEATHER_ERROR_UNKNOWN_ERROR             => "An unknown error has occured.",
                 SERVICES_WEATHER_ERROR_NO_LOCATION               => "No location provided.",
                 SERVICES_WEATHER_ERROR_INVALID_LOCATION          => "Invalid location provided.",
