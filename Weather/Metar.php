@@ -77,10 +77,18 @@ class Services_Weather_Metar extends Services_Weather_Common
     /**
     * The source METAR uses
     *
-    * @var      string                      $_source
+    * @var      string                      $_sourceMetar
     * @access   private
     */
-    var $_source;
+    var $_sourceMetar;
+
+    /**
+    * The source TAF uses
+    *
+    * @var      string                      $_sourceTaf
+    * @access   private
+    */
+    var $_sourceTaf;
 
     /**
     * This path is used to find the METAR data
@@ -131,23 +139,30 @@ class Services_Weather_Metar extends Services_Weather_Common
             return;
         }
         
-        if (isset($options["source"])) {
-            if (isset($options["sourcePath"])) {
-                $sourcePathMetar = $options["sourcePath"];
-            } elseif (isset($options["sourcePathMetar"])) {
-                $sourcePathMetar = $options["sourcePathMetar"];
+        // Setting the data sources for METAR and TAF - have to watch out for older API usage
+        if (($source = isset($options["source"])) || isset($options["sourceMetar"])) {
+            $sourceMetar = $source ? $options["source"] : $options["sourceMetar"]; 
+            if (($sourcePath = isset($options["sourcePath"])) || isset($options["sourcePathMetar"])) {
+                $sourcePathMetar = $sourcePath ? $options["sourcePath"] : $options["sourcePathMetar"];
             } else {
                 $sourcePathMetar = "";
             }
-            if (isset($options["sourcePathTaf"])) {
+        } else {
+            $sourceMetar = "http";
+            $sourcePathMetar = "";
+        }
+        if (isset($options["sourceTaf"])) {
+            $sourceTaf = $options["sourceTaf"];
+            if (isset($option["sourcePathTaf"])) {
                 $sourcePathTaf = $options["sourcePathTaf"];
             } else {
-                $sourcePathTaf = "";
+                $soucePathTaf = "";
             }
-            $this->setMetarSource($options["source"], $sourcePathMetar, $sourcePathTaf);
         } else {
-            $this->setMetarSource("http");
+            $sourceTaf = "http";
+            $sourcePathTaf = "";
         }
+        $this->setMetarSource($sourceMetar, $sourcePathMetar, $sourceTaf, $sourcePathTaf);
     }
     // }}}
 
@@ -190,20 +205,21 @@ class Services_Weather_Metar extends Services_Weather_Common
     * Source can be http, ftp or file.
     * Alternate sourcepaths can be provided.
     *
-    * @param    string                      $source
+    * @param    string                      $sourceMetar
     * @param    string                      $sourcePathMetar
+    * @param    string                      $sourceTaf
     * @param    string                      $sourcePathTaf
     * @access   public
     */
-    function setMetarSource($source, $sourcePathMetar = "", $sourcePathTaf = "")
+    function setMetarSource($sourceMetar, $sourcePathMetar = "", $sourceTaf = "", $sourcePathTaf = "")
     {
-        if (in_array($source, array("http", "ftp", "file"))) {
-            $this->_source = $source;
+        if (in_array($sourceMetar, array("http", "ftp", "file"))) {
+            $this->_sourceMetar = $sourceMetar;
         }
         if (strlen($sourcePathMetar)) {
             $this->_sourcePathMetar = $sourcePathMetar;
         } else {
-            switch ($source) {
+            switch ($sourceMetar) {
                 case "http":
                     $this->_sourcePathMetar = "http://weather.noaa.gov/pub/data/observations/metar/stations/";
                     break;
@@ -215,10 +231,13 @@ class Services_Weather_Metar extends Services_Weather_Common
                     break;
             }
         }
+        if (in_array($sourceTaf, array("http", "ftp", "file"))) {
+            $this->_sourceTaf = $sourceTaf;
+        }
         if (strlen($sourcePathTaf)) {
             $this->_sourcePathTaf = $sourcePathTaf;
         } else {
-            switch ($source) {
+            switch ($sourceTaf) {
                 case "http":
                     $this->_sourcePathTaf = "http://weather.noaa.gov/pub/data/forecasts/taf/stations/";
                     break;

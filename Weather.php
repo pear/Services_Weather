@@ -92,9 +92,10 @@ class Services_Weather {
     * --- METAR/TAF Options
     * o dsn                 String for defining the DB connection
     * o dbOptions           passes DB options
-    * o source              http, ftp or file - type of data-source
+    * o sourceMetar         http, ftp or file - type of data-source for METAR
     * o sourcePathMetar     where to look for the source, URI or filepath,
     *                       of METAR information
+    * o sourceTaf           http, ftp or file - type of data-source for TAF
     * o sourcePathTaf       where to look for the source, URI or filepath,
     *                       of TAF information
     * --- weather.com Options
