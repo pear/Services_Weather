@@ -16,7 +16,7 @@
 // | Authors: Alexander Wirtz <alex@pc4p.net>                             |
 // +----------------------------------------------------------------------+
 //
-// $Id $
+// $Id$
 
 require_once "Services/Weather.php";
 
@@ -38,6 +38,9 @@ $ejse->setUnitsFormat("metric");
 $ejse->setDateTimeFormat("d.m.Y", "H:i");
 
 $location = "81611"; // Aspen, CO
+//$location = "02115"; // Boston, MA
+//$location = "96799"; // Pago Pago, AS
+//$location = "09009"; // Armed Forces Europe -> Error
 
 // Now iterate through available functions for retrieving data
 foreach (array("getLocation", "getWeather", "getForecast") as $function) {
