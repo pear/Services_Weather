@@ -230,7 +230,7 @@ class Services_Weather_Common {
                 "temp"   => array("c", "f"),
                 "vis"    => array("m", "km", "ft", "sm"),
                 "height" => array("m", "ft"),
-                "wind"   => array("mph", "kmh", "kt", "mps", "fps"),
+                "wind"   => array("mph", "kmh", "kt", "mps", "fps", "bft"),
                 "pres"   => array("in", "hpa", "mb", "mm", "atm"),
                 "rain"   => array("in", "mm")
             );
@@ -354,7 +354,7 @@ class Services_Weather_Common {
 
     // {{{ convertSpeed()
     /**
-    * Convert speed between mph, kmh, kt, mps and fps
+    * Convert speed between mph, kmh, kt, mps, fps and bft
     *
     * @param    float                       $speed
     * @param    string                      $from
@@ -368,6 +368,7 @@ class Services_Weather_Common {
         $to   = strtolower($to);
 
         static $factor;
+        static $beaufort;
         if (!isset($factor)) {
             $factor = array(
                 "mph" => array(
@@ -386,9 +387,27 @@ class Services_Weather_Common {
                     "mph" => 0.6818182, "kmh" => 1.09728,  "kt" => 0.5924838, "mps" => 0.3048,    "fps" => 1
                 )
             );
-        }
 
-        return round($speed * $factor[$from][$to], 2);
+            $beaufort = array(
+                  1,   3,   6,  10, 
+                 16,  21,  27,  33,
+                 40,  47,  55,  63,
+                 71,  80,  89,  99,
+                108, 118    
+            );
+        }
+        
+        if ($to == "bft") {
+            $speed = round($speed * $factor[$from]["kt"], 0); 
+            for ($i = 0; $i < sizeof($beaufort); $i++) {
+                if ($speed <= $beaufort[$i]) {
+                    return $i;
+                }
+            }
+            return sizeof($beaufort);
+        } else {
+            return round($speed * $factor[$from][$to], 2);
+        }
     }
     // }}}
 
