@@ -444,7 +444,7 @@ class Services_Weather_Common {
     /**
     * Calculate windchill from temperature and windspeed (enhanced formula)
     *
-    * Temperature has to be entered in ?F!
+    * Temperature has to be entered in deg F, speed in mph!
     *
     * @param    float                       $temperature
     * @param    float                       $speed
@@ -464,7 +464,7 @@ class Services_Weather_Common {
     * This is only an approximation, there is no exact formula, this
     * one here is called Magnus-Formula
     *
-    * Temperature and dewpoint have to be entered in ?C!
+    * Temperature and dewpoint have to be entered in deg C!
     *
     * @param    float                       $temperature
     * @param    float                       $dewPoint
@@ -503,7 +503,7 @@ class Services_Weather_Common {
     * This is only an approximation, there is no exact formula, this
     * one here is called Magnus-Formula
     *
-    * Temperature has to be entered in ?C!
+    * Temperature has to be entered in deg C!
     *
     * @param    float                       $temperature
     * @param    float                       $humidity
