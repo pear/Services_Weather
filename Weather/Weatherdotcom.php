@@ -37,8 +37,7 @@ require_once "Services/Weather/Common.php";
 * implemented in this class. It obeys to the times as written down in the guidelines.
 *
 * For a working example, please take a look at
-*     docs/Services_Weather/examples/weather.com-basic.php and
-*     docs/Services_Weather/examples/weather.com-error.php
+*     docs/Services_Weather/examples/weather.com-basic.php
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.weather.com/services/xmloap.html
