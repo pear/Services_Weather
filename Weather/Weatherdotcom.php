@@ -75,6 +75,14 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     var $_licenseKey = "";
 
     /**
+    * Object containing the promotional links-data
+    *
+    * @var      object stdClass             $_links
+    * @access   private
+    */
+    var $_links;
+
+    /**
     * XML_Unserializer, used for processing the xml
     *
     * @var      object XML_Unserializer     $_unserializer
@@ -214,6 +222,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                         case "head":
                             continue 2;
                             break;
+                        case "prmo":
+                            $varname  = "links";
+                            break;
                         case "loc":
                             $varname  = "location";
                             break;
@@ -295,6 +306,53 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     }
     // }}}
 
+    // {{{ getLinks()
+    /**
+    * Returns the data for the promotional links belonging to the ID
+    *
+    * @param    string                      $id
+    * @return   PEAR_Error|array
+    * @throws   PEAR_Error
+    * @access   public
+    */
+    function getLinks($id = "")
+    {
+        $status = $this->_checkLocationID($id);
+
+        if (Services_Weather::isError($status)) {
+            return $status;
+        }
+
+        $linksReturn = array();
+        $linksURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&link=xoap";
+
+        if ($this->_cacheEnabled && ($links = $this->_cache->get($id, "links"))) {
+            // Get data from cache
+            $this->_links = $links;
+            $linksReturn["cache"] = "HIT";
+        } else {
+            // Same as in the function above...
+            $status = $this->_parseWeatherData($id, $linksURL);
+
+            if (Services_Weather::isError($status)) {
+                return $status;
+            }
+            $linksReturn["cache"] = "MISS";
+        }
+
+        $linksReturn["promo"] = array();
+        for ($i = 0; $i < sizeof($this->_links->link); $i++) {
+            $linksReturn["promo"][$i] = array();
+            $linksReturn["promo"][$i]["title"] = $this->_links->link[$i]->t;
+            // B0rked response (returned is &par=xoap, should be &prod=xoap), fix it
+            $linksReturn["promo"][$i]["link"]  = str_replace("par=", "prod=", $this->_links->link[$i]->l);
+            $linksReturn["promo"][$i]["link"] .= "&par=".$this->_partnerID;
+        }   
+
+        return $linksReturn;
+    }
+    // }}}
+
     // {{{ getLocation()
     /**
     * Returns the data for the location belonging to the ID
@@ -313,7 +371,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         }
 
         $locationReturn = array();
-        $locationURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
+        $locationURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey;
 
         if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
             // Get data from cache
@@ -328,6 +386,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             }
             $locationReturn["cache"] = "MISS";
         }
+
         $locationReturn["name"]      = $this->_location->dnam;
         $locationReturn["time"]      = date($this->_timeFormat, strtotime($this->_location->tm));
         $locationReturn["latitude"]  = $this->_location->lat;
