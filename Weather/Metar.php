@@ -207,6 +207,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         } elseif (!ctype_alpha($id) || (strlen($id) > 4)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
+
         return true;
     }
     // }}}
@@ -706,6 +707,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         if (isset($weatherData["noparse"])) {
             $weatherData["noparse"] = implode(" ",  $weatherData["noparse"]);
         }
+
         return $weatherData;
     }
     // }}}
@@ -786,6 +788,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION);
         }
+
         return $icao;
     }
     // }}}
