@@ -385,6 +385,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $weatherReturn["windDegrees"]     = $this->_weather->wind->d;
         $weatherReturn["windDirection"]   = $this->_weather->wind->t;
         $weatherReturn["humidity"]        = $this->_weather->hmid;
+        $weatherReturn["dewPoint"]        = $this->calculateDewPoint($this->_weather->tmp, $this->_weather->hmid);
         $weatherReturn["visibility"]      = $this->_weather->vis;
         $weatherReturn["uvIndex"]         = $this->_weather->uv->i;
         $weatherReturn["uvText"]          = $this->_weather->uv->t;

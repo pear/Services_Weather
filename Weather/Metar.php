@@ -391,6 +391,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                         $dewPoint *= -1;
                                     }
                                     $weatherData["dewPoint"] = $dewPoint;
+                                    $weatherData["humidity"] = $this->calculateHumidity($temperature, $dewPoint);
                                 }
                                 if (isset($weatherData["wind"])) {
                                     // Now calculate windchill from temperature and windspeed

@@ -366,6 +366,73 @@ class Services_Weather_Common {
     }
     // }}}
 
+    // {{{ calculateHumidity()
+    /**
+    * Calculate humidity from temperature and dewpoint
+    * This is only an approximation, there is no exact formula
+    *
+    * @param    float                       $temperature
+    * @param    float                       $dewPoint
+    * @return   float
+    * @access   public
+    */
+    function calculateHumidity($temperature, $dewPoint)
+    {   
+        // First calculate saturation steam pressure for both temperatures
+        if ($temperature >= 0) {
+            $a = 7.5;
+            $b = 237.3;
+        } else {
+            $a = 7.6;
+            $b = 240.7;
+        }
+        $tempSSP = 6.1078 * pow(10, ($a * $temperature) / ($b + $temperature));
+
+        if ($dewPoint >= 0) {
+            $a = 7.5;
+            $b = 237.3;
+        } else {
+            $a = 7.6;
+            $b = 240.7;
+        }
+        $dewSSP  = 6.1078 * pow(10, ($a * $dewPoint) / ($b + $dewPoint));
+        
+        return round(100 * $dewSSP / $tempSSP, 1);
+    }
+    // }}}
+
+    // {{{ calculateDewPoint()
+    /**
+    * Calculate dewpoint from temperature and humidity
+    * This is only an approximation, there is no exact formula
+    *
+    * @param    float                       $temperature
+    * @param    float                       $humidity
+    * @return   float
+    * @access   public
+    */
+    function calculateDewPoint($temperature, $humidity)
+    {   
+        if ($temperature >= 0) {
+            $a = 7.5;
+            $b = 237.3;
+        } else {
+            $a = 7.6;
+            $b = 240.7;
+        }
+
+        // First calculate saturation steam pressure for temperature
+        $SSP = 6.1078 * pow(10, ($a * $temperature) / ($b + $temperature));
+
+        // Steam pressure
+        $SP  = $humidity / 100 * $SSP;
+
+        $v   = log($SP / 6.1078, 10);
+
+        return  round($b * $v / ($a - $v), 1);
+    }
+    // }}}
+
     // {{{ polar2cartesian()
     /**
     * Convert polar coordinates to cartesian coordinates
