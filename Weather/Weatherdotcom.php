@@ -111,6 +111,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         } else {
             $this->_unserializer = $unserializer;
         }
+        
+		// Can't acquire an object here, has to be clean on every request
+		include_once "HTTP/Request.php";
     }
     // }}}
 
@@ -168,8 +171,16 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     */
     function _parseWeatherData($id, $url)
     {
-        // Get data from URL and unserialize
-        $status = $this->_unserializer->unserialize($url, true);
+		// Get data from URL...
+		$request = &new HTTP_Request($url, array("timeout" => 60));
+		$status = $request->sendRequest();
+        if (Services_Weather::isError($status)) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
+        }
+		$data = $request->getResponseBody();
+    	
+        // ...and unserialize
+        $status = $this->_unserializer->unserialize($data);
 
         if (Services_Weather::isError($status)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);

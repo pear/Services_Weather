@@ -92,7 +92,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         }
 
         include_once "SOAP/Client.php";
-        $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl");
+        $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl", array("timeout" => 60));
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
             $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA);
             return;
@@ -367,20 +367,24 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
             $condition[] = $this->_weather->phenomena[$i]->string;
         }
         $weatherReturn["condition"]         = implode(", ", $condition);
-        $layers    = array();
-        for ($i = 0; $i < sizeof($this->_weather->sky->layers); $i++) {
-            if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLEAR") {
-                $layers[$i]             = array();
-                $layers[$i]["amount"]   = $clouds[$this->_weather->sky->layers[$i]->extent];
-                $layers[$i]["height"]   = $this->convertDistance($this->_weather->sky->layers[$i]->altitude / 1000, "km", "ft");
-                if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLOUD") {
-                    $layers[$i]["type"] = ucwords(str_replace("_", "", $this->_weather->sky->layers[$i]->type));
-                }
-            }
-        }
-        if (sizeof($layers)) {
-            $weatherReturn["clouds"]        = $layers;
-        }
+
+		if (is_array($this->_weather->sky->layers)) {
+	        $layers = array();
+	        for ($i = 0; $i < sizeof($this->_weather->sky->layers); $i++) {
+	            if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLEAR") {
+	                $layers[$i]             = array();
+	                $layers[$i]["amount"]   = $clouds[$this->_weather->sky->layers[$i]->extent];
+	                $layers[$i]["height"]   = $this->convertDistance($this->_weather->sky->layers[$i]->altitude / 1000, "km", "ft");
+	                if (strtoupper($this->_weather->sky->layers[$i]->type) != "CLOUD") {
+	                    $layers[$i]["type"] = ucwords(str_replace("_", "", $this->_weather->sky->layers[$i]->type));
+	                }
+	            }
+	        }
+	        if (sizeof($layers)) {
+	            $weatherReturn["clouds"]        = $layers;
+	        }
+		}
+
         $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->temperature->ambient, "c", $units["temp"]);
         $feltTemperature = $this->calculateWindChill($this->convertTemperature($weatherReturn["temperature"], $units["temp"], "f"), $this->convertSpeed($weatherReturn["wind"], $units["wind"], "mph"));
         $weatherReturn["feltTemperature"]   = $this->convertTemperature($feltTemperature, "f", $units["temp"]);
