@@ -37,7 +37,7 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
-* @version      1.1
+* @version      1.2
 */
 class Services_Weather_Common {
 

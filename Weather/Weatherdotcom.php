@@ -43,10 +43,9 @@ require_once "Services/Weather/Common.php";
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://www.weather.com/services/xmloap.html
 * @example      docs/Services_Weather/examples/weather.com-basic.php
-* @example      docs/Services_Weather/examples/weather.com-error.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
-* @version      1.1
+* @version      1.2
 */
 class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 

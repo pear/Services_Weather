@@ -39,7 +39,7 @@ require_once "Services/Weather/Common.php";
 * @example      docs/Services_Weather/examples/globalweather-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
-* @version      1.1
+* @version      1.2
 */
 class Services_Weather_Globalweather extends Services_Weather_Common {
 
