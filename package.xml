@@ -38,7 +38,7 @@
                 <file role="php">Weather.php</file>
                 <dir name="Weather" role="php">
                     <file>Common.php</file>
-                    <file>GlobalWeather.php</file>
+                    <file>Globalweather.php</file>
                     <file>Metar.php</file>
                     <file>Weatherdotcom.php</file>
                 </dir>
