@@ -856,9 +856,10 @@ class Services_Weather_Metar extends Services_Weather_Common
             array_shift($data);
             $taf = explode(" ", preg_replace("/\s{2,}/", " ", implode(" ", $data)));
 
-            $fromTime =  "";
-            $fmcCount =  0;
-            $pointer  =& $forecastData; 
+            // Add a few local variables for data processing
+            $fromTime =  "";            // The timeperiod the data gets added to
+            $fmcCount =  0;             // If we have FMCs (Forecast Meteorological Conditions), we need this
+            $pointer  =& $forecastData; // Pointer to the array we add the data to 
             for ($i = 0; $i < sizeof($taf); $i++) {
                 // Check for whitespace and step loop, if nothing's there
                 $taf[$i] = trim($taf[$i]);
@@ -873,7 +874,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
                 $found = false;
                 foreach ($tafCode as $key => $regexp) {
-                    // Check if current code matches current metar snippet
+                    // Check if current code matches current taf snippet
                     if (($found = preg_match("/^".$regexp."$/i", $taf[$i], $result)) == true) {
                         $insert = array();
                         switch ($key) {
@@ -882,12 +883,15 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 unset($tafCode["station"]);
                                 break;
                             case "valid":
+                                // Generates the timeperiod the report is valid for
                                 $pointer["valid"] = array();
                                 list($year, $month, $day) = explode("-", date("Y-m-d", $forecastData["update"]));
+                                // Date is in next month
                                 if ($result[1] < $day) {
                                     $month++;
                                 }
                                 $pointer["valid"]["from"] = gmmktime($result[2], 0, 0, $month, $result[1], $year);
+                                // Valid time ends next day
                                 if ($result[2] >= $result[3]) {
                                     $result[1]++;
                                 }
@@ -897,6 +901,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $pointer["time"] = array();
                                 $fromTime = $result[2].":00";
                                 $pointer["time"][$fromTime] = array();
+                                // Set pointer to the first timeperiod
                                 $pointer =& $pointer["time"][$fromTime];
                                 break;
                             case "wind":
@@ -991,18 +996,24 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $pointer["clouds"][] = $cloud;
                                 break;
                             case "from":
+                                // Next timeperiod is coming up, prepare array and
+                                // set pointer accordingly
                                 $fromTime = $result[1].":".$result[2];
                                 $forecastData["time"][$fromTime] = array();
                                 $pointer =& $forecastData["time"][$fromTime];
                                 break;
                             case "fmc";
+                                // Handle the FMC, generate neccessary array if it's the first...
                                 if (!isset($forecastData["time"][$fromTime]["fmc"])) {
                                     $forecastData["time"][$fromTime]["fmc"] = array();
                                 }
-                                $fmcCount = sizeof($forecastData["time"][$fromTime]["fmc"]);
+                                // ...increase counter, generate array...
+                                $fmcCount++;
                                 $forecastData["time"][$fromTime]["fmc"][$fmcCount] = array();
+                                // ...and set pointer.
                                 $pointer =& $forecastData["time"][$fromTime]["fmc"][$fmcCount];
 
+                                // Insert data
                                 $pointer["type"] = $result[1];
                                 if (isset($result[2]) && is_numeric($result[2])) {
                                     $pointer["propability"] = $result[2];
@@ -1011,6 +1022,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $result);
                                 $pointer["from"] = $result[1].":00";
                                 $pointer["to"]   = $result[2].":00";
+                                // As we have just extracted the time for this FMC
+                                // from our TAF, increase field-counter
                                 $i++;
                                 break;
                             default:
@@ -1042,11 +1055,22 @@ class Services_Weather_Metar extends Services_Weather_Common
     }
     // }}}
 
+    // {{{ _convertReturn()
+    /**
+    * Converts the data in the return array to the desired units and/or
+    * output format. 
+    *
+    * @param    array                       $target
+    * @param    string                      $units
+    * @param    string                      $location
+    * @access   private
+    */
     function _convertReturn(&$target, $units, $location)
     {
         if (is_array($target)) {
             foreach ($target as $key => $val) {
                 if (is_array($val)) {
+                    // Another array detected, so recurse into it to convert the units
                     $this->_convertReturn($target[$key], $units, $location);
                 } else {
                     switch ($key) {
@@ -1115,6 +1139,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             }
         }
     }
+    // }}}
 
     // {{{ searchLocation()
     /**
@@ -1468,8 +1493,8 @@ class Services_Weather_Metar extends Services_Weather_Common
     
     // {{{ getForecast()
     /**
-    * METAR has no forecast per se, so this function is just for
-    * compatibility purposes.
+    * METAR provides no forecast per se, we use the TAF reports to generate
+    * a forecast for the announced timeperiod
     *
     * @param    string                      $id
     * @param    int                         $days           Ignored, not applicable
