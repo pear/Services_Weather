@@ -277,18 +277,18 @@ class Services_Weather_Ejse extends Services_Weather_Common {
                 "south southwest"   => array("SSW", 202.5),
                 "southwest"         => array("SW", 225),
                 "west southwest"    => array("WSW", 247.5),
-                "west"              => array("w", 270),
+                "west"              => array("W", 270),
                 "west northwest"    => array("WNW", 292.5),
                 "northwest"         => array("NW", 315),
                 "north northwest"   => array("NNW", 337.5)
             );
         }
 
-        preg_match("/(\w+) (\d+), (\d+), at (\d+:\d+) (\wM) [^\(]+(\(([^\)]+)\))?/", $this->_weather->LastUpdated, $update);
-        if (isset($update[6])) {
-            $timestring = $update[7];
+        preg_match("/(\w+) (\d+), (\d+), at (\d+:\d+ \wM) [^\(]+(\(([^\)]+)\))?/", $this->_weather->LastUpdated, $update);
+        if (isset($update[5])) {
+            $timestring = $update[6];
         } else {
-            $timestring = $update[2]." ".$update[1]." ".$update[3]." ".$update[4]." ".$update[5]." EST";
+            $timestring = $update[2]." ".$update[1]." ".$update[3]." ".$update[4]." EST";
         }
         $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($timestring));
         $weatherReturn["station"]           = $this->_weather->ReportedAt;
