@@ -22,7 +22,7 @@
  * Well, this is a more elaborate example how to create a neat little page
  * with fetching data from weather.com and putting it into a design.
  * I'm not too proud of my design-skills, most of the stuff here is taken
- * from the weather-block which can be found withing the Horde Framework,
+ * from the weather-block which can be found within the Horde Framework,
  * courtesy of Rick Emery - creative pixelshoving isn't my domain :-P
  * I've used a Firefox for checking the design, so don't be too
  * disappointed, if the page looks shabby with with the IE, not that I care
@@ -31,6 +31,8 @@
  * http://www.weather.com/services/xmloap.html you'll recive an eMail
  * containing the partner id, the license key and a link pointing to the
  * SDK. Put the 32x32 and the logos folders into the images/ directory.
+ * The design should adhere to the conventions defined by the weather.com
+ * SDK-guide, though I won't give any legal certainty for this (of course).
  * Have fun!
 */
 
