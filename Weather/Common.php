@@ -273,7 +273,7 @@ class Services_Weather_Common {
     *
     * @param    string                      $dateFormat
     * @param    string                      $timeFormat
-    * @access   private
+    * @access   public
     */
     function setDateTimeFormat($dateFormat = "", $timeFormat = "")
     {
