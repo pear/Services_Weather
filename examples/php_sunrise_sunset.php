@@ -27,9 +27,9 @@
 
 
 if(!defined("SUNFUNCS_RET_TIMESTAMP")) {
-    define("SUNFUNCS_RET_TIMESTAMP", 1);
-    define("SUNFUNCS_RET_STRING",    2);
-    define("SUNFUNCS_RET_DOUBLE",    3);
+    define("SUNFUNCS_RET_TIMESTAMP", 0);
+    define("SUNFUNCS_RET_STRING",    1);
+    define("SUNFUNCS_RET_DOUBLE",    2);
 }
 define("SUNFUNCS_DEFAULT_LATITUDE",  31.7667);
 define("SUNFUNCS_DEFAULT_LONGITUDE", 35.2333);

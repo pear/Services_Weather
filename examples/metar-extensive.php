@@ -119,8 +119,8 @@ foreach ($fetch as $variable => $function) {
 // Calculate sunrise/-set for our location - UTC is used here!
 $gmt_offset = 0;
 $timestamp  = gmmktime();
-$location["sunrise"] = date_sunrise($timestamp, "", $location["latitude"], $location["longitude"], "", $gmt_offset);
-$location["sunset"]  = date_sunset($timestamp, "", $location["latitude"], $location["longitude"], "", $gmt_offset);
+$location["sunrise"] = date_sunrise($timestamp, SUNFUNCS_RET_STRING, $location["latitude"], $location["longitude"], SUNFUNCS_SUNRISE_ZENITH, $gmt_offset);
+$location["sunset"]  = date_sunset($timestamp, SUNFUNCS_RET_STRING, $location["latitude"], $location["longitude"], SUNFUNCS_SUNSET_ZENITH, $gmt_offset);
 
 // Now we output all the data, please don't expect extensive comments here, this is basic
 // HTML/CSS stuff. Also this isn't a very fancy design, it's just to show you, what
