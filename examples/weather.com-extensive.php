@@ -16,7 +16,7 @@
 // | Authors: Alexander Wirtz <alex@pc4p.net>                             |
 // +----------------------------------------------------------------------+
 //
-// $Id $
+// $Id$
 
 /*
  * Well, this is a more elaborate example how to create a neat little page
