@@ -33,21 +33,24 @@ require_once "DB.php";
 /**
 * PEAR::Services_Weather_Metar
 *
-* This class acts as an interface to the metar service of weather.noaa.gov. It searches for
-* locations given in ICAO notation and retrieves the current weather data.
+* This class acts as an interface to the metar service of weather.noaa.gov.
+* It searches for locations given in ICAO notation and retrieves the
+* current weather data.
 *
-* Of course the parsing of the METAR-data has its limitations, as it follows the
-* Federal Meteorological Handbook No.1 with modifications to accomodate for non-US reports,
-* so if the report deviates from these standards, you won't get it parsed correctly.
-* Anything that is not parsed, is saved in the "noparse" array-entry, returned by
-* getWeather(), so you can do your own parsing afterwards. This limitation is specifically
-* given for remarks, as the class is not processing everything mentioned there, but you will
-* get the most common fields like precipitation and temperature-changes. Again, everything
-* not parsed, goes into "noparse".
+* Of course the parsing of the METAR-data has its limitations, as it
+* follows the Federal Meteorological Handbook No.1 with modifications to
+* accomodate for non-US reports, so if the report deviates from these
+* standards, you won't get it parsed correctly.
+* Anything that is not parsed, is saved in the "noparse" array-entry,
+* returned by getWeather(), so you can do your own parsing afterwards. This
+* limitation is specifically given for remarks, as the class is not
+* processing everything mentioned there, but you will get the most common
+* fields like precipitation and temperature-changes. Again, everything not
+* parsed, goes into "noparse".
 *
-* If you think, some important field is missing or not correctly parsed, please file a feature-
-* request/bugreport at http://pear.php.net/ and be sure to provide the METAR report with a
-* _detailed_ explanation!
+* If you think, some important field is missing or not correctly parsed,
+* please file a feature-request/bugreport at http://pear.php.net/ and be
+* sure to provide the METAR report with a _detailed_ explanation!
 *
 * For a working example, please take a look at
 *     docs/Services_Weather/examples/metar-basic.php
@@ -133,10 +136,10 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ setMetarDB()
     /**
-    * Sets the parameters needed for connecting to the DB, where the location-
-    * search is fetching its data from. You need to build a DB with the external
-    * tool buildMetarDB first, it fetches the locations and airports from a
-    * NOAA-website.
+    * Sets the parameters needed for connecting to the DB, where the
+    * location-search is fetching its data from. You need to build a DB
+    * with the external tool buildMetarDB first, it fetches the locations
+    * and airports from a NOAA-website.
     *
     * @param    string                      $dsn
     * @param    array                       $dbOptions
@@ -199,7 +202,8 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ _checkLocationID()
     /**
-    * Checks the id for valid values and thus prevents silly requests to METAR server
+    * Checks the id for valid values and thus prevents silly requests to
+    * METAR server
     *
     * @param    string                      $id
     * @return   PEAR_Error|bool
@@ -223,7 +227,8 @@ class Services_Weather_Metar extends Services_Weather_Common
     /**
     * Parses the data returned by the provided source and caches it
     *    
-    * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB 18/16 A2992 RMK SLP045 T01820159
+    * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB
+    * 18/16 A2992 RMK SLP045 T01820159
     *
     * @param    string                      $source
     * @return   PEAR_Error|array
@@ -722,7 +727,8 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ searchLocation()
     /**
-    * Searches IDs for given location, returns array of possible locations or single ID
+    * Searches IDs for given location, returns array of possible locations
+    * or single ID
     *
     * @param    string|array                $location
     * @param    bool                        $useFirst       If set, first ID of result-array is returned
@@ -803,7 +809,8 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ searchLocationByCountry()
     /**
-    * Returns IDs with location-name for a given country or all available countries, if no value was given 
+    * Returns IDs with location-name for a given country or all available
+    * countries, if no value was given 
     *
     * @param    string                      $country
     * @return   PEAR_Error|array
@@ -862,7 +869,8 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ searchAirport()
     /**
-    * Searches the nearest airport(s) for given coordinates, returns array of IDs or single ID
+    * Searches the nearest airport(s) for given coordinates, returns array
+    * of IDs or single ID
     *
     * @param    float                       $latitude
     * @param    float                       $longitude

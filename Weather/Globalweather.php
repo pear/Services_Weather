@@ -31,12 +31,13 @@ require_once "Services/Weather/Common.php";
 /**
 * PEAR::Services_Weather_Globalweather
 *
-* This class acts as an interface to the soap service of capescience.com. It searches for given
-* locations and retrieves current weather data.
+* This class acts as an interface to the soap service of capescience.com.
+* It searches for given locations and retrieves current weather data.
 *
-* GlobalWeather is a SOAP frontend for METAR data, provided by CapeScience. If you want to
-* use METAR, you should try this class first, as it is much more comfortable (and also a bit
-* faster) than the native METAR-class provided by this package.
+* GlobalWeather is a SOAP frontend for METAR data, provided by CapeScience.
+* If you want to use METAR, you should try this class first, as it is much
+* more comfortable (and also a bit faster) than the native METAR-class
+* provided by this package.
 *
 * For a working example, please take a look at
 *     docs/Services_Weather/examples/globalweather-basic.php
@@ -118,7 +119,8 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ _checkLocationID()
     /**
-    * Checks the id for valid values and thus prevents silly requests to GlobalWeather server
+    * Checks the id for valid values and thus prevents silly requests to
+    * GlobalWeather server
     *
     * @param    string                      $id
     * @return   PEAR_Error|bool
@@ -140,7 +142,8 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ searchLocation()
     /**
-    * Searches IDs for given location, returns array of possible locations or single ID
+    * Searches IDs for given location, returns array of possible locations
+    * or single ID
     *
     * @param    string                      $location
     * @param    bool                        $useFirst       If set, first ID of result-array is returned
@@ -177,7 +180,8 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ searchLocationByCountry()
     /**
-    * Returns IDs with location-name for a given country or all available countries, if no value was given 
+    * Returns IDs with location-name for a given country or all available
+    * countries, if no value was given 
     *
     * @param    string                      $country
     * @return   PEAR_Error|array

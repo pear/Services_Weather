@@ -31,17 +31,19 @@ require_once "Services/Weather/Common.php";
 /**
 * PEAR::Services_Weather_Weatherdotcom
 *
-* This class acts as an interface to the xml service of weather.com. It searches for given
-* locations and retrieves current weather data as well as forecast for up to 10 days.
+* This class acts as an interface to the xml service of weather.com. It
+* searches for given locations and retrieves current weather data as well
+* as forecast for up to 10 days.
 *
 * For using the weather.com xml-service please visit
 *     http://www.weather.com/services/xmloap.html
-* and follow the link to sign up, it's free! You will receive an email where to download
-* the SDK with the needed images and guidelines how to publish live data from weather.com.
-* Unfortunately the guidelines are a bit harsh, that's why there's no actual data-representation
-* in this class, just the raw data.
-* Also weather.com demands active caching, so I'd strongly recommend enabling the caching
-* implemented in this class. It obeys to the times as written down in the guidelines.
+* and follow the link to sign up, it's free! You will receive an email
+* where to download the SDK with the needed images and guidelines how to
+* publish live data from weather.com. Unfortunately the guidelines are a
+* bit harsh, that's why there's no actual data-representation in this
+* class, just the raw data. Also weather.com demands active caching, so I'd
+* strongly recommend enabling the caching implemented in this class. It
+* obeys to the times as written down in the guidelines.
 *
 * For a working example, please take a look at
 *     docs/Services_Weather/examples/weather.com-basic.php
@@ -126,7 +128,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ setAccountData()
     /**
-    * Sets the neccessary account-information for weather.com, you'll receive them after registering for the XML-stream
+    * Sets the neccessary account-information for weather.com, you'll
+    * receive them after registering for the XML-stream
     *
     * @param    string                      $partnerID
     * @param    string                      $licenseKey
@@ -145,7 +148,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ _checkLocationID()
     /**
-    * Checks the id for valid values and thus prevents silly requests to weather.com server
+    * Checks the id for valid values and thus prevents silly requests to
+    * weather.com server
     *
     * @param    string                      $id
     * @return   PEAR_Error|bool
@@ -237,7 +241,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ searchLocation()
     /**
-    * Searches IDs for given location, returns array of possible locations or single ID
+    * Searches IDs for given location, returns array of possible locations
+    * or single ID
     *
     * @param    string                      $location
     * @param    bool                        $useFirst       If set, first ID of result-array is returned

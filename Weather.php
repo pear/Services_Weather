@@ -58,11 +58,11 @@ define("SERVICES_WEATHER_ERROR_INVALID_LICENSE_KEY",    102);
 *
 * This class acts as an interface to various online weather-services.
 *
-* Services_Weather searches for given locations and retrieves current weather data
-* and, dependant on the used service, also forecasts. Up to now, SOAP services from
-* CapeScience and EJSE, XML from weather.com and METAR from noaa.gov are supported,
-* further services will get included, if they become available and are
-* properly documented.
+* Services_Weather searches for given locations and retrieves current
+* weather data and, dependant on the used service, also forecasts. Up to
+* now, SOAP services from CapeScience and EJSE, XML from weather.com and
+* METAR from noaa.gov are supported, further services will get
+* included, if they become available and are properly documented.
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @package      Services_Weather
@@ -93,7 +93,8 @@ class Services_Weather {
     * o dsn                 String for defining the DB connection
     * o dbOptions           passes DB options
     * o source              http, ftp or file - type of data-source
-    * o sourcePath          where to look for the source, URI or filepath
+    * o sourcePathMetar     where to look for the source, URI or filepath,
+    *                       of METAR information
     * --- weather.com Options
     * o partnerID           You'll receive these keys after registering
     * o licenseKey          with the weather.com XML-service
