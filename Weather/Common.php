@@ -153,6 +153,8 @@ class Services_Weather_Common {
     *
     * @param    string                      $cacheType
     * @param    array                       $cacheOptions
+    * @return   PEAR_Error|bool
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED
     * @access   public
     */
     function setCache($cacheType = "file", $cacheOptions = array())
