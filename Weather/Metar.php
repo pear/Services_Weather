@@ -927,6 +927,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     // Wind with gusts...
                                     $pointer["windGust"] = $this->convertSpeed($result[4], strtolower($result[5]), "mph");
                                 }
+                                if (isset($probability)) {
+                                    $pointer["windProb"] = $probability;
+                                    unset($probability);
+                                }
                                 break;
                             case "visibility":
                                 $pointer["visQualifier"] = "AT";
@@ -960,6 +964,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $pointer["clouds"] = array("amount" => "none", "height" => "below 5000ft");
                                     $pointer["condition"] = "no significant weather";
                                 }
+                                if (isset($probability)) {
+                                    $pointer["visProb"] = $probability;
+                                    unset($probability);
+                                }
                                 $pointer["visibility"] = $visibility;
                                 break;
                             case "condition":
@@ -984,6 +992,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     }
                                 }
                                 $pointer["condition"] = trim($pointer["condition"]);
+                                if (isset($probability)) {
+                                    $pointer["condition"] .= " (".$probability."% prob.)";
+                                    unset($probability);
+                                }
                                 break;
                             case "clouds":
                                 if (!isset($pointer["clouds"])) {
@@ -1001,6 +1013,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 else {
                                     // SKC or CLR or NSC
                                     $cloud = array("amount" => $clouds[strtolower($result[0])]);
+                                }
+                                if(isset($probability)) {
+                                    $cloud["prob"] = $probability;
+                                    unset($probability);
                                 }
                                 $pointer["clouds"][] = $cloud;
                                 break;
@@ -1031,51 +1047,58 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $pointer =& $forecastData["time"][$fromTime];
                                 break;
                             case "fmc";
-                                // Test, if this is a probability for the next FMC
+                                // Test, if this is a probability for the next FMC                                
                                 if (preg_match("/^BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
-                                    if (isset($result[2]) && is_numeric($result[2])) {
-                                        $type        = $lresult[0];
-                                        $probability = $result[2];
-                                        // As we have just extracted the probability for the next FMC
-                                        // increase field-counter
-                                        $i++;
-                                    } elseif (isset($probability)) {
-                                        unset($probability);
-                                    }
-                                } else {
+                                    // Set type to BECMG or TEMPO
+                                    $type = $lresult[0];
+                                    // Set probability
+                                    $probability = $result[2];
+                                    // Now extract time for this group
+                                    preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 2], $lresult);
+                                    $from = $lresult[1].":00";
+                                    $to   = $lresult[2].":00";
+                                    $to   = ($to == "24:00") ? "00:00" : $to;
+                                    // As we now have type, probability and time for this FMC
+                                    // from our TAF, increase field-counter
+                                    $i += 2;
+                                } elseif (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
+                                    // Normal group, set type and use extracted time
                                     $type = $result[1];
-                                    if (isset($result[2]) && is_numeric($result[2])) {
+                                    // Check for PROBdd
+                                    if (isset($result[2])) {
                                         $probability = $result[2];
-                                    } elseif (isset($probability)) {
-                                        unset($probability);
                                     }
-                                }
-                                if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                     $from = $lresult[1].":00";
                                     $to   = $lresult[2].":00";
                                     $to   = ($to == "24:00") ? "00:00" : $to;
                                     // Same as above, we have a time for this FMC from our TAF, 
                                     // increase field-counter
-                                    $i++;
+                                    $i += 1;
+                                } else {
+                                    // This is either a PROBdd or a malformed TAF
+                                    if (isset($result[2])) {
+                                        $probability = $result[2];
+                                    }
                                 }
 
                                 // Handle the FMC, generate neccessary array if it's the first...
-                                if (!isset($forecastData["time"][$fromTime]["fmc"])) {
-                                    $forecastData["time"][$fromTime]["fmc"] = array();
-                                }
-                                $forecastData["time"][$fromTime]["fmc"][$fmcCount] = array();
-                                // ...and set pointer.
-                                $pointer =& $forecastData["time"][$fromTime]["fmc"][$fmcCount];
-                                $fmcCount++;
-
-                                // Insert data
-                                $pointer["type"] = $type;
-                                if (isset($probability)) {
-                                    $pointer["probability"] = $probability;
-                                }
-                                if (isset($from)) {
+                                if (isset($type)) {
+                                    if (!isset($forecastData["time"][$fromTime]["fmc"])) {
+                                        $forecastData["time"][$fromTime]["fmc"] = array();
+                                    }
+                                    $forecastData["time"][$fromTime]["fmc"][$fmcCount] = array();
+                                    // ...and set pointer.
+                                    $pointer =& $forecastData["time"][$fromTime]["fmc"][$fmcCount];
+                                    $fmcCount++;
+                                    // Insert data
+                                    $pointer["type"] = $type;
                                     $pointer["from"] = $from;
                                     $pointer["to"]   = $to;
+                                    unset($type, $from, $to);
+                                    if (isset($probability)) {
+                                        $pointer["probability"] = $probability;
+                                        unset($probability);
+                                    }
                                 }
                                 break;
                             default:
