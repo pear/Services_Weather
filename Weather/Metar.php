@@ -572,7 +572,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     if ($lresult[1] == "FM") {
                                         $pointer["from"] = $lresult[2].":".$lresult[3];                                
                                     } elseif ($lresult[1] == "TL") {
-                                        $pointer["till"] = $lresult[2].":".$lresult[3];
+                                        $pointer["to"] = $lresult[2].":".$lresult[3];
                                     } else {
                                         $pointer["at"] = $lresult[2].":".$lresult[3];
                                     }
@@ -1041,7 +1041,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                     $from = $lresult[1].":00";
                                     $to   = $lresult[2].":00";
-                                    // Same as above´, we have a time for this FMC from our TAF, 
+                                    // Same as above?, we have a time for this FMC from our TAF, 
                                     // increase field-counter
                                     $i++;
                                 }
