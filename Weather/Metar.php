@@ -57,6 +57,7 @@ require_once "DB.php";
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @link         http://weather.noaa.gov/weather/metar.shtml
+* @link         http://weather.noaa.gov/weather/taf.shtml
 * @example      examples/metar-basic.php metar-basic.php
 * @package      Services_Weather
 * @license      http://www.php.net/license/2_02.txt
@@ -824,7 +825,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         }
 
         $tafCode = array(
-            "report"      => "TAF",
+            "report"      => "TAF|AMD",
             "station"     => "\w{4}",
             "update"      => "(\d{2})?(\d{4})Z",
             "valid"       => "(\d{2})(\d{2})(\d{2})",
@@ -832,6 +833,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "condition"   => "(-|\+|VC)?(MI|BC|PR|TS|BL|SH|DR|FZ)?(DZ|RA|SN|SG|IC|PL|GR|GS|UP)?(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
             "clouds"      => "(SKC|CLR|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
+            "windshear"   => "WS(\d{3})\/(\d{3})(\d{2,3})(\w{2,3})",
             "from"        => "FM(\d{2})(\d{2})",
             "fmc"         => "(PROB(\d{2})?|BECMG|TEMPO)"
         );
@@ -983,17 +985,24 @@ class Services_Weather_Metar extends Services_Weather_Common
 
                                 if (sizeof($result) == 5) {
                                     // Only amount and height
-                                    $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4]*100));
+                                    $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4] * 100));
                                 }
                                 elseif (sizeof($result) == 6) {
                                     // Amount, height and type
-                                    $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4]*100), "type" => $clouds[strtolower($result[5])]);
+                                    $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4] * 100), "type" => $clouds[strtolower($result[5])]);
                                 }
                                 else {
                                     // SKC or CLR
                                     $cloud = array("amount" => $clouds[strtolower($result[0])]);
                                 }
                                 $pointer["clouds"][] = $cloud;
+                                break;
+                            case "windshear":
+                                // Parse windshear, if available
+                                $pointer["windshear"]          = $this->convertSpeed($result[3], strtolower($result[4]), "mph");
+                                $pointer["windshearHeight"]    = $result[1] * 100;
+                                $pointer["windshearDegrees"]   = $result[2];
+                                $pointer["windshearDirection"] = $compass[round($result[2] / 22.5) % 16];
                                 break;
                             case "from":
                                 // Next timeperiod is coming up, prepare array and
@@ -1087,12 +1096,14 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "wind":
                         case "windGust":
+                        case "windshear":
                             $newVal = $this->convertSpeed($val, "mph", $units["wind"]);
                             break;
                         case "visibility":
                             $newVal = $this->convertDistance($val, "sm", $units["vis"]);
                             break;
                         case "height":
+                        case "windshearHeight":
                             $newVal = $this->convertDistance($val, "ft", $units["height"]);
                             break;
                         case "temperature":
