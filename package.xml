@@ -7,10 +7,10 @@
     <description>
         Services_Weather searches for given locations and retrieves current
         weather data and, dependent on the used service, also forecasts. Up to
-        now, GlobalWeather from CapeScience, a XML service from weather.com
-        and METAR from noaa.gov are supported. Further services will get
-        included, if they become available, have a usable API and are properly
-        documented.
+        now, GlobalWeather from CapeScience, Weather XML from EJSE (US only),
+        a XOAP service from Weather.com and METAR from noaa.gov are supported.
+        Further services will get included, if they become available, have a
+        usable API and are properly documented.
     </description>
     <maintainers>
         <maintainer>
@@ -21,27 +21,12 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.1.0</version>
-        <date>2003-12-30</date>
+        <version>1.2.0</version>
+        <date>2004-01-10</date>
         <license>PHP License</license>
         <state>stable</state>
         <notes>
-            - Removed dependency on 4.3.0
-            - Weather.php, Common.php, Globalweather.php, Metar.php, Weatherdotcom.php
-                o Changed error throwing in constructors to work actually
-                o Removed PEAR-package dependency checking
-            - Globalweather.php, Metar.php, Weatherdotcom.php
-                o Added searchLocationByCountry for listing available
-                  weatherstations per country
-            - Globalweather.php
-                o Fixed checking for SOAP error on object initialization
-            - Weatherdotcom.php
-                o Changed parsing of update time, as "Local Time" confuses
-                  strtotime, when querying locations in your timezone
-            - globalweather-basic.php, metar-basic.php, weather.com-basic.php
-                o Updated for proper error handling and added features
-            - weather.com-error.php
-                o Erased
+            - Introduced EJSE
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
@@ -55,6 +40,7 @@
                 <dir name="Weather" role="php">
                     <file>Common.php</file>
                     <file>Globalweather.php</file>
+                    <file>Ejse.php</file>
                     <file>Metar.php</file>
                     <file>Weatherdotcom.php</file>
                 </dir>
@@ -62,6 +48,7 @@
             <dir name="/" role="doc">
                 <dir name="examples">
                     <file>globalweather-basic.php</file>
+                    <file>ejse-basic.php</file>
                     <file>metar-basic.php</file>
                     <file>weather.com-basic.php</file>
                 </dir>

@@ -52,9 +52,10 @@ define("SERVICES_WEATHER_ERROR_INVALID_LICENSE_KEY",    102);
 * This class acts as an interface to various online weather-services.
 *
 * Services_Weather searches for given locations and retrieves current weather data
-* and, dependant on the used service, also forecasts. Up to now, weather.com-XML and
-* METAR from noaa.gov are supported, further services will get included, if they become
-* available and are properly documented.
+* and, dependant on the used service, also forecasts. Up to now, SOAP services from
+* CapeScience and EJSE, XML from weather.com and METAR from noaa.gov are supported,
+* further services will get included, if they become available and are
+* properly documented.
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @package      Services_Weather
@@ -76,6 +77,8 @@ class Services_Weather {
     * o customUnitsFormat   defines the customized units format
     * o dateFormat          string to use for date output
     * o timeFormat          string to use for time output
+    * --- EJSE Options
+    * none
     * --- GlobalWeather Options
     * none
     * --- METAR Options
