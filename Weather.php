@@ -221,10 +221,11 @@ class Services_Weather {
         // really needed.
         include_once "PEAR.php";
 
-        $message = "Services_Weather: ".Services_Weather::_errorMessage($code);
+        $message = "Services_Weather";
         if ($file != "" && $line > 0) {
-            $message .= " (".$file.":".$line.")";
+            $message .= " (".basename($file).":".$line.")";
         }
+        $message .= ": ".Services_Weather::_errorMessage($code);
 
         return PEAR::raiseError($message, $code, PEAR_ERROR_RETURN, E_USER_NOTICE, "Services_Weather_Error", null, false);
     }
