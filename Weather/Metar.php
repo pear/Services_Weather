@@ -790,7 +790,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $s = array(
             "cache" => "MISS",
             "temp"  => "F",
-            "vis"   => "mi",
+            "vis"   => "sm",
             "wind"  => "mph",
             "pres"  => "in",
             "rain"  => "in"
