@@ -21,15 +21,14 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.2.0</version>
-        <date>2004-01-14</date>
+        <version>1.2.1</version>
+        <date>2004-02-16</date>
         <license>PHP License</license>
         <state>stable</state>
         <notes>
-            - Weather.php Ejse.php ejse-basic.php
-                o Introduced new module EJSE
             - Weatherdotcom.php
-                o Changed userdata-relevant caching for forecasts
+                o Fixed bug on receiving a weather.com originated error
+                o Changed keyAttribute in XML_Unserializer, needed for errno retrieval
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
