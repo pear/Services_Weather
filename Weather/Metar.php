@@ -484,7 +484,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 } else {
                                     $pointer["visQualifier"] = "BEYOND";
                                     $visibility = $this->convertDistance(10, "km", "sm");
-                                    $pointer["clouds"] = array("amount" => "none", "height" => "below 5000ft");
+                                    $pointer["clouds"] = array("amount" => "Clear below", "height" => 5000);
                                     $pointer["condition"] = "no significant weather";
                                 }
                                 $pointer["visibility"] = $visibility;
@@ -1545,7 +1545,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             $weatherReturn["cache"] = "HIT";
         } else {
             // Set the source
-            if ($this->_source == "file") {
+            if ($this->_sourceMetar == "file") {
                 $source = realpath($this->_sourcePathMetar."/".$id.".TXT");
             } else {
                 $source = $this->_sourcePathMetar."/".$id.".TXT";
@@ -1604,7 +1604,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             $forecastReturn["cache"] = "HIT";
         } else {
             // Set the source
-            if ($this->_source == "file") {
+            if ($this->_sourceTaf == "file") {
                 $source = realpath($this->_sourcePathTaf."/".$id.".TXT");
             } else {
                 $source = $this->_sourcePathTaf."/".$id.".TXT";
