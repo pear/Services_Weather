@@ -24,7 +24,12 @@ $metar = &Services_Weather::service("METAR", array("debug" => 0));
 
 $metar->setMetarDB("sqlite://localhost//usr/local/lib/php/data/Services_Weather/servicesWeatherDB");
 //$metar->setCache("file", array("cache_dir" => "/tmp/cache/"));
-$metar->setUnitsFormat("metric");
+$metar->setUnitsFormat("custom", array(
+    "wind" => "kt",
+    "vis" => "km",
+    "temp" => "c",
+    "pres" => "hpa",
+    "rain" => "in"));
 $metar->setDateTimeFormat("d.m.Y", "H:i");
 
 $search = $metar->searchLocation("Bonn, Germany");
