@@ -27,7 +27,7 @@
         <state>stable</state>
         <notes>
             - Weather.php
-                o Return-by-Reference fix for PHP 4.4 (Bug #4814) provided by <jan at horde dot org>
+                o Return-by-Reference fix for PHP 4.4 (Bug #4814) provided by (jan at horde dot org)
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
