@@ -228,7 +228,8 @@ class Services_Weather {
         }
         $message .= ": ".Services_Weather::_errorMessage($code);
 
-        return PEAR::raiseError($message, $code, PEAR_ERROR_RETURN, E_USER_NOTICE, "Services_Weather_Error", null, false);
+        $error = PEAR::raiseError($message, $code, PEAR_ERROR_RETURN, E_USER_NOTICE, "Services_Weather_Error", null, false);
+        return $error;
     }
     // }}}
 }

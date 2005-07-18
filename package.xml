@@ -21,17 +21,13 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.3.1</version>
-        <date>2004-10-01</date>
+        <version>1.3.2</version>
+        <date>2005-07-18</date>
         <license>PHP License</license>
         <state>stable</state>
         <notes>
-            - Common.php
-                o Added converting to Beaufort (bft) in convertSpeed()
-            - Metar.php
-                o Fixed error in CAVOK handling, cloud-information was broken
-            - Ejse.php
-                o Fixed error when receiving empty LastUpdated from EJSE
+            - Weather.php
+                o Return-by-Reference fix for PHP 4.4 (Bug #4814) provided by <jan at horde dot org>
         </notes>
         <deps>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
