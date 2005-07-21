@@ -140,7 +140,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
     */
     function searchLocation($location = null, $useFirst = null)
     {
-        return $false;
+        return false;
     }
     // }}}
 
@@ -156,7 +156,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
     */
     function searchLocationByCountry($country = null)
     {
-        return $false;
+        return false;
     }
     // }}}
 
