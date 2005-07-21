@@ -281,8 +281,8 @@ for ($day = 0; $day < $forecastDays; $day++) {
                         <td align="center" style="height: 45px"><?=$forecast["days"][$day]["night"]["precipitation"]?>%</td>
                     </tr>
                     <tr>
-                        <td align="center" style="height: 45px"><?=$afternoon ? "&nbsp;" : round($forecast["days"][$day]["day"]["wind"], 0).$units["wind"]." from&nbsp;".$forecast["days"][0]["day"]["windDirection"]?></td>
-                        <td align="center" style="height: 45px"><?=round($forecast["days"][$day]["night"]["wind"], 0).$units["wind"]?> from&nbsp;<?=$forecast["days"][0]["day"]["windDirection"]?></td>
+                        <td align="center" style="height: 45px"><?=$afternoon ? "&nbsp;" : round($forecast["days"][$day]["day"]["wind"], 0).$units["wind"]." from&nbsp;".$forecast["days"][$day]["day"]["windDirection"]?></td>
+                        <td align="center" style="height: 45px"><?=round($forecast["days"][$day]["night"]["wind"], 0).$units["wind"]?> from&nbsp;<?=$forecast["days"][$day]["night"]["windDirection"]?></td>
                     </tr>
                     <tr>
                         <td align="center" style="height: 15px"><?=$afternoon ? "" : $forecast["days"][$day]["day"]["humidity"]."%"?></td>
