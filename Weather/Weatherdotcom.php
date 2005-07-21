@@ -223,7 +223,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                     switch ($key) {
                         case "head":
                             continue 2;
-                            break;
                         case "prmo":
                             $varname  = "links";
                             break;

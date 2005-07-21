@@ -178,14 +178,11 @@ function php_do_sunrise_sunset($date, $retformat, $latitude, $longitude, $zenith
     switch ($retformat) {
         case SUNFUNCS_RET_TIMESTAMP:
             return floor($time - ($time % (24 * 3600))) + floor(60 * $ret);
-            break;
         case SUNFUNCS_RET_STRING:
             $N = floor($ret);
             return sprintf("%02d:%02d", $N, floor(60 * ($ret - $N)));
-            break;
         case SUNFUNCS_RET_DOUBLE:
             return $ret;
-            break;
         default:
             trigger_error("invalid format", E_USER_WARNING);
             return false;

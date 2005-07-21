@@ -1201,7 +1201,6 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         default:
                             continue 2;
-                            break;
                     }
                     $target[$key] = $newVal;
                 }

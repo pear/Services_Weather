@@ -249,8 +249,7 @@ if (isset($weather["trend"]) && sizeof($weather["trend"])) {
                 case "windVariability":
                 case "windGust":
                 case "visQualifier":
-                    continue(2);
-                    break;
+                    continue 2;
                 default:
                     $string = ""; $value = "";
                     var_dump($key, $val);
