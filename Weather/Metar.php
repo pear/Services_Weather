@@ -361,6 +361,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "type"        => "AUTO|COR",
             "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2}))?(\w{2,3})",
             "windVar"     => "(\d{3})V(\d{3})",
+            "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "runway"      => "R(\d{2})(\w)?\/(P|M)?(\d{4})(FT)?(V(P|M)?(\d{4})(FT)?)?(\w)?",
             "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
@@ -455,6 +456,22 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 // Once more wind, now variability around the current wind-direction
                                 $pointer["windVariability"] = array("from" => intval($result[1]), "to" => intval($result[2]));
                                 break;
+                            case "visFrac":
+                                // Possible fractional visibility here. Check if it matches with the next METAR piece for visibility
+                                if (!isset($metar[$i + 1]) || !preg_match("/^".$metarCode["visibility"]."$/i", $result[1]." ".$metar[$i + 1], $resultVF)) {
+                                    // No next METAR piece available or not matching. Match against next METAR code
+                                    $found = false;
+                                    break;
+                                } else {
+                                    // Match. Hand over result and advance METAR
+                                    if (SERVICES_WEATHER_DEBUG) { 
+                                        echo $key."\n";
+                                        echo "\"".$result[1]." ".$metar[$i + 1]."\"".str_repeat("\t", 2 - floor((strlen($result[1]." ".$metar[$i + 1]) + 2) / 8))."-> ";
+                                    }
+                                    $key = "visibility";
+                                    $result = $resultVF;
+                                    $i++;
+                                }
                             case "visibility":
                                 $pointer["visQualifier"] = "AT";
                                 if (is_numeric($result[1]) && ($result[1] == 9999)) {
@@ -729,10 +746,12 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 unset($metarCode[$key]);
                                 break;
                         }
-                        if (SERVICES_WEATHER_DEBUG) {
+                        if ($found && !SERVICES_WEATHER_DEBUG) {
+                            break;
+                        } elseif ($found && SERVICES_WEATHER_DEBUG) {
                             echo $key."\n";
+                            break;
                         }
-                        break;
                     }
                 }
                 if (!$found) {
@@ -832,6 +851,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "update"      => "(\d{2})?(\d{4})Z",
             "valid"       => "(\d{2})(\d{2})(\d{2})",
             "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2}))?(\w{2,3})",
+            "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
             "clouds"      => "(SKC|CLR|NSC|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
@@ -932,6 +952,22 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     unset($probability);
                                 }
                                 break;
+                            case "visFrac":
+                                // Possible fractional visibility here. Check if it matches with the next TAF piece for visibility
+                                if (!isset($taf[$i + 1]) || !preg_match("/^".$tafCode["visibility"]."$/i", $result[1]." ".$taf[$i + 1], $resultVF)) {
+                                    // No next TAF piece available or not matching. Match against next TAF code
+                                    $found = false;
+                                    break;
+                                } else {
+                                    // Match. Hand over result and advance TAF
+                                    if (SERVICES_WEATHER_DEBUG) { 
+                                        echo $key."\n";
+                                        echo "\"".$result[1]." ".$taf[$i + 1]."\"".str_repeat("\t", 2 - floor((strlen($result[1]." ".$taf[$i + 1]) + 2) / 8))."-> ";
+                                    }
+                                    $key = "visibility";
+                                    $result = $resultVF;
+                                    $i++;
+                                }
                             case "visibility":
                                 $pointer["visQualifier"] = "AT";
                                 if (is_numeric($result[1]) && ($result[1] == 9999)) {
@@ -1105,10 +1141,12 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 // Do nothing
                                 break;
                         }
-                        if (SERVICES_WEATHER_DEBUG) {
+                        if ($found && !SERVICES_WEATHER_DEBUG) {
+                            break;
+                        } elseif ($found && SERVICES_WEATHER_DEBUG) {
                             echo $key."\n";
+                            break;
                         }
-                        break;
                     }
                 }
                 if (!$found) {
