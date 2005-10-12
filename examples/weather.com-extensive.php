@@ -124,6 +124,11 @@ $fup  = strtotime($forecast["update"]) + $location["timezone"] * 3600;
 // This triggers if the day-forecast for the current day will get shown.
 $afternoon = ($location["time"] > "13:59" || date("Ymd", $fup) < date("Ymd")) ? true : false;
 
+// The usual notation for condition icons is numeric. Check for numeric icon or "na" and set to "na" if that's not the case
+if (!(ctype_digit($weather["conditionIcon"]) || $weather["conditionIcon"] == "na")) {
+    $weather["conditionIcon"] = "na";
+}
+
 // Now we output all the data, please don't expect extensive comments here, this is basic
 // HTML/CSS stuff. Also this isn't a very fancy design, it's just to show you, what
 // the script is able to do (and more ;-))...
@@ -253,6 +258,14 @@ for ($day = 0; $day < $forecastDays; $day++) {
     }
     // Afternoon is only important for today
     $afternoon = ($day == 0) ? $afternoon : false;
+
+    // The usual notation for condition icons is numeric. Check for numeric icon or "na" and set to "na" if that's not the case
+    if (!(ctype_digit($forecast["days"][$day]["day"]["conditionIcon"]) || $forecast["days"][$day]["day"]["conditionIcon"] == "na")) {
+        $forecast["days"][$day]["day"]["conditionIcon"] = "na";
+    }
+    if (!(ctype_digit($forecast["days"][$day]["night"]["conditionIcon"]) || $forecast["days"][$day]["night"]["conditionIcon"] == "na")) {
+        $forecast["days"][$day]["night"]["conditionIcon"] = "na";
+    }
 ?>
             <td style="width: <?=(90 / $forecastDays)?>%">
                 <table style="width: 100%"<?=($day % 2) ? ' class="bggrey"' : ""?>>
