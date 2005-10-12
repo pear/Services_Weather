@@ -199,7 +199,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
 		$data = $request->getResponseBody();
-    	
+
         // ...and unserialize
         $status = $this->_unserializer->unserialize($data);
 
@@ -266,8 +266,15 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     function searchLocation($location, $useFirst = false)
     {
         // Get search data from server and unserialize
-        $searchURL = "http://xoap.weather.com/search/search?where=".urlencode(trim($location));
-        $status = $this->_unserializer->unserialize($searchURL, true, array("overrideOptions" => true, "complexType" => "array", "keyAttribute" => "id"));
+        $request = &new HTTP_Request("http://xoap.weather.com/search/search?where=".urlencode(trim($location)), array("timeout" => $this->_httpTimeout));
+        $status = $request->sendRequest();
+        if (Services_Weather::isError($status)) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+        }
+        $data = $request->getResponseBody();
+
+        // ...and unserialize
+        $status = $this->_unserializer->unserialize($data, false, array("overrideOptions" => true, "complexType" => "array", "keyAttribute" => "id"));
 
         if (Services_Weather::isError($status)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
