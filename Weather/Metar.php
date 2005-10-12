@@ -405,6 +405,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Ok, we have correct data, start with parsing the first line for the last update
             $weatherData = array();
             $weatherData["station"]   = "";
+            $weatherData["dataRaw"]   = implode(" ", $data);
             $weatherData["update"]    = strtotime(trim($data[0])." GMT");
             $weatherData["updateRaw"] = trim($data[0]);
             // and prepare the rest for stepping through
@@ -877,6 +878,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Ok, we have correct data, start with parsing the first line for the last update
             $forecastData = array();
             $forecastData["station"]   = "";
+            $forecastData["dataRaw"]   = implode(" ", $data);
             $forecastData["update"]    = strtotime(trim($data[0])." GMT");
             $forecastData["updateRaw"] = trim($data[0]);
             // and prepare the rest for stepping through
