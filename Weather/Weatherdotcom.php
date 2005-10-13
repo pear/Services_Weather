@@ -121,7 +121,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (isset($options["licenseKey"])) {
             $this->setAccountData("", $options["licenseKey"]);
         }
-        
+
         include_once "XML/Unserializer.php";
         $unserializer = &new XML_Unserializer(array("complexType" => "object", "keyAttribute" => "type"));
         if (Services_Weather::isError($unserializer)) {
@@ -130,9 +130,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         } else {
             $this->_unserializer = $unserializer;
         }
-        
-		// Can't acquire an object here, has to be clean on every request
-		include_once "HTTP/Request.php";
+
+        // Can't acquire an object here, has to be clean on every request
+        include_once "HTTP/Request.php";
     }
     // }}}
 
@@ -192,13 +192,13 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     */
     function _parseWeatherData($id, $url)
     {
-		// Get data from URL...
-		$request = &new HTTP_Request($url, array("timeout" => $this->_httpTimeout));
-		$status = $request->sendRequest();
+        // Get data from URL...
+        $request = &new HTTP_Request($url, array("timeout" => $this->_httpTimeout));
+        $status = $request->sendRequest();
         if (Services_Weather::isError($status)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
-		$data = $request->getResponseBody();
+        $data = $request->getResponseBody();
 
         // ...and unserialize
         $status = $this->_unserializer->unserialize($data);
@@ -300,8 +300,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ searchLocationByCountry()
     /**
-    * Returns only false, as weather.com offers no country listing via 
-    * its XML services 
+    * Returns only false, as weather.com offers no country listing via
+    * its XML services
     *
     * @param    string                      $country
     * @return   bool
@@ -355,7 +355,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             // B0rked response (returned is &par=xoap, should be &prod=xoap), fix it
             $linksReturn["promo"][$i]["link"]  = str_replace("par=", "prod=", $this->_links->link[$i]->l);
             $linksReturn["promo"][$i]["link"] .= "&par=".$this->_partnerID;
-        }   
+        }
 
         return $linksReturn;
     }
@@ -444,7 +444,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             }
             $weatherReturn["cache"] = "MISS";
         }
-        
+
         // Some explanation for the next two lines:
         // weather.com isn't always supplying the timezone in the update string, but
         // uses "Local Time" as reference, which is imho utterly stupid, because it's
@@ -464,7 +464,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $weatherReturn["pressure"]          = $this->convertPressure($this->_weather->bar->r, "in", $units["pres"]);
         $weatherReturn["pressureTrend"]     = $this->_weather->bar->d;
         $weatherReturn["wind"]              = $this->convertSpeed($this->_weather->wind->s, "mph", $units["wind"]);
-		$weatherReturn["windGust"]			= $this->convertSpeed($this->_weather->wind->gust, "mph", $units["wind"]);        
+        $weatherReturn["windGust"]          = $this->convertSpeed($this->_weather->wind->gust, "mph", $units["wind"]);
         $weatherReturn["windDegrees"]       = $this->_weather->wind->d;
         $weatherReturn["windDirection"]     = $this->_weather->wind->t;
         $weatherReturn["humidity"]          = $this->_weather->hmid;
@@ -502,7 +502,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (!in_array($days, range(1, 10))) {
             $days = 2;
         }
-        
+
         // Get other data
         $units    = $this->getUnitsFormat($unitsFormat);
 

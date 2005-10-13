@@ -39,7 +39,7 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 *
 * Parent class for weather-services. Defines common functions for unit
 * conversions, checks for cache enabling and does other miscellaneous
-* things. 
+* things.
 *
 * @author       Alexander Wirtz <alex@pc4p.net>
 * @package      Services_Weather
@@ -72,13 +72,13 @@ class Services_Weather_Common {
         "rain"   => "in"
     );
 
-	/**
-	* Timeout for HTTP requests
-	*
-	* @var		int							$_httpTimeout
-	* @access	private
-	*/
-	var $_httpTimeout = 60;
+    /**
+    * Timeout for HTTP requests
+    *
+    * @var      int                         $_httpTimeout
+    * @access   private
+    */
+    var $_httpTimeout = 60;
 
     /**
     * Format of the used dates
@@ -149,7 +149,7 @@ class Services_Weather_Common {
     */
     function Services_Weather_Common($options, &$error)
     {
-        // Set options accordingly        
+        // Set options accordingly
         if (isset($options["cacheType"])) {
             if (isset($options["cacheOptions"])) {
                 $status = $this->setCache($options["cacheType"], $options["cacheOptions"]);
@@ -170,10 +170,10 @@ class Services_Weather_Common {
             }
         }
 
-		if (isset($options["httpTimeout"])) {
-			$this->setHttpTimeout($options["httpTimeout"]);
-		}
-        
+        if (isset($options["httpTimeout"])) {
+            $this->setHttpTimeout($options["httpTimeout"]);
+        }
+
         if (isset($options["dateFormat"])) {
             $this->setDateTimeFormat($options["dateFormat"], "");
         }
@@ -235,7 +235,7 @@ class Services_Weather_Common {
                 "rain"   => array("in", "mm")
             );
         }
-        
+
         if (strlen($unitsFormat) && in_array(strtolower($unitsFormat{0}), array("c", "m", "s"))) {
             $this->_unitsFormat = strtolower($unitsFormat{0});
             if ($this->_unitsFormat == "c" && is_array($customUnitsFormat)) {
@@ -251,20 +251,20 @@ class Services_Weather_Common {
     }
     // }}}
 
-	// {{{ setHttpTimeout()
+    // {{{ setHttpTimeout()
     /**
     * Sets the timeout in seconds for HTTP requests
     *
-    * @param    int  	                    $httpTimeout
+    * @param    int                          $httpTimeout
     * @access   public
     */
-	function setHttpTimeout($httpTimeout)
-	{
-		if (is_int($httpTimeout)) {
-			$this->_httpTimeout = $httpTimeout;
-		}
-	}
-	// }}}
+    function setHttpTimeout($httpTimeout)
+    {
+        if (is_int($httpTimeout)) {
+            $this->_httpTimeout = $httpTimeout;
+        }
+    }
+    // }}}
 
     // {{{ getUnitsFormat()
     /**
@@ -394,16 +394,16 @@ class Services_Weather_Common {
 
             // Beaufort scale, measurements are in knots
             $beaufort = array(
-                  1,   3,   6,  10, 
+                  1,   3,   6,  10,
                  16,  21,  27,  33,
-                 40,  47,  55,  63    
+                 40,  47,  55,  63
             );
         }
-        
+
         if ($from == "bft") {
             return false;
         } elseif ($to == "bft") {
-            $speed = round($speed * $factor[$from]["kt"], 0); 
+            $speed = round($speed * $factor[$from]["kt"], 0);
             for ($i = 0; $i < sizeof($beaufort); $i++) {
                 if ($speed <= $beaufort[$i]) {
                     return $i;
@@ -503,7 +503,7 @@ class Services_Weather_Common {
     * @param    float                       $speed
     * @return   float
     * @access   public
-    * @link     http://www.nws.noaa.gov/om/windchill/      
+    * @link     http://www.nws.noaa.gov/om/windchill/
     */
     function calculateWindChill($temperature, $speed)
     {
@@ -526,7 +526,7 @@ class Services_Weather_Common {
     * @link     http://www.faqs.org/faqs/meteorology/temp-dewpoint/
     */
     function calculateHumidity($temperature, $dewPoint)
-    {   
+    {
         // First calculate saturation steam pressure for both temperatures
         if ($temperature >= 0) {
             $a = 7.5;
@@ -545,7 +545,7 @@ class Services_Weather_Common {
             $b = 240.7;
         }
         $dewSSP  = 6.1078 * pow(10, ($a * $dewPoint) / ($b + $dewPoint));
-        
+
         return round(100 * $dewSSP / $tempSSP, 1);
     }
     // }}}
@@ -565,7 +565,7 @@ class Services_Weather_Common {
     * @link     http://www.faqs.org/faqs/meteorology/temp-dewpoint/
     */
     function calculateDewPoint($temperature, $humidity)
-    {   
+    {
         if ($temperature >= 0) {
             $a = 7.5;
             $b = 237.3;

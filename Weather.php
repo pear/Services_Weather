@@ -149,7 +149,7 @@ class Services_Weather {
      * @return   string
      * @access   public
      */
-   function apiVersion()
+    function apiVersion()
     {
         return "1.3";
     }

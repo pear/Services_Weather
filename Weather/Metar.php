@@ -75,7 +75,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     * @access   private
     */
     var $_db;
-    
+
     /**
     * The source METAR uses
     *
@@ -127,8 +127,8 @@ class Services_Weather_Metar extends Services_Weather_Common
             $error = $perror;
             return;
         }
-        
-        // Set options accordingly        
+
+        // Set options accordingly
         if (isset($options["dsn"])) {
             if (isset($options["dbOptions"])) {
                 $status = $this->setMetarDB($options["dsn"], $options["dbOptions"]);
@@ -140,10 +140,10 @@ class Services_Weather_Metar extends Services_Weather_Common
             $error = $status;
             return;
         }
-        
+
         // Setting the data sources for METAR and TAF - have to watch out for older API usage
         if (($source = isset($options["source"])) || isset($options["sourceMetar"])) {
-            $sourceMetar = $source ? $options["source"] : $options["sourceMetar"]; 
+            $sourceMetar = $source ? $options["source"] : $options["sourceMetar"];
             if (($sourcePath = isset($options["sourcePath"])) || isset($options["sourcePathMetar"])) {
                 $sourcePathMetar = $sourcePath ? $options["sourcePath"] : $options["sourcePathMetar"];
             } else {
@@ -188,7 +188,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         if (is_array($dsninfo) && !isset($dsninfo["mode"])) {
             $dsninfo["mode"]= 0644;
         }
-        
+
         // Initialize connection to DB and store in object if successful
         $db =  DB::connect($dsninfo, $dbOptions);
         if (DB::isError($db)) {
@@ -280,7 +280,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     // {{{ _parseWeatherData()
     /**
     * Parses the data returned by the provided source and caches it
-    *    
+    *
     * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB
     * 18/16 A2992 RMK SLP045 T01820159
     *
@@ -353,7 +353,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                 "chino"  => "2nd Ceiling Height Indicator offline"
             );
         }
- 
+
         $metarCode = array(
             "report"      => "METAR|SPECI",
             "station"     => "\w{4}",
@@ -371,7 +371,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "trend"       => "NOSIG|TEMPO|BECMG",
             "remark"      => "RMK"
         );
-        
+
         $remarks = array(
             "nospeci"     => "NOSPECI",
             "autostation" => "AO(1|2)",
@@ -389,7 +389,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "3hpresstend" => "5([0-8])(\d{3})",
             "sensors"     => "RVRNO|PWINO|PNO|FZRANO|TSNO|VISNO|CHINO",
             "maintain"    => "[\$]"
-        );        
+        );
 
         $data = @file($source);
 
@@ -414,7 +414,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
             // Add a few local variables for data processing
             $trendCount = 0;             // If we have trends, we need this
-            $pointer    =& $weatherData; // Pointer to the array we add the data to 
+            $pointer    =& $weatherData; // Pointer to the array we add the data to
             for ($i = 0; $i < sizeof($metar); $i++) {
                 // Check for whitespace and step loop, if nothing's there
                 $metar[$i] = trim($metar[$i]);
@@ -465,7 +465,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     break;
                                 } else {
                                     // Match. Hand over result and advance METAR
-                                    if (SERVICES_WEATHER_DEBUG) { 
+                                    if (SERVICES_WEATHER_DEBUG) {
                                         echo $key."\n";
                                         echo "\"".$result[1]." ".$metar[$i + 1]."\"".str_repeat("\t", 2 - floor((strlen($result[1]." ".$metar[$i + 1]) + 2) / 8))."-> ";
                                     }
@@ -590,7 +590,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $pointer["type"] = $result[0];
                                 while (isset($metar[$i + 1]) && preg_match("/^(FM|TL|AT)(\d{2})(\d{2})$/i", $metar[$i + 1], $lresult)) {
                                     if ($lresult[1] == "FM") {
-                                        $pointer["from"] = $lresult[2].":".$lresult[3];                                
+                                        $pointer["from"] = $lresult[2].":".$lresult[3];
                                     } elseif ($lresult[1] == "TL") {
                                         $pointer["to"] = $lresult[2].":".$lresult[3];
                                     } else {
@@ -682,7 +682,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $result[2] *= -1;
                                 }
                                 $weatherData["remark"]["1htemp"] = $this->convertTemperature($result[2] / 10, "c", "f");
-                                
+
                                 if (sizeof($result) > 3) {
                                     // same for dewpoint
                                     if ($result[4] == "1") {
@@ -777,7 +777,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     // {{{ _parseForecastData()
     /**
     * Parses the data returned by the provided source and caches it
-    *    
+    *
     * TAF KLGA 271734Z 271818 11007KT P6SM -RA SCT020 BKN200
     *   FM2300 14007KT P6SM SCT030 BKN150
     *   FM0400 VRB03KT P6SM SCT035 OVC080 PROB30 0509 P6SM -RA BKN035
@@ -888,7 +888,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Add a few local variables for data processing
             $fromTime =  "";            // The timeperiod the data gets added to
             $fmcCount =  0;             // If we have FMCs (Forecast Meteorological Conditions), we need this
-            $pointer  =& $forecastData; // Pointer to the array we add the data to 
+            $pointer  =& $forecastData; // Pointer to the array we add the data to
             for ($i = 0; $i < sizeof($taf); $i++) {
                 // Check for whitespace and step loop, if nothing's there
                 $taf[$i] = trim($taf[$i]);
@@ -962,7 +962,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     break;
                                 } else {
                                     // Match. Hand over result and advance TAF
-                                    if (SERVICES_WEATHER_DEBUG) { 
+                                    if (SERVICES_WEATHER_DEBUG) {
                                         echo $key."\n";
                                         echo "\"".$result[1]." ".$taf[$i + 1]."\"".str_repeat("\t", 2 - floor((strlen($result[1]." ".$taf[$i + 1]) + 2) / 8))."-> ";
                                     }
@@ -1085,7 +1085,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $pointer =& $forecastData["time"][$fromTime];
                                 break;
                             case "fmc";
-                                // Test, if this is a probability for the next FMC                                
+                                // Test, if this is a probability for the next FMC
                                 if (preg_match("/^BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
                                     // Set type to BECMG or TEMPO
                                     $type = $lresult[0];
@@ -1109,7 +1109,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     $from = $lresult[1].":00";
                                     $to   = $lresult[2].":00";
                                     $to   = ($to == "24:00") ? "00:00" : $to;
-                                    // Same as above, we have a time for this FMC from our TAF, 
+                                    // Same as above, we have a time for this FMC from our TAF,
                                     // increase field-counter
                                     $i += 1;
                                 } else {
@@ -1173,7 +1173,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     // {{{ _convertReturn()
     /**
     * Converts the data in the return array to the desired units and/or
-    * output format. 
+    * output format.
     *
     * @param    array                       $target
     * @param    string                      $units
@@ -1267,7 +1267,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED, __FILE__, __LINE__);
         }
-        
+
         if (is_string($location)) {
             // Try to part search string in name, state and country part
             // and build where clause from it for the select
@@ -1281,7 +1281,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                 $where .= " AND LOWER(state) LIKE '%".strtolower(trim($location[1]))."%'";
                 $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[2]))."%'";
             }
-                
+
             // Create select, locations with ICAO first
             $select = "SELECT icao, name, state, country, latitude, longitude ".
                       "FROM metarLocations ".
@@ -1294,7 +1294,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             } elseif (strtolower(get_class($result)) != "db_result" || $result->numRows() == 0) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
             }
-            
+
             // Result is valid, start preparing the return
             $icao = array();
             while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != null) {
@@ -1334,7 +1334,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     // {{{ searchLocationByCountry()
     /**
     * Returns IDs with location-name for a given country or all available
-    * countries, if no value was given 
+    * countries, if no value was given
     *
     * @param    string                      $country
     * @return   PEAR_Error|array
@@ -1412,8 +1412,8 @@ class Services_Weather_Metar extends Services_Weather_Common
         }
         if (!is_numeric($latitude) || !is_numeric($longitude)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_INVALID_LOCATION, __FILE__, __LINE__);
-        }           
-        
+        }
+
         // Get all airports
         $select = "SELECT icao, x, y, z FROM metarAirports";
         $result = $this->_db->query($select);
@@ -1602,7 +1602,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         return $weatherReturn;
     }
     // }}}
-    
+
     // {{{ getForecast()
     /**
     * METAR provides no forecast per se, we use the TAF reports to generate

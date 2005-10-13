@@ -130,7 +130,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
     // {{{ searchLocation()
     /**
     * EJSE offers no search function to date, so this function is disabled.
-    * Maybe this is the place to interface to some online postcode service... 
+    * Maybe this is the place to interface to some online postcode service...
     *
     * @param    string                      $location
     * @param    bool                        $useFirst
@@ -147,7 +147,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
     // {{{ searchLocationByCountry()
     /**
     * EJSE offers no search function to date, so this function is disabled.
-    * Maybe this is the place to interface to some online postcode service... 
+    * Maybe this is the place to interface to some online postcode service...
     *
     * @param    string                      $country
     * @return   bool
@@ -283,23 +283,23 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         } else {
             $weatherReturn["update"]            = "";
         }
-        $weatherReturn["updateRaw"]			= $this->_weather->LastUpdated;
+        $weatherReturn["updateRaw"]         = $this->_weather->LastUpdated;
         $weatherReturn["station"]           = $this->_weather->ReportedAt;
         $weatherReturn["conditionIcon"]     = $this->_weather->IconIndex;
-        preg_match("/(-?\d+)\D+/", $this->_weather->Temprature, $temperature);        
+        preg_match("/(-?\d+)\D+/", $this->_weather->Temprature, $temperature);
         $weatherReturn["temperature"]       = $this->convertTemperature($temperature[1], "f", $units["temp"]);
-        preg_match("/(-?\d+)\D+/", $this->_weather->FeelsLike, $feltTemperature);        
+        preg_match("/(-?\d+)\D+/", $this->_weather->FeelsLike, $feltTemperature);
         $weatherReturn["feltTemperature"]   = $this->convertTemperature($feltTemperature[1], "f", $units["temp"]);
         $weatherReturn["condition"]         = $this->_weather->Forecast;
-        if (preg_match("/([\d\.]+)\D+/", $this->_weather->Visibility, $visibility)) { 
+        if (preg_match("/([\d\.]+)\D+/", $this->_weather->Visibility, $visibility)) {
             $weatherReturn["visibility"]    = $this->convertDistance($visibility[1], "sm", $units["vis"]);
         } else {
             $weatherReturn["visibility"]    = trim($this->_weather->Visibility);
-        } 
+        }
         preg_match("/([\d\.]+) inches and (\w+)/", $this->_weather->Pressure, $pressure);
-        $weatherReturn["pressure"]          = $this->convertPressure($pressure[1], "in", $units["pres"]);        
+        $weatherReturn["pressure"]          = $this->convertPressure($pressure[1], "in", $units["pres"]);
         $weatherReturn["pressureTrend"]     = $pressure[2];
-        preg_match("/(-?\d+)\D+/", $this->_weather->DewPoint, $dewPoint);      
+        preg_match("/(-?\d+)\D+/", $this->_weather->DewPoint, $dewPoint);
         $weatherReturn["dewPoint"]          = $this->convertTemperature($dewPoint[1], "f", $units["temp"]);
         preg_match("/(\d+) (\w+)/", $this->_weather->UVIndex, $uvIndex);
         $weatherReturn["uvIndex"]           = $uvIndex[1];
@@ -373,8 +373,8 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         $forecastReturn["days"]   = array();
 
         for ($i = 1; $i <= $days; $i++) {
-            preg_match("/(-?\d+)\D+/", $this->_forecast->{"Day".$i}->High, $temperatureHigh);        
-            preg_match("/(-?\d+)\D+/", $this->_forecast->{"Day".$i}->Low, $temperatureLow);        
+            preg_match("/(-?\d+)\D+/", $this->_forecast->{"Day".$i}->High, $temperatureHigh);
+            preg_match("/(-?\d+)\D+/", $this->_forecast->{"Day".$i}->Low, $temperatureLow);
             $day = array(
                 "tempertureHigh" => $this->convertTemperature($temperatureHigh[1], "f", $units["temp"]),
                 "temperatureLow" => $this->convertTemperature($temperatureLow[1], "f", $units["temp"]),
@@ -388,7 +388,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             $forecastReturn["days"][] = $day;
         }
 
-        return $forecastReturn;        
+        return $forecastReturn;
     }
     // }}}
 }
