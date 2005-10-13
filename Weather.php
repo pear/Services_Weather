@@ -1,30 +1,33 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at                              |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Alexander Wirtz <alex@pc4p.net>                             |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
 /**
-* @package      Services_Weather
-* @filesource
-*/
+ * PEAR::Services_Weather
+ *
+ * Services_Weather searches for given locations and retrieves current
+ * weather data and, dependant on the used service, also forecasts. Up to
+ * now, SOAP services from CapeScience and EJSE, XML from weather.com and
+ * METAR/TAF from noaa.gov are supported, further services will get
+ * included, if they become available and are properly documented.
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 3.0 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Web Services
+ * @package    Services_Weather
+ * @author     Alexander Wirtz <alex@pc4p.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version    CVS: $Id$
+ * @link       http://pear.php.net/package/Services_Weather
+ * @filesource
+ */
 
-/**
-*/
 // {{{ constants
 // {{{ cache times
 define("SERVICES_WEATHER_EXPIRES_UNITS",      900);
@@ -54,61 +57,56 @@ define("SERVICES_WEATHER_ERROR_INVALID_LICENSE_KEY",    102);
 
 // {{{ class Services_Weather
 /**
-* PEAR::Services_Weather
-*
-* This class acts as an interface to various online weather-services.
-*
-* Services_Weather searches for given locations and retrieves current
-* weather data and, dependant on the used service, also forecasts. Up to
-* now, SOAP services from CapeScience and EJSE, XML from weather.com and
-* METAR/TAF from noaa.gov are supported, further services will get
-* included, if they become available and are properly documented.
-*
-* @author       Alexander Wirtz <alex@pc4p.net>
-* @package      Services_Weather
-* @license      http://www.php.net/license/2_02.txt
-* @version      1.3
-*/
+ * This class acts as an interface to various online weather-services.
+ *
+ * @category   Web Services
+ * @package    Services_Weather
+ * @author     Alexander Wirtz <alex@pc4p.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version    Release: @package_version@
+ * @link       http://pear.php.net/package/Services_Weather
+ */
 class Services_Weather {
 
     // {{{ &service()
     /**
-    * Factory for creating the services-objects
-    *
-    * Usable keys for the options array are:
-    * o debug               enables debugging output
-    * --- Common Options
-    * o cacheType           defines what type of cache to use
-    * o cacheOptions        passes cache options
-    * o unitsFormat         use (US)-standard, metric or custom units
-    * o customUnitsFormat   defines the customized units format
-    * o httpTimeout			sets timeout for HTTP requests
-    * o dateFormat          string to use for date output
-    * o timeFormat          string to use for time output
-    * --- EJSE Options
-    * o none
-    * --- GlobalWeather Options
-    * o none
-    * --- METAR/TAF Options
-    * o dsn                 String for defining the DB connection
-    * o dbOptions           passes DB options
-    * o sourceMetar         http, ftp or file - type of data-source for METAR
-    * o sourcePathMetar     where to look for the source, URI or filepath,
-    *                       of METAR information
-    * o sourceTaf           http, ftp or file - type of data-source for TAF
-    * o sourcePathTaf       where to look for the source, URI or filepath,
-    *                       of TAF information
-    * --- weather.com Options
-    * o partnerID           You'll receive these keys after registering
-    * o licenseKey          with the weather.com XML-service
-    *
-    * @param    string                      $service
-    * @param    array                       $options
-    * @return   PEAR_Error|object
-    * @throws   PEAR_Error
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND
-    * @access   public
-    */
+     * Factory for creating the services-objects
+     *
+     * Usable keys for the options array are:
+     * o debug               enables debugging output
+     * --- Common Options
+     * o cacheType           defines what type of cache to use
+     * o cacheOptions        passes cache options
+     * o unitsFormat         use (US)-standard, metric or custom units
+     * o customUnitsFormat   defines the customized units format
+     * o httpTimeout         sets timeout for HTTP requests
+     * o dateFormat          string to use for date output
+     * o timeFormat          string to use for time output
+     * --- EJSE Options
+     * o none
+     * --- GlobalWeather Options
+     * o none
+     * --- METAR/TAF Options
+     * o dsn                 String for defining the DB connection
+     * o dbOptions           passes DB options
+     * o sourceMetar         http, ftp or file - type of data-source for METAR
+     * o sourcePathMetar     where to look for the source, URI or filepath,
+     *                       of METAR information
+     * o sourceTaf           http, ftp or file - type of data-source for TAF
+     * o sourcePathTaf       where to look for the source, URI or filepath,
+     *                       of TAF information
+     * --- weather.com Options
+     * o partnerID           You'll receive these keys after registering
+     * o licenseKey          with the weather.com XML-service
+     *
+     * @param    string                      $service
+     * @param    array                       $options
+     * @return   PEAR_Error|object
+     * @throws   PEAR_Error
+     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND
+     * @access   public
+     */
     function &service($service, $options = null)
     {
         $service = ucfirst(strtolower($service));
@@ -146,11 +144,11 @@ class Services_Weather {
 
     // {{{ apiVersion()
     /**
-    * For your convenience, when I come up with changes in the API...
-    *
-    * @return   string
-    * @access   public
-    */
+     * For your convenience, when I come up with changes in the API...
+     *
+     * @return   string
+     * @access   public
+     */
    function apiVersion()
     {
         return "1.3";
@@ -159,12 +157,12 @@ class Services_Weather {
 
     // {{{ _errorMessage()
     /**
-    * Returns the message for a certain error code
-    *
-    * @param    PEAR_Error|int              $value
-    * @return   string
-    * @access   private
-    */
+     * Returns the message for a certain error code
+     *
+     * @param    PEAR_Error|int              $value
+     * @return   string
+     * @access   private
+     */
     function _errorMessage($value)
     {
         static $errorMessages;
@@ -194,12 +192,12 @@ class Services_Weather {
 
     // {{{ isError()
     /**
-    * Checks for an error object, same as in PEAR
-    *
-    * @param    PEAR_Error|mixed            $value
-    * @return   bool
-    * @access   public
-    */
+     * Checks for an error object, same as in PEAR
+     *
+     * @param    PEAR_Error|mixed            $value
+     * @return   bool
+     * @access   public
+     */
     function isError($value)
     {
         return (is_object($value) && (strtolower(get_class($value)) == "pear_error" || is_subclass_of($value, "pear_error")));
@@ -208,14 +206,14 @@ class Services_Weather {
 
     // {{{ &raiseError()
     /**
-    * Creates error, same as in PEAR with a customized flavor
-    *
-    * @param    int                         $code
-    * @param    string                      $file
-    * @param    int                         $line
-    * @return   PEAR_Error
-    * @access   private
-    */
+     * Creates error, same as in PEAR with a customized flavor
+     *
+     * @param    int                         $code
+     * @param    string                      $file
+     * @param    int                         $line
+     * @return   PEAR_Error
+     * @access   private
+     */
     function &raiseError($code = SERVICES_WEATHER_ERROR_UNKNOWN_ERROR, $file = "", $line = 0)
     {
         // This should improve the performance of the script, as PEAR is only included, when
