@@ -1565,6 +1565,10 @@ class Services_Weather_Metar extends Services_Weather_Common
         $units    = $this->getUnitsFormat($unitsFormat);
         $location = $this->getLocation($id);
 
+        if (Services_Weather::isError($location)) {
+            return $location;
+        }
+
         if ($this->_cacheEnabled && ($weather = $this->_cache->get("METAR-".$id, "weather"))) {
             // Wee... it was cached, let's have it...
             $weatherReturn  = $weather;
@@ -1623,6 +1627,10 @@ class Services_Weather_Metar extends Services_Weather_Common
         // Get other data
         $units    = $this->getUnitsFormat($unitsFormat);
         $location = $this->getLocation($id);
+
+        if (Services_Weather::isError($location)) {
+            return $location;
+        }
 
         if ($this->_cacheEnabled && ($forecast = $this->_cache->get("METAR-".$id, "forecast"))) {
             // Wee... it was cached, let's have it...
