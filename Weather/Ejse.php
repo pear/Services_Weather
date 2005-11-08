@@ -75,7 +75,6 @@ class Services_Weather_Ejse extends Services_Weather_Common {
     * @param    array                       $options
     * @param    mixed                       $error
     * @throws   PEAR_Error
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
     * @see      Science_Weather::Science_Weather
     * @access   private
     */
@@ -85,23 +84,33 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         $this->Services_Weather_Common($options, $perror);
         if (Services_Weather::isError($perror)) {
             $error = $perror;
-            return;
         }
+    }
+    // }}}
 
+    // {{{ _connectServer()
+    /**
+    * Connects to the SOAP server and retrieves the WSDL data
+    *
+    * @return   PEAR_Error|bool
+    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+    * @access   private
+    */
+    function _connectServer()
+    {
         include_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://www.ejse.com/WeatherService/Service.asmx?WSDL", array("timeout" => $this->_httpTimeout));
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
-            return;
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
 
         eval($this->_wsdl->generateAllProxies());
         if (!class_exists("WebService_Service_ServiceSoap")) {
-            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
-            return;
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
-
         $this->_weatherSoap = &new WebService_Service_ServiceSoap;
+
+        return true;
     }
     // }}}
 
@@ -184,6 +193,14 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             $this->_weather = $weather;
             $locationReturn["cache"] = "HIT";
         } else {
+            // Check, if the weatherSoap-Object is present. If not, connect to the Server and retrieve the WDSL data
+            if (!$this->_weatherSoap) {
+                $status = $this->_connectServer();
+                if (Services_Weather::isError($status)) {
+                    return $status;
+                }
+            }
+            
             $weather = $this->_weatherSoap->getWeatherInfo($id);
 
             if (Services_Weather::isError($weather)) {
@@ -232,6 +249,14 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             $this->_weather = $weather;
             $weatherReturn["cache"] = "HIT";
         } else {
+            // Check, if the weatherSoap-Object is present. If not, connect to the Server and retrieve the WDSL data
+            if (!$this->_weatherSoap) {
+                $status = $this->_connectServer();
+                if (Services_Weather::isError($status)) {
+                    return $status;
+                }
+            }
+
             // ...as last function
             $weather = $this->_weatherSoap->getWeatherInfo($id);
 
@@ -353,6 +378,14 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             $this->_forecast = $forecast;
             $forecastReturn["cache"] = "HIT";
         } else {
+            // Check, if the weatherSoap-Object is present. If not, connect to the Server and retrieve the WDSL data
+            if (!$this->_weatherSoap) {
+                $status = $this->_connectServer();
+                if (Services_Weather::isError($status)) {
+                    return $status;
+                }
+            }
+
             // ...as last function
             $forecast = $this->_weatherSoap->GetNineDayForecastInfo($id);
 
