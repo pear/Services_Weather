@@ -89,7 +89,6 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     * @param    mixed                       $error
     * @throws   PEAR_Error
     * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @see      Science_Weather::Science_Weather
     * @access   private
     */
     function Services_Weather_Globalweather($options, &$error)

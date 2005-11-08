@@ -144,7 +144,6 @@ class Services_Weather_Common {
     * @param    array                       $options
     * @param    mixed                       $error
     * @throws   PEAR_Error
-    * @see      Science_Weather::Science_Weather
     * @access   private
     */
     function Services_Weather_Common($options, &$error)
