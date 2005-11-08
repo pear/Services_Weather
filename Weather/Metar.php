@@ -1,123 +1,149 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at                              |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Alexander Wirtz <alex@pc4p.net>                             |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
 /**
-* @package      Services_Weather
-* @filesource
-*/
+ * PEAR::Services_Weather_Metar
+ *
+ * PHP versions 4 and 5
+ *
+ * <LICENSE>
+ * Copyright (c) 2005, Alexander Wirtz
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * o Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * o Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * o Neither the name of the software nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * </LICENSE>
+ * 
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/Services_Weather
+ * @link        http://weather.noaa.gov/weather/metar.shtml
+ * @link        http://weather.noaa.gov/weather/taf.shtml
+ * @example     examples/metar-basic.php            metar-basic.php
+ * @example     examples/metar-extensive.php        metar-extensive.php
+ * @filesource
+ */
 
-/**
-*/
 require_once "Services/Weather/Common.php";
 
 require_once "DB.php";
 
 // {{{ class Services_Weather_Metar
 /**
-* PEAR::Services_Weather_Metar
-*
-* This class acts as an interface to the METAR/TAF service of
-* weather.noaa.gov. It searches for locations given in ICAO notation and
-* retrieves the current weather data.
-*
-* Of course the parsing of the METAR-data has its limitations, as it
-* follows the Federal Meteorological Handbook No.1 with modifications to
-* accomodate for non-US reports, so if the report deviates from these
-* standards, you won't get it parsed correctly.
-* Anything that is not parsed, is saved in the "noparse" array-entry,
-* returned by getWeather(), so you can do your own parsing afterwards. This
-* limitation is specifically given for remarks, as the class is not
-* processing everything mentioned there, but you will get the most common
-* fields like precipitation and temperature-changes. Again, everything not
-* parsed, goes into "noparse".
-*
-* If you think, some important field is missing or not correctly parsed,
-* please file a feature-request/bugreport at http://pear.php.net/ and be
-* sure to provide the METAR (or TAF) report with a _detailed_ explanation!
-*
-* For working examples, please take a look at
-*     docs/Services_Weather/examples/metar-basic.php
-*     docs/Services_Weather/examples/metar-extensive.php
-*
-* @author       Alexander Wirtz <alex@pc4p.net>
-* @link         http://weather.noaa.gov/weather/metar.shtml
-* @link         http://weather.noaa.gov/weather/taf.shtml
-* @example      examples/metar-basic.php        metar-basic.php
-* @example      examples/metar-extensive.php    metar-extensive.php
-* @package      Services_Weather
-* @license      http://www.php.net/license/2_02.txt
-* @version      1.3
-*/
+ * This class acts as an interface to the METAR/TAF service of
+ * weather.noaa.gov. It searches for locations given in ICAO notation and
+ * retrieves the current weather data.
+ *
+ * Of course the parsing of the METAR-data has its limitations, as it
+ * follows the Federal Meteorological Handbook No.1 with modifications to
+ * accomodate for non-US reports, so if the report deviates from these
+ * standards, you won't get it parsed correctly.
+ * Anything that is not parsed, is saved in the "noparse" array-entry,
+ * returned by getWeather(), so you can do your own parsing afterwards. This
+ * limitation is specifically given for remarks, as the class is not
+ * processing everything mentioned there, but you will get the most common
+ * fields like precipitation and temperature-changes. Again, everything not
+ * parsed, goes into "noparse".
+ *
+ * If you think, some important field is missing or not correctly parsed,
+ * please file a feature-request/bugreport at http://pear.php.net/ and be
+ * sure to provide the METAR (or TAF) report with a _detailed_ explanation!
+ *
+ * For working examples, please take a look at
+ *     docs/Services_Weather/examples/metar-basic.php
+ *     docs/Services_Weather/examples/metar-extensive.php
+ *
+ *
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     Release: @package_version@
+ * @link        http://pear.php.net/package/Services_Weather
+ * @link        http://weather.noaa.gov/weather/metar.shtml
+ * @link        http://weather.noaa.gov/weather/taf.shtml
+ * @example     examples/metar-basic.php            metar-basic.php
+ * @example     examples/metar-extensive.php        metar-extensive.php
+ */
 class Services_Weather_Metar extends Services_Weather_Common
 {
     // {{{ properties
     /**
-    * Information to access the location DB
-    *
-    * @var      object  DB                  $_db
-    * @access   private
-    */
+     * Information to access the location DB
+     *
+     * @var     object  DB                  $_db
+     * @access  private
+     */
     var $_db;
 
     /**
-    * The source METAR uses
-    *
-    * @var      string                      $_sourceMetar
-    * @access   private
-    */
+     * The source METAR uses
+     *
+     * @var     string                      $_sourceMetar
+     * @access  private
+     */
     var $_sourceMetar;
 
     /**
-    * The source TAF uses
-    *
-    * @var      string                      $_sourceTaf
-    * @access   private
-    */
+     * The source TAF uses
+     *
+     * @var     string                      $_sourceTaf
+     * @access  private
+     */
     var $_sourceTaf;
 
     /**
-    * This path is used to find the METAR data
-    *
-    * @var      string                      $_sourcePathMetar
-    * @access   private
-    */
+     * This path is used to find the METAR data
+     *
+     * @var     string                      $_sourcePathMetar
+     * @access  private
+     */
     var $_sourcePathMetar;
 
     /**
-    * This path is used to find the TAF data
-    *
-    * @var      string                      $_sourcePathTaf
-    * @access   private
-    */
+     * This path is used to find the TAF data
+     *
+     * @var     string                      $_sourcePathTaf
+     * @access  private
+     */
     var $_sourcePathTaf;
     // }}}
 
     // {{{ constructor
     /**
-    * Constructor
-    *
-    * @param    array                       $options
-    * @param    mixed                       $error
-    * @throws   PEAR_Error
-    * @access   private
-    */
+     * Constructor
+     *
+     * @param   array                       $options
+     * @param   mixed                       $error
+     * @throws  PEAR_Error
+     * @access  private
+     */
     function Services_Weather_Metar($options, &$error)
     {
         $perror = null;
@@ -169,18 +195,18 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ setMetarDB()
     /**
-    * Sets the parameters needed for connecting to the DB, where the
-    * location-search is fetching its data from. You need to build a DB
-    * with the external tool buildMetarDB first, it fetches the locations
-    * and airports from a NOAA-website.
-    *
-    * @param    string                      $dsn
-    * @param    array                       $dbOptions
-    * @return   DB_Error|bool
-    * @throws   DB_Error
-    * @see      DB::parseDSN
-    * @access   public
-    */
+     * Sets the parameters needed for connecting to the DB, where the
+     * location-search is fetching its data from. You need to build a DB
+     * with the external tool buildMetarDB first, it fetches the locations
+     * and airports from a NOAA-website.
+     *
+     * @param   string                      $dsn
+     * @param   array                       $dbOptions
+     * @return  DB_Error|bool
+     * @throws  DB_Error
+     * @see     DB::parseDSN
+     * @access  public
+     */
     function setMetarDB($dsn, $dbOptions = array())
     {
         $dsninfo = DB::parseDSN($dsn);
@@ -201,17 +227,17 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ setMetarSource()
     /**
-    * Sets the source, where the class tries to locate the METAR/TAF data
-    *
-    * Source can be http, ftp or file.
-    * Alternate sourcepaths can be provided.
-    *
-    * @param    string                      $sourceMetar
-    * @param    string                      $sourcePathMetar
-    * @param    string                      $sourceTaf
-    * @param    string                      $sourcePathTaf
-    * @access   public
-    */
+     * Sets the source, where the class tries to locate the METAR/TAF data
+     *
+     * Source can be http, ftp or file.
+     * Alternate sourcepaths can be provided.
+     *
+     * @param   string                      $sourceMetar
+     * @param   string                      $sourcePathMetar
+     * @param   string                      $sourceTaf
+     * @param   string                      $sourcePathTaf
+     * @access  public
+     */
     function setMetarSource($sourceMetar, $sourcePathMetar = "", $sourceTaf = "", $sourcePathTaf = "")
     {
         if (in_array($sourceMetar, array("http", "ftp", "file"))) {
@@ -255,15 +281,15 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ _checkLocationID()
     /**
-    * Checks the id for valid values and thus prevents silly requests to
-    * METAR server
-    *
-    * @param    string                      $id
-    * @return   PEAR_Error|bool
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
-    * @access   private
-    */
+     * Checks the id for valid values and thus prevents silly requests to
+     * METAR server
+     *
+     * @param   string                      $id
+     * @return  PEAR_Error|bool
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
+     * @access  private
+     */
     function _checkLocationID($id)
     {
         if (is_array($id) || is_object($id) || !strlen($id)) {
@@ -278,17 +304,17 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ _parseWeatherData()
     /**
-    * Parses the data returned by the provided source and caches it
-    *
-    * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB
-    * 18/16 A2992 RMK SLP045 T01820159
-    *
-    * @param    string                      $source
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @access   private
-    */
+     * Parses the data returned by the provided source and caches it
+     *
+     * METAR KPIT 091955Z COR 22015G25KT 3/4SM R28L/2600FT TSRA OVC010CB
+     * 18/16 A2992 RMK SLP045 T01820159
+     *
+     * @param   string                      $source
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @access  private
+     */
     function _parseWeatherData($source)
     {
         static $compass;
@@ -775,21 +801,21 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ _parseForecastData()
     /**
-    * Parses the data returned by the provided source and caches it
-    *
-    * TAF KLGA 271734Z 271818 11007KT P6SM -RA SCT020 BKN200
-    *   FM2300 14007KT P6SM SCT030 BKN150
-    *   FM0400 VRB03KT P6SM SCT035 OVC080 PROB30 0509 P6SM -RA BKN035
-    *   FM0900 VRB03KT 6SM -RA BR SCT015 OVC035
-    *       TEMPO 1215 5SM -RA BR SCT009 BKN015
-    *       BECMG 1517 16007KT P6SM NSW SCT015 BKN070
-    *
-    * @param    string                      $source
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @access   private
-    */
+     * Parses the data returned by the provided source and caches it
+     *
+     * TAF KLGA 271734Z 271818 11007KT P6SM -RA SCT020 BKN200
+     *     FM2300 14007KT P6SM SCT030 BKN150
+     *     FM0400 VRB03KT P6SM SCT035 OVC080 PROB30 0509 P6SM -RA BKN035
+     *     FM0900 VRB03KT 6SM -RA BR SCT015 OVC035
+     *         TEMPO 1215 5SM -RA BR SCT009 BKN015
+     *         BECMG 1517 16007KT P6SM NSW SCT015 BKN070
+     *
+     * @param   string                      $source
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @access  private
+     */
     function _parseForecastData($source)
     {
         static $compass;
@@ -1177,14 +1203,14 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ _convertReturn()
     /**
-    * Converts the data in the return array to the desired units and/or
-    * output format.
-    *
-    * @param    array                       $target
-    * @param    string                      $units
-    * @param    string                      $location
-    * @access   private
-    */
+     * Converts the data in the return array to the desired units and/or
+     * output format.
+     *
+     * @param   array                       $target
+     * @param   string                      $units
+     * @param   string                      $location
+     * @access  private
+     */
     function _convertReturn(&$target, $units, $location)
     {
         if (is_array($target)) {
@@ -1256,17 +1282,17 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ searchLocation()
     /**
-    * Searches IDs for given location, returns array of possible locations
-    * or single ID
-    *
-    * @param    string|array                $location
-    * @param    bool                        $useFirst       If set, first ID of result-array is returned
-    * @return   PEAR_Error|array|string
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
-    * @access   public
-    */
+     * Searches IDs for given location, returns array of possible locations
+     * or single ID
+     *
+     * @param   string|array                $location
+     * @param   bool                        $useFirst       If set, first ID of result-array is returned
+     * @return  PEAR_Error|array|string
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
+     * @access  public
+     */
     function searchLocation($location, $useFirst = false)
     {
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
@@ -1343,16 +1369,16 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ searchLocationByCountry()
     /**
-    * Returns IDs with location-name for a given country or all available
-    * countries, if no value was given
-    *
-    * @param    string                      $country
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @access   public
-    */
+     * Returns IDs with location-name for a given country or all available
+     * countries, if no value was given
+     *
+     * @param   string                      $country
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @access  public
+     */
     function searchLocationByCountry($country = "")
     {
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
@@ -1405,18 +1431,18 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ searchAirport()
     /**
-    * Searches the nearest airport(s) for given coordinates, returns array
-    * of IDs or single ID
-    *
-    * @param    float                       $latitude
-    * @param    float                       $longitude
-    * @param    int                         $numResults
-    * @return   PEAR_Error|array|string
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
-    * @access   public
-    */
+     * Searches the nearest airport(s) for given coordinates, returns array
+     * of IDs or single ID
+     *
+     * @param   float                       $latitude
+     * @param   float                       $longitude
+     * @param   int                         $numResults
+     * @return  PEAR_Error|array|string
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
+     * @access  public
+     */
     function searchAirport($latitude, $longitude, $numResults = 1)
     {
         if (!isset($this->_db) || !DB::isConnection($this->_db)) {
@@ -1485,13 +1511,13 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ getLocation()
     /**
-    * Returns the data for the location belonging to the ID
-    *
-    * @param    string                      $id
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * Returns the data for the location belonging to the ID
+     *
+     * @param   string                      $id
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getLocation($id = "")
     {
         $status = $this->_checkLocationID($id);
@@ -1556,14 +1582,14 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ getWeather()
     /**
-    * Returns the weather-data for the supplied location
-    *
-    * @param    string                      $id
-    * @param    string                      $unitsFormat
-    * @return   PHP_Error|array
-    * @throws   PHP_Error
-    * @access   public
-    */
+     * Returns the weather-data for the supplied location
+     *
+     * @param   string                      $id
+     * @param   string                      $unitsFormat
+     * @return  PHP_Error|array
+     * @throws  PHP_Error
+     * @access  public
+     */
     function getWeather($id = "", $unitsFormat = "")
     {
         $id     = strtoupper($id);
@@ -1617,16 +1643,16 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     // {{{ getForecast()
     /**
-    * METAR provides no forecast per se, we use the TAF reports to generate
-    * a forecast for the announced timeperiod
-    *
-    * @param    string                      $id
-    * @param    int                         $days           Ignored, not applicable
-    * @param    string                      $unitsFormat
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * METAR provides no forecast per se, we use the TAF reports to generate
+     * a forecast for the announced timeperiod
+     *
+     * @param   string                      $id
+     * @param   int                         $days           Ignored, not applicable
+     * @param   string                      $unitsFormat
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getForecast($id = "", $days = null, $unitsFormat = "")
     {
         $id     = strtoupper($id);

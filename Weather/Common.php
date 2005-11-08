@@ -1,30 +1,50 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at                              |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Alexander Wirtz <alex@pc4p.net>                             |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
 /**
-* @package      Services_Weather
-* @filesource
-*/
+ * PEAR::Services_Weather_Common
+ *
+ * PHP versions 4 and 5
+ *
+ * <LICENSE>
+ * Copyright (c) 2005, Alexander Wirtz
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * o Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * o Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * o Neither the name of the software nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * </LICENSE>
+ * 
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/Services_Weather
+ * @filesource
+ */
 
-/**
-*/
 require_once "Services/Weather.php";
 
 // {{{ constants
@@ -35,34 +55,35 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 
 // {{{ class Services_Weather_Common
 /**
-* PEAR::Services_Weather_Common
-*
-* Parent class for weather-services. Defines common functions for unit
-* conversions, checks for cache enabling and does other miscellaneous
-* things.
-*
-* @author       Alexander Wirtz <alex@pc4p.net>
-* @package      Services_Weather
-* @license      http://www.php.net/license/2_02.txt
-* @version      1.3
-*/
+ * Parent class for weather-services. Defines common functions for unit
+ * conversions, checks for cache enabling and does other miscellaneous
+ * things.
+ *
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     Release: @package_version@
+ * @link        http://pear.php.net/package/Services_Weather
+ */
 class Services_Weather_Common {
 
     // {{{ properties
     /**
-    * Format of the units provided (standard/metric/custom)
-    *
-    * @var      string                      $_unitsFormat
-    * @access   private
-    */
+     * Format of the units provided (standard/metric/custom)
+     *
+     * @var     string                      $_unitsFormat
+     * @access  private
+     */
     var $_unitsFormat = "s";
 
     /**
-    * Custom format of the units
-    *
-    * @var      array                       $_customUnitsFormat
-    * @access   private
-    */
+     * Custom format of the units
+     *
+     * @var     array                       $_customUnitsFormat
+     * @access  private
+     */
     var $_customUnitsFormat = array(
         "temp"   => "f",
         "vis"    => "sm",
@@ -73,79 +94,79 @@ class Services_Weather_Common {
     );
 
     /**
-    * Timeout for HTTP requests
-    *
-    * @var      int                         $_httpTimeout
-    * @access   private
-    */
+     * Timeout for HTTP requests
+     *
+     * @var     int                        $_httpTimeout
+     * @access  private
+     */
     var $_httpTimeout = 60;
 
     /**
-    * Format of the used dates
-    *
-    * @var      string                      $_dateFormat
-    * @access   private
-    */
+     * Format of the used dates
+     *
+     * @var     string                      $_dateFormat
+     * @access  private
+     */
     var $_dateFormat = "m/d/y";
 
     /**
-    * Format of the used times
-    *
-    * @var      string                      $_timeFormat
-    * @access   private
-    */
+     * Format of the used times
+     *
+     * @var     string                      $_timeFormat
+     * @access  private
+     */
     var $_timeFormat = "G:i A";
 
     /**
-    * Object containing the location-data
-    *
-    * @var      object stdClass             $_location
-    * @access   private
-    */
+     * Object containing the location-data
+     *
+     * @var     object stdClass             $_location
+     * @access  private
+     */
     var $_location;
 
     /**
-    * Object containing the weather-data
-    *
-    * @var      object stdClass             $_weather
-    * @access   private
-    */
+     * Object containing the weather-data
+     *
+     * @var     object stdClass             $_weather
+     * @access  private
+     */
     var $_weather;
 
     /**
-    * Object containing the forecast-data
-    *
-    * @var      object stdClass             $_forecast
-    * @access   private
-    */
+     * Object containing the forecast-data
+     *
+     * @var     object stdClass             $_forecast
+     * @access  private
+     */
     var $_forecast;
 
     /**
-    * Cache, containing the data-objects
-    *
-    * @var      object Cache                $_cache
-    * @access   private
-    */
+     * Cache, containing the data-objects
+     *
+     * @var     object Cache                $_cache
+     * @access  private
+     */
     var $_cache;
 
     /**
-    * Provides check for Cache
-    *
-    * @var      bool                        $_cacheEnabled
-    * @access   private
-    */
+     * Provides check for Cache
+     *
+     * @var     bool                        $_cacheEnabled
+     * @access  private
+     */
     var $_cacheEnabled = false;
     // }}}
 
     // {{{ constructor
     /**
-    * Constructor
-    *
-    * @param    array                       $options
-    * @param    mixed                       $error
-    * @throws   PEAR_Error
-    * @access   private
-    */
+     * Constructor
+     *
+     * @param   array                       $options
+     * @param   mixed                       $error
+     * @throws  PEAR_Error
+     * @access  private
+     */
     function Services_Weather_Common($options, &$error)
     {
         // Set options accordingly
@@ -184,16 +205,16 @@ class Services_Weather_Common {
 
     // {{{ setCache()
     /**
-    * Enables caching the data, usage strongly recommended
-    *
-    * Requires Cache to be installed
-    *
-    * @param    string                      $cacheType
-    * @param    array                       $cacheOptions
-    * @return   PEAR_Error|bool
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED
-    * @access   public
-    */
+     * Enables caching the data, usage strongly recommended
+     *
+     * Requires Cache to be installed
+     *
+     * @param   string                      $cacheType
+     * @param   array                       $cacheOptions
+     * @return  PEAR_Error|bool
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED
+     * @access  public
+     */
     function setCache($cacheType = "file", $cacheOptions = array())
     {
         // The error handling in Cache is a bit crummy (read: not existent)
@@ -215,12 +236,12 @@ class Services_Weather_Common {
 
     // {{{ setUnitsFormat()
     /**
-    * Changes the representation of the units (standard/metric)
-    *
-    * @param    string                      $unitsFormat
-    * @param    array                       $customUnitsFormat
-    * @access   public
-    */
+     * Changes the representation of the units (standard/metric)
+     *
+     * @param   string                      $unitsFormat
+     * @param   array                       $customUnitsFormat
+     * @access  public
+     */
     function setUnitsFormat($unitsFormat, $customUnitsFormat = array())
     {
         static $acceptedFormats;
@@ -252,11 +273,11 @@ class Services_Weather_Common {
 
     // {{{ setHttpTimeout()
     /**
-    * Sets the timeout in seconds for HTTP requests
-    *
-    * @param    int                          $httpTimeout
-    * @access   public
-    */
+     * Sets the timeout in seconds for HTTP requests
+     *
+     * @param   int                          $httpTimeout
+     * @access  public
+     */
     function setHttpTimeout($httpTimeout)
     {
         if (is_int($httpTimeout)) {
@@ -267,12 +288,12 @@ class Services_Weather_Common {
 
     // {{{ getUnitsFormat()
     /**
-    * Returns the selected units format
-    *
-    * @param    string                      $unitsFormat
-    * @return   array
-    * @access   public
-    */
+     * Returns the selected units format
+     *
+     * @param   string                      $unitsFormat
+     * @return  array
+     * @access  public
+     */
     function getUnitsFormat($unitsFormat = "")
     {
         // This is cheap'o stuff
@@ -306,12 +327,12 @@ class Services_Weather_Common {
 
     // {{{ setDateTimeFormat()
     /**
-    * Changes the representation of time and dates (see http://www.php.net/date)
-    *
-    * @param    string                      $dateFormat
-    * @param    string                      $timeFormat
-    * @access   public
-    */
+     * Changes the representation of time and dates (see http://www.php.net/date)
+     *
+     * @param   string                      $dateFormat
+     * @param   string                      $timeFormat
+     * @access  public
+     */
     function setDateTimeFormat($dateFormat = "", $timeFormat = "")
     {
         if (strlen($dateFormat)) {
@@ -325,14 +346,14 @@ class Services_Weather_Common {
 
     // {{{ convertTemperature()
     /**
-    * Convert temperature between f and c
-    *
-    * @param    float                       $temperature
-    * @param    string                      $from
-    * @param    string                      $to
-    * @return   float
-    * @access   public
-    */
+     * Convert temperature between f and c
+     *
+     * @param   float                       $temperature
+     * @param   string                      $from
+     * @param   string                      $to
+     * @return  float
+     * @access  public
+     */
     function convertTemperature($temperature, $from, $to)
     {
         $from = strtolower($from{0});
@@ -353,18 +374,18 @@ class Services_Weather_Common {
 
     // {{{ convertSpeed()
     /**
-    * Convert speed between mph, kmh, kt, mps, fps and bft
-    *
-    * Function will return "false" when trying to convert from
-    * Beaufort, as it is a scale and not a true measurement
-    *
-    * @param    float                       $speed
-    * @param    string                      $from
-    * @param    string                      $to
-    * @return   float|int|bool
-    * @access   public
-    * @link     http://www.spc.noaa.gov/faq/tornado/beaufort.html
-    */
+     * Convert speed between mph, kmh, kt, mps, fps and bft
+     *
+     * Function will return "false" when trying to convert from
+     * Beaufort, as it is a scale and not a true measurement
+     *
+     * @param   float                       $speed
+     * @param   string                      $from
+     * @param   string                      $to
+     * @return  float|int|bool
+     * @access  public
+     * @link    http://www.spc.noaa.gov/faq/tornado/beaufort.html
+     */
     function convertSpeed($speed, $from, $to)
     {
         $from = strtolower($from);
@@ -417,14 +438,14 @@ class Services_Weather_Common {
 
     // {{{ convertPressure()
     /**
-    * Convert pressure between in, hpa, mb, mm and atm
-    *
-    * @param    float                       $pressure
-    * @param    string                      $from
-    * @param    string                      $to
-    * @return   float
-    * @access   public
-    */
+     * Convert pressure between in, hpa, mb, mm and atm
+     *
+     * @param   float                       $pressure
+     * @param   string                      $from
+     * @param   string                      $to
+     * @return  float
+     * @access  public
+     */
     function convertPressure($pressure, $from, $to)
     {
         $from = strtolower($from);
@@ -457,14 +478,14 @@ class Services_Weather_Common {
 
     // {{{ convertDistance()
     /**
-    * Convert distance between km, ft and sm
-    *
-    * @param    float                       $distance
-    * @param    string                      $from
-    * @param    string                      $to
-    * @return   float
-    * @access   public
-    */
+     * Convert distance between km, ft and sm
+     *
+     * @param   float                       $distance
+     * @param   string                      $from
+     * @param   string                      $to
+     * @return  float
+     * @access  public
+     */
     function convertDistance($distance, $from, $to)
     {
         $to   = strtolower($to);
@@ -494,16 +515,16 @@ class Services_Weather_Common {
 
     // {{{ calculateWindChill()
     /**
-    * Calculate windchill from temperature and windspeed (enhanced formula)
-    *
-    * Temperature has to be entered in deg F, speed in mph!
-    *
-    * @param    float                       $temperature
-    * @param    float                       $speed
-    * @return   float
-    * @access   public
-    * @link     http://www.nws.noaa.gov/om/windchill/
-    */
+     * Calculate windchill from temperature and windspeed (enhanced formula)
+     *
+     * Temperature has to be entered in deg F, speed in mph!
+     *
+     * @param   float                       $temperature
+     * @param   float                       $speed
+     * @return  float
+     * @access  public
+     * @link    http://www.nws.noaa.gov/om/windchill/
+     */
     function calculateWindChill($temperature, $speed)
     {
         return round(35.74 + 0.6215 * $temperature - 35.75 * pow($speed, 0.16) + 0.4275 * $temperature * pow($speed, 0.16));
@@ -512,18 +533,18 @@ class Services_Weather_Common {
 
     // {{{ calculateHumidity()
     /**
-    * Calculate humidity from temperature and dewpoint
-    * This is only an approximation, there is no exact formula, this
-    * one here is called Magnus-Formula
-    *
-    * Temperature and dewpoint have to be entered in deg C!
-    *
-    * @param    float                       $temperature
-    * @param    float                       $dewPoint
-    * @return   float
-    * @access   public
-    * @link     http://www.faqs.org/faqs/meteorology/temp-dewpoint/
-    */
+     * Calculate humidity from temperature and dewpoint
+     * This is only an approximation, there is no exact formula, this
+     * one here is called Magnus-Formula
+     *
+     * Temperature and dewpoint have to be entered in deg C!
+     *
+     * @param   float                       $temperature
+     * @param   float                       $dewPoint
+     * @return  float
+     * @access  public
+     * @link    http://www.faqs.org/faqs/meteorology/temp-dewpoint/
+     */
     function calculateHumidity($temperature, $dewPoint)
     {
         // First calculate saturation steam pressure for both temperatures
@@ -551,18 +572,18 @@ class Services_Weather_Common {
 
     // {{{ calculateDewPoint()
     /**
-    * Calculate dewpoint from temperature and humidity
-    * This is only an approximation, there is no exact formula, this
-    * one here is called Magnus-Formula
-    *
-    * Temperature has to be entered in deg C!
-    *
-    * @param    float                       $temperature
-    * @param    float                       $humidity
-    * @return   float
-    * @access   public
-    * @link     http://www.faqs.org/faqs/meteorology/temp-dewpoint/
-    */
+     * Calculate dewpoint from temperature and humidity
+     * This is only an approximation, there is no exact formula, this
+     * one here is called Magnus-Formula
+     *
+     * Temperature has to be entered in deg C!
+     *
+     * @param   float                       $temperature
+     * @param   float                       $humidity
+     * @return  float
+     * @access  public
+     * @link    http://www.faqs.org/faqs/meteorology/temp-dewpoint/
+     */
     function calculateDewPoint($temperature, $humidity)
     {
         if ($temperature >= 0) {
@@ -587,13 +608,13 @@ class Services_Weather_Common {
 
     // {{{ polar2cartesian()
     /**
-    * Convert polar coordinates to cartesian coordinates
-    *
-    * @param    float                       $latitude
-    * @param    float                       $longitude
-    * @return   array
-    * @access   public
-    */
+     * Convert polar coordinates to cartesian coordinates
+     *
+     * @param   float                       $latitude
+     * @param   float                       $longitude
+     * @return  array
+     * @access  public
+     */
     function polar2cartesian($latitude, $longitude)
     {
         $theta = deg2rad($latitude);

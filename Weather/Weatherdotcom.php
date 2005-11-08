@@ -1,109 +1,133 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at                              |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Alexander Wirtz <alex@pc4p.net>                             |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
 /**
-* @package      Services_Weather
-* @filesource
-*/
+ * PEAR::Services_Weather_Weatherdotcom
+ *
+ * PHP versions 4 and 5
+ *
+ * <LICENSE>
+ * Copyright (c) 2005, Alexander Wirtz
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * o Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * o Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * o Neither the name of the software nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * </LICENSE>
+ * 
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/Services_Weather
+ * @link        http://www.weather.com/services/xmloap.html
+ * @example     examples/weather.com-basic.php      weather.com-basic.php
+ * @example     examples/weather.com-extensive.php  weather.com-extensive.php
+ * @filesource
+ */
 
-/**
-*/
 require_once "Services/Weather/Common.php";
 
 // {{{ class Services_Weather_Weatherdotcom
 /**
-* PEAR::Services_Weather_Weatherdotcom
-*
-* This class acts as an interface to the xml service of weather.com. It
-* searches for given locations and retrieves current weather data as well
-* as forecast for up to 10 days.
-*
-* For using the weather.com xml-service please visit
-*     http://www.weather.com/services/xmloap.html
-* and follow the link to sign up, it's free! You will receive an email
-* where to download the SDK with the needed images and guidelines how to
-* publish live data from weather.com. Unfortunately the guidelines are a
-* bit harsh, that's why there's no actual data-representation in this
-* class, just the raw data. Also weather.com demands active caching, so I'd
-* strongly recommend enabling the caching implemented in this class. It
-* obeys to the times as written down in the guidelines.
-*
-* For working examples, please take a look at
-*     docs/Services_Weather/examples/weather.com-basic.php
-*     docs/Services_Weather/examples/weather.com-extensive.php
-*
-* @author       Alexander Wirtz <alex@pc4p.net>
-* @link         http://www.weather.com/services/xmloap.html
-* @example      examples/weather.com-basic.php      weather.com-basic.php
-* @example      examples/weather.com-extensive.php  weather.com-extensive.php
-* @package      Services_Weather
-* @license      http://www.php.net/license/2_02.txt
-* @version      1.3
-*/
+ * This class acts as an interface to the xml service of weather.com. It
+ * searches for given locations and retrieves current weather data as well
+ * as forecast for up to 10 days.
+ *
+ * For using the weather.com xml-service please visit
+ *     http://www.weather.com/services/xmloap.html
+ * and follow the link to sign up, it's free! You will receive an email
+ * where to download the SDK with the needed images and guidelines how to
+ * publish live data from weather.com. Unfortunately the guidelines are a
+ * bit harsh, that's why there's no actual data-representation in this
+ * class, just the raw data. Also weather.com demands active caching, so I'd
+ * strongly recommend enabling the caching implemented in this class. It
+ * obeys to the times as written down in the guidelines.
+ *
+ * For working examples, please take a look at
+ *     docs/Services_Weather/examples/weather.com-basic.php
+ *     docs/Services_Weather/examples/weather.com-extensive.php
+ *
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     Release: @package_version@
+ * @link        http://pear.php.net/package/Services_Weather
+ * @link        http://www.weather.com/services/xmloap.html
+ * @example     examples/weather.com-basic.php      weather.com-basic.php
+ * @example     examples/weather.com-extensive.php  weather.com-extensive.php
+ */
 class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ properties
     /**
-    * Partner-ID at weather.com
-    *
-    * @var      string                      $_partnerID
-    * @access   private
-    */
+     * Partner-ID at weather.com
+     *
+     * @var     string                      $_partnerID
+     * @access  private
+     */
     var $_partnerID = "";
 
     /**
-    * License key at weather.com
-    *
-    * @var      string                      $_licenseKey
-    * @access   private
-    */
+     * License key at weather.com
+     *
+     * @var     string                      $_licenseKey
+     * @access  private
+     */
     var $_licenseKey = "";
 
     /**
-    * Object containing the promotional links-data
-    *
-    * @var      object stdClass             $_links
-    * @access   private
-    */
+     * Object containing the promotional links-data
+     *
+     * @var     object stdClass             $_links
+     * @access  private
+     */
     var $_links;
 
     /**
-    * XML_Unserializer, used for processing the xml
-    *
-    * @var      object XML_Unserializer     $_unserializer
-    * @access   private
-    */
+     * XML_Unserializer, used for processing the xml
+     *
+     * @var     object XML_Unserializer     $_unserializer
+     * @access  private
+     */
     var $_unserializer;
     // }}}
 
     // {{{ constructor
     /**
-    * Constructor
-    *
-    * Requires XML_Serializer to be installed
-    *
-    * @param    array                       $options
-    * @param    mixed                       $error
-    * @throws   PEAR_Error
-    * @access   private
-    */
+     * Constructor
+     *
+     * Requires XML_Serializer to be installed
+     *
+     * @param   array                       $options
+     * @param   mixed                       $error
+     * @throws  PEAR_Error
+     * @access  private
+     */
     function Services_Weather_Weatherdotcom($options, &$error)
     {
         $perror = null;
@@ -137,13 +161,13 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ setAccountData()
     /**
-    * Sets the neccessary account-information for weather.com, you'll
-    * receive them after registering for the XML-stream
-    *
-    * @param    string                      $partnerID
-    * @param    string                      $licenseKey
-    * @access   public
-    */
+     * Sets the neccessary account-information for weather.com, you'll
+     * receive them after registering for the XML-stream
+     *
+     * @param   string                      $partnerID
+     * @param   string                      $licenseKey
+     * @access  public
+     */
     function setAccountData($partnerID, $licenseKey)
     {
         if (strlen($partnerID) && ctype_digit($partnerID)) {
@@ -157,15 +181,15 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ _checkLocationID()
     /**
-    * Checks the id for valid values and thus prevents silly requests to
-    * weather.com server
-    *
-    * @param    string                      $id
-    * @return   PEAR_Error|bool
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
-    * @access   private
-    */
+     * Checks the id for valid values and thus prevents silly requests to
+     * weather.com server
+     *
+     * @param   string                      $id
+     * @return  PEAR_Error|bool
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
+     * @access  private
+     */
     function _checkLocationID($id)
     {
         if (is_array($id) || is_object($id) || !strlen($id)) {
@@ -180,15 +204,15 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ _parseWeatherData()
     /**
-    * Parses the data returned by the provided URL and caches it
-    *
-    * @param    string                      $id
-    * @param    string                      $url
-    * @return   PEAR_Error|bool
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws   PEAR_Error
-    * @access   private
-    */
+     * Parses the data returned by the provided URL and caches it
+     *
+     * @param   string                      $id
+     * @param   string                      $url
+     * @return  PEAR_Error|bool
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @throws  PEAR_Error
+     * @access  private
+     */
     function _parseWeatherData($id, $url)
     {
         // Get data from URL...
@@ -252,16 +276,16 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ searchLocation()
     /**
-    * Searches IDs for given location, returns array of possible locations
-    * or single ID
-    *
-    * @param    string                      $location
-    * @param    bool                        $useFirst       If set, first ID of result-array is returned
-    * @return   PEAR_Error|array|string
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @access   public
-    */
+     * Searches IDs for given location, returns array of possible locations
+     * or single ID
+     *
+     * @param   string                      $location
+     * @param   bool                        $useFirst       If set, first ID of result-array is returned
+     * @return  PEAR_Error|array|string
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @access  public
+     */
     function searchLocation($location, $useFirst = false)
     {
         // Get search data from server and unserialize
@@ -299,14 +323,14 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ searchLocationByCountry()
     /**
-    * Returns only false, as weather.com offers no country listing via
-    * its XML services
-    *
-    * @param    string                      $country
-    * @return   bool
-    * @access   public
-    * @deprecated
-    */
+     * Returns only false, as weather.com offers no country listing via
+     * its XML services
+     *
+     * @param   string                      $country
+     * @return  bool
+     * @access  public
+     * @deprecated
+     */
     function searchLocationByCountry($country = "")
     {
         return false;
@@ -315,13 +339,13 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ getLinks()
     /**
-    * Returns the data for the promotional links belonging to the ID
-    *
-    * @param    string                      $id
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * Returns the data for the promotional links belonging to the ID
+     *
+     * @param   string                      $id
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getLinks($id = "")
     {
         $status = $this->_checkLocationID($id);
@@ -362,13 +386,13 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ getLocation()
     /**
-    * Returns the data for the location belonging to the ID
-    *
-    * @param    string                      $id
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * Returns the data for the location belonging to the ID
+     *
+     * @param   string                      $id
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getLocation($id = "")
     {
         $status = $this->_checkLocationID($id);
@@ -408,14 +432,14 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ getWeather()
     /**
-    * Returns the weather-data for the supplied location
-    *
-    * @param    string                      $id
-    * @param    string                      $unitsFormat
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * Returns the weather-data for the supplied location
+     *
+     * @param   string                      $id
+     * @param   string                      $unitsFormat
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getWeather($id = "", $unitsFormat = "")
     {
         $status = $this->_checkLocationID($id);
@@ -482,15 +506,15 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ getForecast()
     /**
-    * Get the forecast for the next days
-    *
-    * @param    string                      $id
-    * @param    int                         $days           Values between 1 and 10
-    * @param    string                      $unitsFormat
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * Get the forecast for the next days
+     *
+     * @param   string                      $id
+     * @param   int                         $days           Values between 1 and 10
+     * @param   string                      $unitsFormat
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getForecast($id = "", $days = 2, $unitsFormat = "")
     {
         $status = $this->_checkLocationID($id);

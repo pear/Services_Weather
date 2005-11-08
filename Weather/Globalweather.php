@@ -1,96 +1,120 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at                              |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Alexander Wirtz <alex@pc4p.net>                             |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
 /**
-* @package      Services_Weather
-* @filesource
-*/
+ * PEAR::Services_Weather_Globalweather
+ *
+ * PHP versions 4 and 5
+ *
+ * <LICENSE>
+ * Copyright (c) 2005, Alexander Wirtz
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * o Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * o Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * o Neither the name of the software nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * </LICENSE>
+ * 
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/Services_Weather
+ * @link        http://www.capescience.com/webservices/globalweather/index.shtml
+ * @example     examples/globalweather-basic.php    globalweather-basic.php
+ * @filesource
+ */
 
-/**
-*/
 require_once "Services/Weather/Common.php";
 
 // {{{ class Services_Weather_Globalweather
 /**
-* PEAR::Services_Weather_Globalweather
-*
-* This class acts as an interface to the soap service of capescience.com.
-* It searches for given locations and retrieves current weather data.
-*
-* GlobalWeather is a SOAP frontend for METAR data, provided by CapeScience.
-* If you want to use METAR, you should try this class first, as it is much
-* more comfortable (and also a bit faster) than the native METAR-class
-* provided by this package. On the other hand, this service won't supply
-* TAFs, the forecast system accompanying METAR, so you have to make
-* the call here...
-*
-* For a working example, please take a look at
-*     docs/Services_Weather/examples/globalweather-basic.php
-*
-* @author       Alexander Wirtz <alex@pc4p.net>
-* @link         http://www.capescience.com/webservices/globalweather/index.shtml
-* @example      examples/globalweather-basic.php globalweather-basic.php
-* @package      Services_Weather
-* @license      http://www.php.net/license/2_02.txt
-* @version      1.3
-*/
+ * This class acts as an interface to the soap service of capescience.com.
+ * It searches for given locations and retrieves current weather data.
+ *
+ * GlobalWeather is a SOAP frontend for METAR data, provided by CapeScience.
+ * If you want to use METAR, you should try this class first, as it is much
+ * more comfortable (and also a bit faster) than the native METAR-class
+ * provided by this package. On the other hand, this service won't supply
+ * TAFs, the forecast system accompanying METAR, so you have to make
+ * the call here...
+ *
+ * For a working example, please take a look at
+ *     docs/Services_Weather/examples/globalweather-basic.php
+ *
+ *
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     Release: @package_version@
+ * @link        http://pear.php.net/package/Services_Weather
+ * @link        http://www.capescience.com/webservices/globalweather/index.shtml
+ * @example     examples/globalweather-basic.php    globalweather-basic.php
+ */
 class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ properties
     /**
-    * WSDL object, provided by CapeScience
-    *
-    * @var      object                      $_wsdl
-    * @access   private
-    */
+     * WSDL object, provided by CapeScience
+     *
+     * @var     object                      $_wsdl
+     * @access  private
+     */
     var $_wsdl;
 
     /**
-    * SOAP object to access station data, provided by CapeScience
-    *
-    * @var      object                      $_stationSoap
-    * @access   private
-    */
+     * SOAP object to access station data, provided by CapeScience
+     *
+     * @var     object                      $_stationSoap
+     * @access  private
+     */
     var $_stationSoap;
 
     /**
-    * SOAP object to access weather data, provided by CapeScience
-    *
-    * @var      object                      $_weatherSoap
-    * @access   private
-    */
+     * SOAP object to access weather data, provided by CapeScience
+     *
+     * @var      object                      $_weatherSoap
+     * @access   private
+     */
     var $_weatherSoap;
     // }}}
 
     // {{{ constructor
     /**
-    * Constructor
-    *
-    * Requires SOAP to be installed
-    *
-    * @param    array                       $options
-    * @param    mixed                       $error
-    * @throws   PEAR_Error
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @access   private
-    */
+     * Constructor
+     *
+     * Requires SOAP to be installed
+     *
+     * @param   array                       $options
+     * @param   mixed                       $error
+     * @throws  PEAR_Error
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @access  private
+     */
     function Services_Weather_Globalweather($options, &$error)
     {
         $perror = null;
@@ -103,12 +127,12 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ _connectServer()
     /**
-    * Connects to the SOAP server and retrieves the WSDL data
-    *
-    * @return   PEAR_Error|bool
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @access   private
-    */
+     * Connects to the SOAP server and retrieves the WSDL data
+     *
+     * @return  PEAR_Error|bool
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @access  private
+     */
     function _connectServer()
     {
         include_once "SOAP/Client.php";
@@ -133,15 +157,15 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ _checkLocationID()
     /**
-    * Checks the id for valid values and thus prevents silly requests to
-    * GlobalWeather server
-    *
-    * @param    string                      $id
-    * @return   PEAR_Error|bool
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
-    * @access   private
-    */
+     * Checks the id for valid values and thus prevents silly requests to
+     * GlobalWeather server
+     *
+     * @param   string                      $id
+     * @return  PEAR_Error|bool
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_NO_LOCATION
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_INVALID_LOCATION
+     * @access  private
+     */
     function _checkLocationID($id)
     {
         if (is_array($id) || is_object($id) || !strlen($id)) {
@@ -156,16 +180,16 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ searchLocation()
     /**
-    * Searches IDs for given location, returns array of possible locations
-    * or single ID
-    *
-    * @param    string                      $location
-    * @param    bool                        $useFirst       If set, first ID of result-array is returned
-    * @return   PEAR_Error|array|string
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @access   public
-    */
+     * Searches IDs for given location, returns array of possible locations
+     * or single ID
+     *
+     * @param   string                      $location
+     * @param   bool                        $useFirst       If set, first ID of result-array is returned
+     * @return  PEAR_Error|array|string
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @access  public
+     */
     function searchLocation($location, $useFirst = false)
     {
         // Check, if the stationSoap-Object is present. If not, connect to the Server and retrieve the WDSL data
@@ -202,15 +226,15 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ searchLocationByCountry()
     /**
-    * Returns IDs with location-name for a given country or all available
-    * countries, if no value was given
-    *
-    * @param    string                      $country
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
-    * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
-    * @access   public
-    */
+     * Returns IDs with location-name for a given country or all available
+     * countries, if no value was given
+     *
+     * @param   string                      $country
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION
+     * @access  public
+     */
     function searchLocationByCountry($country = "")
     {
         // Return the available countries as no country was given
@@ -252,13 +276,13 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ getLocation()
     /**
-    * Returns the data for the location belonging to the ID
-    *
-    * @param    string                      $id
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * Returns the data for the location belonging to the ID
+     *
+     * @param   string                      $id
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getLocation($id = "")
     {
         $status = $this->_checkLocationID($id);
@@ -315,14 +339,14 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ getWeather()
     /**
-    * Returns the weather-data for the supplied location
-    *
-    * @param    string                      $id
-    * @param    string                      $unitsFormat
-    * @return   PEAR_Error|array
-    * @throws   PEAR_Error
-    * @access   public
-    */
+     * Returns the weather-data for the supplied location
+     *
+     * @param   string                      $id
+     * @param   string                      $unitsFormat
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error
+     * @access  public
+     */
     function getWeather($id = "", $unitsFormat = "")
     {
         static $clouds;
@@ -440,16 +464,16 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
     // {{{ getForecast()
     /**
-    * GlobalWeather has no forecast per se, so this function is just for
-    * compatibility purposes.
-    *
-    * @param    string                      $int
-    * @param    int                         $days
-    * @param    string                      $unitsFormat
-    * @return   bool
-    * @access   public
-    * @deprecated
-    */
+     * GlobalWeather has no forecast per se, so this function is just for
+     * compatibility purposes.
+     *
+     * @param   string                      $int
+     * @param   int                         $days
+     * @param   string                      $unitsFormat
+     * @return  bool
+     * @access  public
+     * @deprecated
+     */
     function getForecast($id = null, $days = null, $unitsFormat = null)
     {
         return false;

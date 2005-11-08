@@ -1,51 +1,64 @@
 #!/usr/local/bin/php
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at                              |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Alexander Wirtz <alex@pc4p.net>                             |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
 /**
-* This script downloads, saves and processes the textfiles needed for
-* the building the databases to enable searching for METAR stations.
-*
-* You can download the locations, which is a database of about 12000 world-
-* wide locations, which can be used to determine the coordinates of your
-* city or you can download a file with 6500 airports providing the metar
-* data. This database is used for the next-METAR-station search. Please see
-* the apropriate documentation in the Services_Weather_Metar class.
-*
-* For usage of this script, invoke with '-h'.
-*
-* @author       Alexander Wirtz <alex@pc4p.net>
-* @link         http://weather.noaa.gov/tg/site.shtml
-* @package      Services_Weather
-* @subpackage   buildMetarDB
-* @filesource
-* @version      1.3
-*/
+ * This script downloads, saves and processes the textfiles needed for
+ * the building the databases to enable searching for METAR stations.
+ * 
+ * You can download the locations, which is a database of about 12000 world-
+ * wide locations, which can be used to determine the coordinates of your
+ * city or you can download a file with 6500 airports providing the metar
+ * data. This database is used for the next-METAR-station search. Please see
+ * the apropriate documentation in the Services_Weather_Metar class.
+ * 
+ * For usage of this script, invoke with '-h'.
+ * 
+ * PHP versions 4 and 5
+ *
+ * <LICENSE>
+ * Copyright (c) 2005, Alexander Wirtz
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * o Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * o Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * o Neither the name of the software nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * </LICENSE>
+ * 
+ * @category    Web Services
+ * @package     Services_Weather
+ * @subpackage  buildMetarDB
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/Services_Weather
+ * @link        http://weather.noaa.gov/tg/site.shtml
+ * @filesource
+ */
 
-/**
-*/
 require_once "DB.php";
 
-/**
-* @ignore
-*/
 // {{{ constants
 // {{{ natural constants and measures
 define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
@@ -54,15 +67,15 @@ define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 
 // {{{ Services_Weather_checkData()
 /**
-* Services_Weather_checkData
-*
-* Checks the data for a certain string-length and if it either consists of
-* a certain char-type or a string of "-" as replacement.
-*
-* @param    array                           $data           The data to be checked
-* @param    array                           $dataOrder      Because the data is in different locations, we provide this
-* @return   bool
-*/
+ * Services_Weather_checkData
+ *
+ * Checks the data for a certain string-length and if it either consists of
+ * a certain char-type or a string of "-" as replacement.
+ *
+ * @param   array                           $data           The data to be checked
+ * @param   array                           $dataOrder      Because the data is in different locations, we provide this
+ * @return  bool
+ */
 function Services_Weather_checkData($data, $dataOrder)
 {
     $return = true;
@@ -94,14 +107,14 @@ function Services_Weather_checkData($data, $dataOrder)
 
 // {{{ Services_Weather_getNextArg()
 /**
-* Services_Weather_getNextArg
-*
-* Checks, if the next argument is a parameter to a predecessing option.
-* Returns either that parameter or false, if the next argument is an option
-*
-* @param    int                             $c              Internal argument counter
-* @return   string|bool
-*/
+ * Services_Weather_getNextArg
+ *
+ * Checks, if the next argument is a parameter to a predecessing option.
+ * Returns either that parameter or false, if the next argument is an option
+ *
+ * @param   int                             $c              Internal argument counter
+ * @return  string|bool
+ */
 function Services_Weather_getNextArg(&$c)
 {
     if ((($c + 1) < $_SERVER["argc"]) && ($_SERVER["argv"][$c + 1]{0} != "-")) {

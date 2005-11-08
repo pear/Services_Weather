@@ -12,19 +12,42 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
- * @category   Web Services
- * @package    Services_Weather
- * @author     Alexander Wirtz <alex@pc4p.net>
- * @copyright  1997-2005 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/Services_Weather
+ * <LICENSE>
+ * Copyright (c) 2005, Alexander Wirtz
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * o Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * o Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * o Neither the name of the software nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * </LICENSE>
+ * 
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/Services_Weather
  * @filesource
  */
 
@@ -59,13 +82,13 @@ define("SERVICES_WEATHER_ERROR_INVALID_LICENSE_KEY",    102);
 /**
  * This class acts as an interface to various online weather-services.
  *
- * @category   Web Services
- * @package    Services_Weather
- * @author     Alexander Wirtz <alex@pc4p.net>
- * @copyright  1997-2005 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Services_Weather
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     Release: @package_version@
+ * @link        http://pear.php.net/package/Services_Weather
  */
 class Services_Weather {
 
@@ -74,34 +97,34 @@ class Services_Weather {
      * Factory for creating the services-objects
      *
      * Usable keys for the options array are:
-     * o debug               enables debugging output
+     * o debug              enables debugging output
      * --- Common Options
-     * o cacheType           defines what type of cache to use
-     * o cacheOptions        passes cache options
-     * o unitsFormat         use (US)-standard, metric or custom units
-     * o customUnitsFormat   defines the customized units format
-     * o httpTimeout         sets timeout for HTTP requests
-     * o dateFormat          string to use for date output
-     * o timeFormat          string to use for time output
+     * o cacheType          defines what type of cache to use
+     * o cacheOptions       passes cache options
+     * o unitsFormat        use (US)-standard, metric or custom units
+     * o customUnitsFormat  defines the customized units format
+     * o httpTimeout        sets timeout for HTTP requests
+     * o dateFormat         string to use for date output
+     * o timeFormat         string to use for time output
      * --- EJSE Options
      * o none
      * --- GlobalWeather Options
      * o none
      * --- METAR/TAF Options
-     * o dsn                 String for defining the DB connection
-     * o dbOptions           passes DB options
-     * o sourceMetar         http, ftp or file - type of data-source for METAR
-     * o sourcePathMetar     where to look for the source, URI or filepath,
-     *                       of METAR information
-     * o sourceTaf           http, ftp or file - type of data-source for TAF
-     * o sourcePathTaf       where to look for the source, URI or filepath,
-     *                       of TAF information
+     * o dsn                String for defining the DB connection
+     * o dbOptions          passes DB options
+     * o sourceMetar        http, ftp or file - type of data-source for METAR
+     * o sourcePathMetar    where to look for the source, URI or filepath,
+     *                      of METAR information
+     * o sourceTaf          http, ftp or file - type of data-source for TAF
+     * o sourcePathTaf      where to look for the source, URI or filepath,
+     *                      of TAF information
      * --- weather.com Options
-     * o partnerID           You'll receive these keys after registering
-     * o licenseKey          with the weather.com XML-service
+     * o partnerID          You'll receive these keys after registering
+     * o licenseKey         with the weather.com XML-service
      *
-     * @param    string                      $service
-     * @param    array                       $options
+     * @param    string                     $service
+     * @param    array                      $options
      * @return   PEAR_Error|object
      * @throws   PEAR_Error
      * @throws   PEAR_Error::SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND
@@ -146,8 +169,8 @@ class Services_Weather {
     /**
      * For your convenience, when I come up with changes in the API...
      *
-     * @return   string
-     * @access   public
+     * @return  string
+     * @access  public
      */
     function apiVersion()
     {
@@ -159,9 +182,9 @@ class Services_Weather {
     /**
      * Returns the message for a certain error code
      *
-     * @param    PEAR_Error|int              $value
-     * @return   string
-     * @access   private
+     * @param   PEAR_Error|int              $value
+     * @return  string
+     * @access  private
      */
     function _errorMessage($value)
     {
@@ -194,9 +217,9 @@ class Services_Weather {
     /**
      * Checks for an error object, same as in PEAR
      *
-     * @param    PEAR_Error|mixed            $value
-     * @return   bool
-     * @access   public
+     * @param   PEAR_Error|mixed            $value
+     * @return  bool
+     * @access  public
      */
     function isError($value)
     {
@@ -208,11 +231,11 @@ class Services_Weather {
     /**
      * Creates error, same as in PEAR with a customized flavor
      *
-     * @param    int                         $code
-     * @param    string                      $file
-     * @param    int                         $line
-     * @return   PEAR_Error
-     * @access   private
+     * @param   int                         $code
+     * @param   string                      $file
+     * @param   int                         $line
+     * @return  PEAR_Error
+     * @access  private
      */
     function &raiseError($code = SERVICES_WEATHER_ERROR_UNKNOWN_ERROR, $file = "", $line = 0)
     {
