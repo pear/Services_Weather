@@ -1278,14 +1278,19 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Try to part search string in name, state and country part
             // and build where clause from it for the select
             $location = explode(",", $location);
-            if (sizeof($location) >= 1) {
+            if (sizeof($location) == 1) {
                 $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0]))."%'";
-            }
-            if (sizeof($location) == 2) {
+            } elseif (sizeof($location) == 2) {
+                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0]))."%'";
                 $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[1]))."%'";
             } elseif (sizeof($location) == 3) {
+                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0]))."%'";
                 $where .= " AND LOWER(state) LIKE '%".strtolower(trim($location[1]))."%'";
                 $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[2]))."%'";
+            } elseif (sizeof($location) == 4) {
+                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0])).", ".strtolower(trim($location[1]))."%'";
+                $where .= " AND LOWER(state) LIKE '%".strtolower(trim($location[2]))."%'";
+                $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[3]))."%'";
             }
 
             // Create select, locations with ICAO first
@@ -1384,13 +1389,15 @@ class Services_Weather_Metar extends Services_Weather_Common
         $locations = array();
         while (($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) != null) {
             $locicao = $row["icao"];
-            // First the name of the location
-            if (!strlen($row["state"])) {
-                $locname = $row["name"].", ".$row["country"];
-            } else {
-                $locname = $row["name"].", ".$row["state"].", ".$row["country"];
+            if ($locicao != "----") {
+                // First the name of the location
+                if (!strlen($row["state"])) {
+                    $locname = $row["name"].", ".$row["country"];
+                } else {
+                    $locname = $row["name"].", ".$row["state"].", ".$row["country"];
+                }
+                $locations[$locicao] = $locname;
             }
-            $locations[$locicao] = $locname;
         }
 
         return $locations;
