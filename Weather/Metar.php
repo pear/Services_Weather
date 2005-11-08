@@ -860,7 +860,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "tempmax"     => "TX(\d{2})\/(\d{2})(\w)",
             "tempmin"     => "TN(\d{2})\/(\d{2})(\w)",
             "tempmaxmin"  => "TX(\d{2})\/(\d{2})(\w)TN(\d{2})\/(\d{2})(\w)",
-            "from"        => "FM(\d{2})(\d{2})",
+            "from"        => "FM(\d{2})(\d{2})?",
             "fmc"         => "(PROB|BECMG|TEMPO)(\d{2})?"
         );
 
@@ -1079,7 +1079,13 @@ class Services_Weather_Metar extends Services_Weather_Common
                             case "from":
                                 // Next timeperiod is coming up, prepare array and
                                 // set pointer accordingly
-                                $fromTime = $result[1].":".$result[2];
+                                if (sizeof($result) > 2) {
+                                    // The ICAO way
+                                    $fromTime = $result[1].":".$result[2];
+                                } else {
+                                    // The Australian way (Hey mates!)
+                                    $fromTime = $result[1].":00";
+                                }
                                 $forecastData["time"][$fromTime] = array();
                                 $fmcCount = 0;
                                 $pointer =& $forecastData["time"][$fromTime];
