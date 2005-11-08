@@ -1,26 +1,11 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2004 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available through the world-wide-web at                              |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Alexander Wirtz <alex@pc4p.net>                             |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
-/*
+/**
+ * Elaborate example for the METAR/TAF-service
+ *
  * Well, this is a more elaborate example how to create a neat little page
- * with fetching METAR/TAF data from noaa.org and putting it into a design.
+ * with fetching METAR/TAF data from NOAA and putting it into a design.
  * I'm not too proud of my design-skills, most of the stuff here is taken
  * from the metar-block which can be found within the Horde Framework,
  * courtesy of Rick Emery - creative pixelshoving isn't my domain :-P
@@ -28,7 +13,47 @@
  * disappointed, if the page looks shabby with the IE, not that I care
  * very much anyway ;-)
  * Have fun!
-*/
+ * 
+ * PHP versions 4 and 5
+ *
+ * <LICENSE>
+ * Copyright (c) 2005, Alexander Wirtz
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * o Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * o Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * o Neither the name of the software nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * </LICENSE>
+ * 
+ * @category    Web Services
+ * @package     Services_Weather
+ * @author      Alexander Wirtz <alex@pc4p.net>
+ * @copyright   2005 Alexander Wirtz
+ * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/Services_Weather
+ * @filesource
+ */
 
 //-------------------------------------------------------------------------
 // This is the area, where you can customize the script
@@ -55,6 +80,7 @@ $timeFormat      = "H:i";           //                    time
 
 // Load the Weather class
 require_once "Services/Weather.php";
+
 // Load the scripts needed for sunrise/-set calculation
 include_once "php_sunrise_sunset.php";
 
