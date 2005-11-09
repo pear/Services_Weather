@@ -1574,6 +1574,8 @@ class Services_Weather_Metar extends Services_Weather_Common
         $locationReturn["name"]      = $locname;
         $locationReturn["latitude"]  = $this->_location["latitude"];
         $locationReturn["longitude"] = $this->_location["longitude"];
+        $locationReturn["sunrise"]   = date($this->_timeFormat, $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $this->_location["latitude"], $this->_location["longitude"], SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, true));
+        $locationReturn["sunset"]    = date($this->_timeFormat, $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $this->_location["latitude"], $this->_location["longitude"], SERVICES_WEATHER_SUNFUNCS_SUNSET_ZENITH,  0, false));
         $locationReturn["elevation"] = $this->_location["elevation"];
 
         return $locationReturn;
