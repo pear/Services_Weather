@@ -51,6 +51,13 @@ require_once "Services/Weather.php";
 // {{{ natural constants and measures
 define("SERVICES_WEATHER_RADIUS_EARTH", 6378.15);
 // }}}
+
+// {{{ default values for the sun-functions
+define("SERVICES_WEATHER_SUNFUNCS_DEFAULT_LATITUDE",  31.7667);
+define("SERVICES_WEATHER_SUNFUNCS_DEFAULT_LONGITUDE", 35.2333);
+define("SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH",    90.83);
+define("SERVICES_WEATHER_SUNFUNCS_SUNSET_ZENITH",     90.83);
+// }}}
 // }}}
 
 // {{{ class Services_Weather_Common
@@ -679,6 +686,191 @@ class Services_Weather_Common {
         $z = SERVICES_WEATHER_RADIUS_EARTH             * sin($theta);
 
         return array($x, $y, $z);
+    }
+    // }}}
+
+
+    // {{{ calculateSunRiseSet()
+    /**
+     * Calculates sunrise and sunset for a location
+     * 
+     * The sun position algorithm taken from the 'US Naval Observatory's
+     * Almanac for Computers', implemented by Ken Bloom <kekabloom[at]ucdavis[dot]edu>
+     * for the zmanim project, converted to C by Moshe Doron <mosdoron[at]netvision[dot]net[dot]il>
+     * and finally taken from the PHP5 sources and converted to native PHP as a wrapper.
+     * 
+     * The date has to be entered as a timestamp!
+     * 
+     * @param   int                         $date
+     * @param   int                         $retformat
+     * @param   float                       $latitude
+     * @param   float                       $longitude
+     * @param   float                       $zenith
+     * @param   float                       $gmt_offset
+     * @param   bool                        $sunrise
+     * @return  PEAR_Error|mixed
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_SUNFUNCS_DATE_INVALID
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_UNKNOWN_ERROR
+     * @access  public
+     */
+    function calculateSunRiseSet($date, $retformat = null, $latitude = null, $longitude = null, $zenith = null, $gmt_offset = null, $sunrise = true)
+    {
+        if (!defined("SUNFUNCS_RET_TIMESTAMP")) {
+            define("SUNFUNCS_RET_TIMESTAMP", 0);
+            define("SUNFUNCS_RET_STRING",    1);
+            define("SUNFUNCS_RET_DOUBLE",    2);
+        }
+
+        if (!is_int($date)) {
+            // date must be timestamp for now
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SUNFUNCS_DATE_INVALID, __FILE__, __LINE__);
+        }
+
+        if ($retformat === null) {
+            $retformat  = SUNFUNCS_RET_STRING;
+        } elseif (!in_array($retformat, array(SUNFUNCS_RET_TIMESTAMP, SUNFUNCS_RET_STRING, SUNFUNCS_RET_DOUBLE)) ) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID, __FILE__, __LINE__);
+        }
+        
+        if ($latitude === null) {
+            $latitude   = SUNFUNCS_DEFAULT_LATITUDE;
+        }
+
+        if ($longitude === null) {
+            $longitude  = SUNFUNCS_DEFAULT_LONGITUDE;
+        }
+
+        if ($zenith === null) {
+            if($sunrise) {
+                $zenith = SUNFUNCS_SUNRISE_ZENITH;
+            } else {
+                $zenith = SUNFUNCS_SUNSET_ZENITH;
+            }
+                
+        }
+
+        if ($gmt_offset === null) {
+            $gmt_offset = date("Z", $date) / 3600;
+        }
+
+        if ($sunrise && function_exists("date_sunrise")) {
+            return date_sunrise($date, $retformat, $latitude, $longitude, $zenith, $gmt_offset);
+        }
+        if (!$sunrise && function_exists("date_sunset")) {
+            return date_sunset($date, $retformat, $latitude, $longitude, $zenith, $gmt_offset);
+        }
+
+        // step 1: First calculate the day of the year
+        $N = date("z", $date) + 1;
+
+        // step 2: convert the longitude to hour value and calculate an approximate time
+        $lngHour = $longitude / 15;
+    
+        // use 18 for sunset instead of 6
+        if ($sunrise) {
+            // Sunrise
+            $t = $N + ((6 - $lngHour) / 24);
+        } else {
+            // Sunset
+            $t = $N + ((18 - $lngHour) / 24);
+        } 
+    
+        // step 3: calculate the sun's mean anomaly
+        $M = (0.9856 * $t) - 3.289;
+    
+        // step 4: calculate the sun's true longitude
+        $L = $M + (1.916 * sin(deg2rad($M))) + (0.020 * sin(deg2rad(2 * $M))) + 282.634;
+    
+        while ($L < 0) {
+            $Lx = $L + 360;
+            assert($Lx != $L); // askingtheguru: really needed?
+            $L = $Lx;
+        }
+        
+        while ($L >= 360) {
+            $Lx = $L - 360;
+            assert($Lx != $L); // askingtheguru: really needed?
+            $L = $Lx;
+        }
+    
+        // step 5a: calculate the sun's right ascension
+        $RA = rad2deg(atan(0.91764 * tan(deg2rad($L))));
+    
+        while ($RA < 0) {
+            $RAx = $RA + 360;
+            assert($RAx != $RA); // askingtheguru: really needed?
+            $RA = $RAx;
+        }
+    
+        while ($RA >= 360) {
+            $RAx = $RA - 360;
+            assert($RAx != $RA); // askingtheguru: really needed?
+            $RA = $RAx;
+        } 
+    
+        // step 5b: right ascension value needs to be in the same quadrant as L
+        $Lquadrant  = floor($L / 90) * 90;
+        $RAquadrant = floor($RA / 90) * 90;
+    
+        $RA = $RA + ($Lquadrant - $RAquadrant);
+    
+        // step 5c: right ascension value needs to be converted into hours
+        $RA /= 15;
+    
+        // step 6: calculate the sun's declination
+        $sinDec = 0.39782 * sin(deg2rad($L));
+        $cosDec = cos(asin($sinDec));
+    
+        // step 7a: calculate the sun's local hour angle
+        $cosH = (cos(deg2rad($zenith)) - ($sinDec * sin(deg2rad($latitude)))) / ($cosDec * cos(deg2rad($latitude)));
+    
+        // XXX: What's the use of this block.. ?
+        // if (sunrise && cosH > 1 || !sunrise && cosH < -1) {
+        //     throw doesnthappen();
+        // }
+    
+        // step 7b: finish calculating H and convert into hours 
+        if ($sunrise) {
+            // Sunrise
+            $H = 360 - rad2deg(acos($cosH));
+        } else {
+            // Sunset
+            $H = rad2deg(acos($cosH));
+        }
+        $H = $H / 15;
+    
+        // step 8: calculate local mean time
+        $T = $H + $RA - (0.06571 * $t) - 6.622;
+    
+        // Sunset step 9: convert to UTC
+        $UT = $T - $lngHour;
+    
+        while ($UT < 0) {
+            $UTx = $UT + 24;
+            assert($UTx != $UT); // askingtheguru: really needed?
+            $UT = $UTx;
+        }
+    
+        while ($UT >= 24) {
+            $UTx = $UT - 24;
+            assert($UTx != $UT); // askingtheguru: really needed?
+            $UT = $UTx;
+        }
+        
+        $UT = $UT + $gmt_offset;
+
+        switch ($retformat) {
+            case SUNFUNCS_RET_TIMESTAMP:
+                return floor($date - ($date % (24 * 3600))) + floor(60 * $UT);
+            case SUNFUNCS_RET_STRING:
+                $N = floor($UT);
+                return sprintf("%02d:%02d", $N, floor(60 * ($UT - $N)));
+            case SUNFUNCS_RET_DOUBLE:
+                return $UT;
+            default:
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_ERROR, __FILE__, __LINE__);
+        } 
     }
     // }}}
 }

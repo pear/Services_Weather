@@ -58,15 +58,18 @@ define("SERVICES_WEATHER_EXPIRES_LOCATION", 43200);
 define("SERVICES_WEATHER_EXPIRES_WEATHER",   1800);
 define("SERVICES_WEATHER_EXPIRES_FORECAST",  7200);
 define("SERVICES_WEATHER_EXPIRES_LINKS",    43200);
+define("SERVICES_WEATHER_EXPIRES_SEARCH", 2678400);
 // }}}
 
 // {{{ error codes
-define("SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND",   10);
-define("SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION",    11);
-define("SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA",   12);
-define("SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED",   13);
-define("SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED",    14);
-define("SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID",  15);
+define("SERVICES_WEATHER_ERROR_SERVICE_NOT_FOUND",        10);
+define("SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION",         11);
+define("SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA",        12);
+define("SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED",        13);
+define("SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED",         14);
+define("SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID",       15);
+define("SERVICES_WEATHER_ERROR_SUNFUNCS_DATE_INVALID",    16);
+define("SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID", 17);
 // }}}
 
 // {{{ error codes defined by weather.com
@@ -198,8 +201,10 @@ class Services_Weather {
                 SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION          => "Unknown location provided.",
                 SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA         => "Server data wrong or not available.",
                 SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED         => "Cache init was not completed.",
-                SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID        => "The given proxy is not valid, please use the notation http://[user[:pass]@]host[:port]",
                 SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED          => "MetarDB is not connected.",
+                SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID        => "The given proxy is not valid, please use the notation http://[user[:pass]@]host[:port].",
+                SERVICES_WEATHER_ERROR_SUNFUNCS_DATE_INVALID     => "The date you've provided for calculation of sunrise/sunset is not a timestamp.",
+                SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID  => "The return format you've provided for calculation of sunrise/sunset is not valid.",
                 SERVICES_WEATHER_ERROR_UNKNOWN_ERROR             => "An unknown error has occured.",
                 SERVICES_WEATHER_ERROR_NO_LOCATION               => "No location provided.",
                 SERVICES_WEATHER_ERROR_INVALID_LOCATION          => "Invalid location provided.",
