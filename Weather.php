@@ -58,7 +58,6 @@ define("SERVICES_WEATHER_EXPIRES_LOCATION", 43200);
 define("SERVICES_WEATHER_EXPIRES_WEATHER",   1800);
 define("SERVICES_WEATHER_EXPIRES_FORECAST",  7200);
 define("SERVICES_WEATHER_EXPIRES_LINKS",    43200);
-define("SERVICES_WEATHER_EXPIRES_SEARCH", 2678400);
 // }}}
 
 // {{{ error codes
@@ -128,6 +127,7 @@ class Services_Weather {
      * --- weather.com Options
      * o partnerID          You'll receive these keys after registering
      * o licenseKey         with the weather.com XML-service
+     * o preFetch           Enables pre-fetching of data in one single request
      *
      * @param    string                     $service
      * @param    array                      $options

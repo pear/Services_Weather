@@ -101,6 +101,14 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     var $_licenseKey = "";
 
     /**
+     * Switch to toggle pre-fetching of data in one single request
+     * 
+     * @var     bool                        $_preFetch
+     * @access  private
+     */
+     var $_preFetch = false;
+
+    /**
      * Object containing the promotional links-data
      *
      * @var     object stdClass             $_links
@@ -144,6 +152,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (isset($options["licenseKey"])) {
             $this->setAccountData("", $options["licenseKey"]);
         }
+        if (isset($options["preFetch"])) {
+            $this->enablePreFetch($options["preFetch"]);
+        }
 
         include_once "XML/Unserializer.php";
         $unserializer = &new XML_Unserializer(array("complexType" => "object", "keyAttribute" => "type"));
@@ -179,6 +190,21 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     }
     // }}}
 
+    // {{{ enablePreFetch()
+    /**
+     * Enables pre-fetching of data in one single request
+     *
+     * @param   bool                        $preFetch
+     * @access  public
+     */
+    function enablePreFetch($preFetch)
+    {
+        if ($preFetch == true) {
+            $this->_preFetch = true;
+        }
+    }
+    // }}}
+
     // {{{ _checkLocationID()
     /**
      * Checks the id for valid values and thus prevents silly requests to
@@ -204,17 +230,38 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     // {{{ _parseWeatherData()
     /**
-     * Parses the data returned by the provided URL and caches it
+     * Fetches the data based on the requested type and caches it
      *
      * @param   string                      $id
-     * @param   string                      $url
+     * @param   string                      $reqType
      * @return  PEAR_Error|bool
      * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA
      * @throws  PEAR_Error
      * @access  private
      */
-    function _parseWeatherData($id, $url)
+    function _parseWeatherData($id, $reqType)
     {
+        if ($this->_preFetch) {
+            $reqType = "all";
+        }
+        
+        $url = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey;
+        
+        switch ($reqType) {
+            case "links":
+                $url .= "&link=xoap";
+                break;
+            case "weather":
+                $url .= "&cc=*&unit=s";
+                break;
+            case "forecast":
+                $url .= "&dayf=10&unit=s";
+                break;
+            case "all":
+                $url = "&link=xoap&cc=*&dayf=10&unit=s";
+                break;
+        }
+
         // Get data from URL...
         $request = &new HTTP_Request($url, $this->_httpOptions);
         $status = $request->sendRequest();
@@ -355,7 +402,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         }
 
         $linksReturn = array();
-        $linksURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&link=xoap";
 
         if ($this->_cacheEnabled && ($links = $this->_cache->get($id, "links"))) {
             // Get data from cache
@@ -363,7 +409,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $linksReturn["cache"] = "HIT";
         } else {
             // Same as in the function above...
-            $status = $this->_parseWeatherData($id, $linksURL);
+            $status = $this->_parseWeatherData($id, "links");
 
             if (Services_Weather::isError($status)) {
                 return $status;
@@ -402,7 +448,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         }
 
         $locationReturn = array();
-        $locationURL    = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey;
 
         if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
             // Get data from cache
@@ -410,7 +455,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $locationReturn["cache"] = "HIT";
         } else {
             // Same as in the function above...
-            $status = $this->_parseWeatherData($id, $locationURL);
+            $status = $this->_parseWeatherData($id, "location");
 
             if (Services_Weather::isError($status)) {
                 return $status;
@@ -452,7 +497,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $units    = $this->getUnitsFormat($unitsFormat);
 
         $weatherReturn = array();
-        $weatherURL    = "http://xoap.weather.com/weather/local/".$id."?cc=*&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
 
         if ($this->_cacheEnabled && ($weather = $this->_cache->get($id, "weather"))) {
             // Same procedure...
@@ -460,7 +504,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $weatherReturn["cache"] = "HIT";
         } else {
             // ...as last function
-            $status = $this->_parseWeatherData($id, $weatherURL);
+            $status = $this->_parseWeatherData($id, "weather");
 
             if (Services_Weather::isError($status)) {
                 return $status;
@@ -530,7 +574,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $units    = $this->getUnitsFormat($unitsFormat);
 
         $forecastReturn = array();
-        $forecastURL = "http://xoap.weather.com/weather/local/".$id."?dayf=10&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey."&unit=s";
 
         if ($this->_cacheEnabled && ($forecast = $this->_cache->get($id, "forecast"))) {
             // Encore...
@@ -538,7 +581,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $forecastReturn["cache"] = "HIT";
         } else {
             // ...
-            $status = $this->_parseWeatherData($id, $forecastURL, $days);
+            $status = $this->_parseWeatherData($id, "forecast");
 
             if (Services_Weather::isError($status)) {
                 return $status;
