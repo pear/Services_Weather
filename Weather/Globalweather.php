@@ -136,7 +136,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     function _connectServer()
     {
         include_once "SOAP/Client.php";
-        $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl", array("timeout" => $this->_httpTimeout));
+        $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl", $this->_httpOptions);
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
             $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             return;

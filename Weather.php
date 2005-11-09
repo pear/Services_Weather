@@ -66,6 +66,7 @@ define("SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION",    11);
 define("SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA",   12);
 define("SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED",   13);
 define("SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED",    14);
+define("SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID",  15);
 // }}}
 
 // {{{ error codes defined by weather.com
@@ -104,6 +105,8 @@ class Services_Weather {
      * o unitsFormat        use (US)-standard, metric or custom units
      * o customUnitsFormat  defines the customized units format
      * o httpTimeout        sets timeout for HTTP requests
+     * o httpProxy          sets proxy for HTTP requests, please use the
+     *                      notation http://[user[:pass]@]host[:port]
      * o dateFormat         string to use for date output
      * o timeFormat         string to use for time output
      * --- EJSE Options
@@ -195,6 +198,7 @@ class Services_Weather {
                 SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION          => "Unknown location provided.",
                 SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA         => "Server data wrong or not available.",
                 SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED         => "Cache init was not completed.",
+                SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID        => "The given proxy is not valid, please use the notation http://[user[:pass]@]host[:port]",
                 SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED          => "MetarDB is not connected.",
                 SERVICES_WEATHER_ERROR_UNKNOWN_ERROR             => "An unknown error has occured.",
                 SERVICES_WEATHER_ERROR_NO_LOCATION               => "No location provided.",

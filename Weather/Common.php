@@ -94,12 +94,12 @@ class Services_Weather_Common {
     );
 
     /**
-     * Timeout for HTTP requests
+     * Options for HTTP requests
      *
-     * @var     int                        $_httpTimeout
+     * @var     array                       $_httpOptions
      * @access  private
      */
-    var $_httpTimeout = 60;
+    var $_httpOptions = array();
 
     /**
      * Format of the used dates
@@ -192,6 +192,15 @@ class Services_Weather_Common {
 
         if (isset($options["httpTimeout"])) {
             $this->setHttpTimeout($options["httpTimeout"]);
+        } else {
+            $this->setHttpTimeout(60);
+        }
+        if (isset($options["httpProxy"])) {
+            $status = $this->setHttpProxy($options["httpProxy"]);
+            if (Services_Weather::isError($status)) {
+                $error = $status;
+                return;
+            }
         }
 
         if (isset($options["dateFormat"])) {
@@ -271,17 +280,62 @@ class Services_Weather_Common {
     }
     // }}}
 
+    // {{{ setHttpOption()
+    /**
+     * Sets an option for usage in HTTP_Request objects
+     *
+     * @param   string                      $varName
+     * @param   mixed                       $varValue
+     * @access  public
+     */
+    function setHttpOption($varName, $varValue)
+    {
+        if (is_string($varName) && $varName != "" && !empty($varValue)) {
+            $this->_httpOptions[$varName] = $varValue;
+        }
+    }
+    // }}}
+
     // {{{ setHttpTimeout()
     /**
      * Sets the timeout in seconds for HTTP requests
      *
-     * @param   int                          $httpTimeout
+     * @param   int                         $httpTimeout
      * @access  public
      */
     function setHttpTimeout($httpTimeout)
     {
         if (is_int($httpTimeout)) {
-            $this->_httpTimeout = $httpTimeout;
+            $this->_httpOptions["timeout"] = $httpTimeout;
+        }
+    }
+    // }}}
+
+    // {{{ setHttpProxy()
+    /**
+     * Sets the proxy for HTTP requests
+     *
+     * @param   string                      $httpProxy
+     * @access  public
+     */
+    function setHttpProxy($httpProxy)
+    {
+        if (preg_match("#http://(?:([^:^@]+)?:?([^@]+)?@)?([^:]+)(?::(\d+))?#", $httpProxy, $proxy)) {
+            if (isset($proxy[1]) && $proxy[1] != "") {
+                $this->_httpOptions["proxy_user"] = $proxy[1];
+            }
+            if (isset($proxy[2]) && $proxy[2] != "") {
+                $this->_httpOptions["proxy_pass"] = $proxy[2];
+            }
+            if (isset($proxy[3]) && $proxy[3] != "") {
+                $this->_httpOptions["proxy_host"] = $proxy[3];
+            }
+            if (isset($proxy[4]) && $proxy[4] != "") {
+                $this->_httpOptions["proxy_port"] = $proxy[4];
+            }
+            return true;
+        } else {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID, __FILE__, __LINE__);
         }
     }
     // }}}
