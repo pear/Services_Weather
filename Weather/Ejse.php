@@ -320,6 +320,16 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             );
         }
 
+        // Initialize some arrays
+        $update             = array();
+        $temperature        = array();
+        $feltTemperature    = array();
+        $visibility         = array();
+        $pressure           = array();
+        $dewPoint           = array();
+        $uvIndex            = array();
+        $wind               = array();
+
         if (preg_match("/(\w+) (\d+), (\d+), at (\d+:\d+ \wM) [^\(]+(\(([^\)]+)\))?/", $this->_weather->LastUpdated, $update)) {
             if (isset($update[5])) {
                 $timestring = $update[6];
@@ -426,6 +436,10 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         }
 
         $forecastReturn["days"]   = array();
+
+        // Initialize some arrays
+        $temperatureHigh    = array();
+        $temperatureLow     = array();
 
         for ($i = 1; $i <= $days; $i++) {
             preg_match("/(-?\d+)\D+/", $this->_forecast->{"Day".$i}->High, $temperatureHigh);

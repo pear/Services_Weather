@@ -451,6 +451,11 @@ class Services_Weather_Metar extends Services_Weather_Common
                     $tab = str_repeat("\t", 2 - floor((strlen($metar[$i]) + 2) / 8));
                     echo "\"".$metar[$i]."\"".$tab."-> ";
                 }
+                
+                // Initialize some arrays
+                $result   = array();
+                $resultVF = array();
+                $lresult  = array();
 
                 $found = false;
                 foreach ($metarCode as $key => $regexp) {
@@ -925,6 +930,11 @@ class Services_Weather_Metar extends Services_Weather_Common
                     $tab = str_repeat("\t", 2 - floor((strlen($taf[$i]) + 2) / 8));
                     echo "\"".$taf[$i]."\"".$tab."-> ";
                 }
+
+                // Initialize some arrays
+                $result   = array();
+                $resultVF = array();
+                $lresult  = array();
 
                 $found = false;
                 foreach ($tafCode as $key => $regexp) {

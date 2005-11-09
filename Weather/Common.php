@@ -327,6 +327,8 @@ class Services_Weather_Common {
      */
     function setHttpProxy($httpProxy)
     {
+        $proxy = array();
+        
         if (preg_match("#http://(?:([^:^@]+)?:?([^@]+)?@)?([^:]+)(?::(\d+))?#", $httpProxy, $proxy)) {
             if (isset($proxy[1]) && $proxy[1] != "") {
                 $this->_httpOptions["proxy_user"] = $proxy[1];
@@ -340,6 +342,7 @@ class Services_Weather_Common {
             if (isset($proxy[4]) && $proxy[4] != "") {
                 $this->_httpOptions["proxy_port"] = $proxy[4];
             }
+
             return true;
         } else {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID, __FILE__, __LINE__);
