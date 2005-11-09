@@ -81,9 +81,6 @@ $timeFormat      = "H:i";           //                    time
 // Load the Weather class
 require_once "Services/Weather.php";
 
-// Load the scripts needed for sunrise/-set calculation
-include_once "php_sunrise_sunset.php";
-
 // Object initialization - error checking is important, because of
 // handling exceptions such as missing PEAR modules
 $metar = &Services_Weather::service("Metar");
