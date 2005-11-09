@@ -279,8 +279,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $root = $this->_unserializer->getRootName();
             $data = $this->_unserializer->getUnserializedData();
 
-            if (Services_Weather::isError($root)) {
-                // Something wrong here...
+            if (Services_Weather::isError($root) || $root == "HTML") {
+                // Something wrong here, maybe not XML retrieved...
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             } elseif ($root == "error") {
                 // We got an error back from weather.com
