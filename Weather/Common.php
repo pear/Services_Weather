@@ -738,10 +738,14 @@ class Services_Weather_Common {
         
         if ($latitude === null) {
             $latitude   = SUNFUNCS_DEFAULT_LATITUDE;
+        } else {
+            $latitude   = (float) $latitude;
         }
 
         if ($longitude === null) {
             $longitude  = SUNFUNCS_DEFAULT_LONGITUDE;
+        } else {
+            $longitude  = (float) $longitude;
         }
 
         if ($zenith === null) {
@@ -750,11 +754,14 @@ class Services_Weather_Common {
             } else {
                 $zenith = SUNFUNCS_SUNSET_ZENITH;
             }
-                
+        } else {
+            $zenith     = (float) $zenith;
         }
 
         if ($gmt_offset === null) {
             $gmt_offset = date("Z", $date) / 3600;
+        } else {
+            $gmt_offset = (float) $gmt_offset;
         }
 
         if ($sunrise && function_exists("date_sunrise")) {
