@@ -269,7 +269,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
         $data = $request->getResponseBody();
-
+        
         // ...and unserialize
         $status = $this->_unserializer->unserialize($data);
 
@@ -350,8 +350,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         } else {
             $search = $this->_unserializer->getUnserializedData();
-
-            if (Services_Weather::isError($search)) {
+            
+            if (Services_Weather::isError($search) || $this->_unserializer->getRootName() == "HTML") {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             } elseif (!is_array($search) || !sizeof($search)) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
