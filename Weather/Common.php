@@ -327,20 +327,18 @@ class Services_Weather_Common {
      */
     function setHttpProxy($httpProxy)
     {
-        $proxy = array();
-        
-        if (preg_match("#http://(?:([^:^@]+)?:?([^@]+)?@)?([^:]+)(?::(\d+))?#", $httpProxy, $proxy)) {
-            if (isset($proxy[1]) && $proxy[1] != "") {
-                $this->_httpOptions["proxy_user"] = $proxy[1];
+        if (($proxy = parse_url($httpProxy)) !== false && $proxy["scheme"] == "http") {
+            if (isset($proxy["user"]) && $proxy["user"] != "") {
+                $this->_httpOptions["proxy_user"] = $proxy["user"];
             }
-            if (isset($proxy[2]) && $proxy[2] != "") {
-                $this->_httpOptions["proxy_pass"] = $proxy[2];
+            if (isset($proxy["pass"]) && $proxy["pass"] != "") {
+                $this->_httpOptions["proxy_pass"] = $proxy["pass"];
             }
-            if (isset($proxy[3]) && $proxy[3] != "") {
-                $this->_httpOptions["proxy_host"] = $proxy[3];
+            if (isset($proxy["host"]) && $proxy["host"] != "") {
+                $this->_httpOptions["proxy_host"] = $proxy["host"];
             }
-            if (isset($proxy[4]) && $proxy[4] != "") {
-                $this->_httpOptions["proxy_port"] = $proxy[4];
+            if (isset($proxy["port"]) && $proxy["port"] != "") {
+                $this->_httpOptions["proxy_port"] = $proxy["port"];
             }
 
             return true;

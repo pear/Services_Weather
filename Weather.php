@@ -69,6 +69,7 @@ define("SERVICES_WEATHER_ERROR_DB_NOT_CONNECTED",         14);
 define("SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID",       15);
 define("SERVICES_WEATHER_ERROR_SUNFUNCS_DATE_INVALID",    16);
 define("SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID", 17);
+define("SERVICES_WEATHER_ERROR_METAR_SOURCE_INVALID",     18);
 // }}}
 
 // {{{ error codes defined by weather.com
@@ -205,6 +206,7 @@ class Services_Weather {
                 SERVICES_WEATHER_ERROR_HTTP_PROXY_INVALID        => "The given proxy is not valid, please use the notation http://[user[:pass]@]host[:port].",
                 SERVICES_WEATHER_ERROR_SUNFUNCS_DATE_INVALID     => "The date you've provided for calculation of sunrise/sunset is not a timestamp.",
                 SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID  => "The return format you've provided for calculation of sunrise/sunset is not valid.",
+                SERVICES_WEATHER_ERROR_METAR_SOURCE_INVALID      => "The METAR/TAF source you've provided has an invalid type or path.",
                 SERVICES_WEATHER_ERROR_UNKNOWN_ERROR             => "An unknown error has occured.",
                 SERVICES_WEATHER_ERROR_NO_LOCATION               => "No location provided.",
                 SERVICES_WEATHER_ERROR_INVALID_LOCATION          => "Invalid location provided.",
