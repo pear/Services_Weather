@@ -9,7 +9,7 @@
  * <LICENSE>
  * Copyright (c) 2005, Alexander Wirtz
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -21,7 +21,7 @@
  * o Neither the name of the software nor the names of its contributors
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * </LICENSE>
- * 
+ *
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
@@ -702,14 +702,14 @@ class Services_Weather_Common {
     // {{{ calculateSunRiseSet()
     /**
      * Calculates sunrise and sunset for a location
-     * 
+     *
      * The sun position algorithm taken from the 'US Naval Observatory's
      * Almanac for Computers', implemented by Ken Bloom <kekabloom[at]ucdavis[dot]edu>
      * for the zmanim project, converted to C by Moshe Doron <mosdoron[at]netvision[dot]net[dot]il>
      * and finally taken from the PHP5 sources and converted to native PHP as a wrapper.
-     * 
+     *
      * The date has to be entered as a timestamp!
-     * 
+     *
      * @param   int                         $date
      * @param   int                         $retformat
      * @param   float                       $latitude
@@ -736,7 +736,7 @@ class Services_Weather_Common {
         } elseif (!in_array($retformat, array(SUNFUNCS_RET_TIMESTAMP, SUNFUNCS_RET_STRING, SUNFUNCS_RET_DOUBLE)) ) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID, __FILE__, __LINE__);
         }
-        
+
         // Set default values for coordinates
         if ($latitude === null) {
             $latitude   = SUNFUNCS_DEFAULT_LATITUDE;
@@ -779,7 +779,7 @@ class Services_Weather_Common {
 
         // Step 2: Convert the longitude to hour value and calculate an approximate time
         $lngHour = $longitude / 15;
-    
+
         // Use 18 for sunset instead of 6
         if ($sunrise) {
             // Sunrise
@@ -787,63 +787,63 @@ class Services_Weather_Common {
         } else {
             // Sunset
             $t = $N + ((18 - $lngHour) / 24);
-        } 
-    
+        }
+
         // Step 3: Calculate the sun's mean anomaly
         $M = (0.9856 * $t) - 3.289;
-    
+
         // Step 4: Calculate the sun's true longitude
         $L = $M + (1.916 * sin(deg2rad($M))) + (0.020 * sin(deg2rad(2 * $M))) + 282.634;
-    
+
         while ($L < 0) {
             $Lx = $L + 360;
             assert($Lx != $L); // askingtheguru: really needed?
             $L = $Lx;
         }
-        
+
         while ($L >= 360) {
             $Lx = $L - 360;
             assert($Lx != $L); // askingtheguru: really needed?
             $L = $Lx;
         }
-    
+
         // Step 5a: Calculate the sun's right ascension
         $RA = rad2deg(atan(0.91764 * tan(deg2rad($L))));
-    
+
         while ($RA < 0) {
             $RAx = $RA + 360;
             assert($RAx != $RA); // askingtheguru: really needed?
             $RA = $RAx;
         }
-    
+
         while ($RA >= 360) {
             $RAx = $RA - 360;
             assert($RAx != $RA); // askingtheguru: really needed?
             $RA = $RAx;
-        } 
-    
+        }
+
         // Step 5b: Right ascension value needs to be in the same quadrant as L
         $Lquadrant  = floor($L / 90) * 90;
         $RAquadrant = floor($RA / 90) * 90;
-    
+
         $RA = $RA + ($Lquadrant - $RAquadrant);
-    
+
         // Step 5c: Right ascension value needs to be converted into hours
         $RA /= 15;
-    
+
         // Step 6: Calculate the sun's declination
         $sinDec = 0.39782 * sin(deg2rad($L));
         $cosDec = cos(asin($sinDec));
-    
+
         // Step 7a: Calculate the sun's local hour angle
         $cosH = (cos(deg2rad($zenith)) - ($sinDec * sin(deg2rad($latitude)))) / ($cosDec * cos(deg2rad($latitude)));
-    
+
         // XXX: What's the use of this block.. ?
         // if (sunrise && cosH > 1 || !sunrise && cosH < -1) {
         //     throw doesnthappen();
         // }
-    
-        // Step 7b: Finish calculating H and convert into hours 
+
+        // Step 7b: Finish calculating H and convert into hours
         if ($sunrise) {
             // Sunrise
             $H = 360 - rad2deg(acos($cosH));
@@ -852,25 +852,25 @@ class Services_Weather_Common {
             $H = rad2deg(acos($cosH));
         }
         $H = $H / 15;
-    
+
         // Step 8: Calculate local mean time
         $T = $H + $RA - (0.06571 * $t) - 6.622;
-    
+
         // Step 9: Convert to UTC
         $UT = $T - $lngHour;
-    
+
         while ($UT < 0) {
             $UTx = $UT + 24;
             assert($UTx != $UT); // askingtheguru: really needed?
             $UT = $UTx;
         }
-    
+
         while ($UT >= 24) {
             $UTx = $UT - 24;
             assert($UTx != $UT); // askingtheguru: really needed?
             $UT = $UTx;
         }
-        
+
         $UT = $UT + $gmt_offset;
 
         // Now bring the result into the chosen format and return
@@ -884,9 +884,254 @@ class Services_Weather_Common {
                 return $UT;
             default:
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_ERROR, __FILE__, __LINE__);
-        } 
+        }
     }
     // }}}
+
+    // {{{ getWeatherIcon()
+    /**
+     * Gets a number corresponding to a weather icon.
+     *
+     * These numbers just happen to correspond with the icons that you get with
+     * the weather.com SDK, but open versions of them have been created. Input
+     * must be in standard units. For the icons that include day/night, we use
+     * the present time and the provided lat/lon to determine if the sun is up.
+     * A complete set of icon descriptions can be found here:
+     * http://sranshaft.wincustomize.com/Articles.aspx?AID=60165&u=0
+     *
+     * There are a number of icon sets here:
+     * http://www.desktopsidebar.com/forums/index.php?showtopic=2441&st=0
+     * http://www.desktopsidebar.com/forums/index.php?showtopic=819
+     *
+     * @param   string                      $conditions     The conditions.
+     * @param   array                       $clouds         The clouds at various levels.
+     * @param   float                       $wind           Wind speed in mph.
+     * @param   float                       $temperature    Temperature in deg F.
+     * @param   float                       $latitude       Point latitude.
+     * @param   float                       $longitude      Point longitude.
+     * @author  Seth Price  <seth@pricepages.org>
+     * @access  public
+     */
+    function getWeatherIcon($conditions, $clouds = array(), $wind = 5, $temperature = 70, $latitude = -360, $longitude = -360)
+    {
+        // Search for matches that don't use the time of day
+        $hail     = (bool) stristr($conditions, "hail");
+        $dust     = (bool) stristr($conditions, "dust")     || (bool) stristr($conditions, "sand");
+        $smoke    = (bool) stristr($conditions, "smoke")    || (bool) stristr($conditions, "volcanic ash");
+
+        // Slightly more complex matches that might or might not use the time of day
+        $near     = (bool) stristr($conditions, "vicinity") || (bool) stristr($conditions, "recent");
+        $light    = (bool) stristr($conditions, "light");
+        $heavy    = (bool) stristr($conditions, "heavy");
+        $ice      = (bool) stristr($conditions, "ice")      || (bool) stristr($conditions, "pellets");
+        $rain     = (bool) stristr($conditions, "rain");
+        $snow     = (bool) stristr($conditions, "snow");
+        $fog      = (bool) stristr($conditions, "fog")      || (bool) stristr($conditions, "spray") || (bool) stristr($conditions, "mist");
+        $haze     = (bool) stristr($conditions, "haze");
+        $ts       = (bool) stristr($conditions, "thunderstorm");
+        $freezing = (bool) stristr($conditions, "freezing");
+        $wind     = (bool) stristr($conditions, "squall")   || $wind > 25;
+        $nsw      = (bool) stristr($conditions, "no significant weather");
+        $hot      = $temperature > 95;
+        $frigid   = $temperature < 5;
+
+
+        if ($hail) {
+            return 6;  // Hail
+        }
+        if ($dust) {
+            return 19; // Dust
+        }
+        if ($smoke) {
+            return 22; // Smoke
+        }
+
+        // Get some of the dangerous conditions fist
+        if ($rain && $snow && ($ice || $freezing)) {
+            return 7;  // Icy/Clouds Rain-Snow
+        }
+        if (($ts || $rain) && ($ice || $freezing)) {
+            return 10; // Icy/Rain
+        }
+        if (($fog || $haze) && ($ice || $freezing)) {
+            return 8;  // Icy/Haze Rain
+        }
+        if ($rain && $snow) {
+            return 5;  // Cloudy/Snow-Rain Mix
+        }
+        if ($fog && $rain) {
+            return 9;  // Haze/Rain
+        }
+        if ($wind && $rain) {
+            return 1;  // Wind/Rain
+        }
+        if ($wind && $snow) {
+            return 43; // Windy/Snow
+        }
+        if ($snow && $light) {
+            return 13; // Flurries
+        }
+        if ($light && $rain) {
+            return 11; // Light Rain
+        }
+
+        // Get the maximum coverage of the clouds at any height. For most
+        // people, overcast at 1000ft is the same as overcast at 10000ft.
+        //
+        // 0 == clear, 1 == hazey, 2 == partly cloudy, 3 == mostly cloudy, 4 == overcast
+        $coverage = 0;
+        foreach ($clouds as $layer) {
+            if ($coverage < 1 && stristr($layer["amount"], "few")) {
+                $coverage = 1;
+            } elseif ($coverage < 2 && stristr($layer["amount"], "scattered")) {
+                $coverage = 2;
+            } elseif ($coverage < 3 && (stristr($layer["amount"], "broken") || stristr($layer["amount"], "cumulus"))) {
+                $coverage = 3;
+            } elseif ($coverage < 4 && stristr($layer["amount"], "overcast")) {
+                $coverage = 4;
+            }
+        }
+
+        // Check if it is day or not. 0 is night, 2 is day, and 1 is unknown
+        // or twilight (~(+|-)1 hour of sunrise/sunset). Note that twilight isn't
+        // always accurate because of issues wrapping around the 24hr clock. Oh well...
+        if ($latitude < 90 && $latitude > -90 && $longitude < 180 && $longitude > -180) {
+            // Calculate sunrise/sunset and current time in GMT
+            $sunrise   = $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $latitude, $longitude, SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, true);
+            $sunset    = $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $latitude, $longitude, SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, false);
+            $timeOfDay = gmmktime();
+
+            // Now that we have the sunrise/sunset times and the current time,
+            // we need to figure out if it is day, night, or twilight. Wrapping
+            // these times around the 24hr clock is a pain.
+            if ($sunrise < $sunset) {
+                if ($timeOfDay > ($sunrise + 3600) && $timeOfDay < ($sunset - 3600)) {
+                    $isDay = 2;
+                } elseif ($timeOfDay > ($sunrise - 3600) && $timeOfDay < ($sunset + 3600)) {
+                    $isDay = 1;
+                } else {
+                    $isDay = 0;
+                }
+            } else {
+                if ($timeOfDay < ($sunrise - 3600) && $timeOfDay > ($sunset + 3600)) {
+                    $isDay = 0;
+                } elseif ($timeOfDay < ($sunrise + 3600) && $timeOfDay > ($sunset - 3600)) {
+                    $isDay = 1;
+                } else {
+                    $isDay = 2;
+                }
+            }
+        } else {
+            // Default to twilight because it tends to have neutral icons.
+            $isDay = 1;
+        }
+
+        // General precipitation
+        if ($ts && $near) {
+            switch ($isDay) {
+                case 0:
+                case 1:
+                    return 38; // Lightning
+                case 2:
+                    return 37; // Lightning/Day
+            }
+        }
+        if ($ts) {
+            switch ($isDay) {
+                case 0:
+                    return 47; // Thunderstorm/Night
+                case 1:
+                case 2:
+                    return 0;  // Rain/Lightning
+            }
+        }
+        if ($snow) {
+            switch ($isDay) {
+                case 0:
+                    return 46; // Snow/Night
+                case 1:
+                case 2:
+                    return 41; // Snow
+            }
+        }
+        if ($rain) {
+            switch ($isDay) {
+                case 0:
+                    return 45; // Rain/Night
+                case 1:
+                    return 40; // Rain
+                case 2:
+                    return 39; // Rain/Day
+            }
+        }
+
+        // Cloud conditions
+        if ($coverage == 4) {
+            return 26; // Mostly Cloudy
+        }
+        if ($coverage == 3) {
+            switch ($isDay) {
+                case 0:
+                    return 27; // Mostly Cloudy/Night
+                case 1:
+                    return 26; // Mostly Cloudy
+                case 2:
+                    return 28; // Mostly Cloudy/Day
+            }
+        }
+        if ($coverage == 2) {
+            switch ($isDay) {
+                case 0:
+                    return 29; // Partly Cloudy/Night
+                case 1:
+                    return 26; // Mostly Cloudy
+                case 2:
+                    return 30; // Partly Cloudy/Day
+            }
+        }
+        if ($coverage == 1) {
+            switch ($isDay) {
+                case 0:
+                case 1:
+                    return 33; // Hazy/Night
+                case 2:
+                    return 34; // Hazy/Day
+            }
+        }
+
+        // Catch-alls
+        if ($fog) {
+            return 20; // Fog
+        }
+        if ($haze) {
+            return 21; // Haze
+        }
+        if ($wind) {
+            return 23; // Wind
+        }
+        if ($hot) {
+            return 36; // Hot!
+        }
+        if ($frigid) {
+            return 25; // Frigid
+        }
+
+        if ($nsw) {
+            switch ($isDay) {
+                case 0:
+                case 1:
+                    // Use night for twilight because the moon is generally
+                    // out then, so it will match with most icon sets.
+                    return 31; // Clear Night
+                case 2:
+                    return 32; // Clear Day
+            }
+        }
+
+        return "na";
+    }
+    // }}}
+ }
 }
 // }}}
 ?>
