@@ -189,7 +189,11 @@ class Services_Weather_Metar extends Services_Weather_Common
             $sourceTaf = "http";
             $sourcePathTaf = "";
         }
-        $this->setMetarSource($sourceMetar, $sourcePathMetar, $sourceTaf, $sourcePathTaf);
+        $status = $this->setMetarSource($sourceMetar, $sourcePathMetar, $sourceTaf, $sourcePathTaf);
+        if (Services_Weather::isError($status)) {
+            $error = $status;
+            return;
+        }
     }
     // }}}
 
@@ -247,6 +251,8 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_METAR_SOURCE_INVALID, __FILE__, __LINE__);
         }
+
+        // Check for a proper METAR source if parameter is set, if not set use defaults
         clearstatcache();
         if (strlen($sourcePathMetar)) {
             if (($this->_sourceMetar == "file" && is_dir($sourcePathMetar)) || ($this->_sourceMetar != "file" && parse_url($sourcePathMetar))) {
@@ -267,11 +273,14 @@ class Services_Weather_Metar extends Services_Weather_Common
                     break;
             }
         }
+
         if (in_array($sourceTaf, array("http", "ftp", "file"))) {
             $this->_sourceTaf = $sourceTaf;
         } elseif ($sourceTaf != "") {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_METAR_SOURCE_INVALID, __FILE__, __LINE__);
         }
+
+        // Check for a proper TAF source if parameter is set, if not set use defaults
         clearstatcache();
         if (strlen($sourcePathTaf)) {
             if (($this->_sourceTaf == "file" && is_dir($sourcePathTaf)) || ($this->_sourceTaf != "file" && parse_url($sourcePathTaf))) {
@@ -333,6 +342,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     function _retrieveServerData($id, $dataType) {
         switch($this->{"_source".ucfirst($dataType)}) {
             case "file":
+                // File source is used, get file and read as-is into a string
                 $source = realpath($this->{"_sourcePath".ucfirst($dataType)}."/".$id.".TXT");
                 $data = @file_get_contents($source);
                 if ($data === false) {
@@ -340,6 +350,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                 }
                 break;
             case "http":
+                // HTTP used, acquire request object and fetch data from webserver. Return body of reply
                 include_once "HTTP/Request.php";
 
                 $request = &new HTTP_Request($this->{"_sourcePath".ucfirst($dataType)}."/".$id.".TXT", $this->_httpOptions);
@@ -351,10 +362,13 @@ class Services_Weather_Metar extends Services_Weather_Common
                 $data = $request->getResponseBody();
                 break;
             case "ftp":
+                // FTP as source, acquire neccessary object first
                 include_once "Net/FTP.php";
 
+                // Parse source to get the server data
                 $server = parse_url($this->{"_sourcePath".ucfirst($dataType)}."/".$id.".TXT");
 
+                // If neccessary options are not set, use defaults
                 if (!isset($server["port"]) || $server["port"] == "" || $server["port"] == 0) {
                     $server["port"] = 21;
                 }
@@ -365,28 +379,33 @@ class Services_Weather_Metar extends Services_Weather_Common
                     $server["pass"] = "ftp@";
                 }
 
+                // Instantiate object and connect to server
                 $ftp = &new Net_FTP($server["host"], $server["port"], $this->_httpOptions["timeout"]);
                 $status = $ftp->connect();
                 if (Services_Weather::isError($status)) {
                     return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
                 }
 
+                // Login to server...
                 $status = $ftp->login($server["user"], $server["pass"]);
                 if (Services_Weather::isError($status)) {
                     return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
                 }
                 
+                // ...and retrieve the data into a temporary file
                 $tempfile = tempnam();
                 $status = $ftp->get($server["path"], $tempfile, true, FTP_ASCII);
                 if (Services_Weather::isError($status)) {
                     return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
                 }
 
+                // Disconnect FTP server, and read data from temporary file
                 $ftp->disconnect();
                 $data = @file_get_contents($tempfile);
                 break;
         }
         
+        // Split data into an array and return
         return preg_split("/\n|\r\n|\n\r/", $data);
     }
     // }}}
