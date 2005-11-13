@@ -9,7 +9,7 @@
  * <LICENSE>
  * Copyright (c) 2005, Alexander Wirtz
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -21,7 +21,7 @@
  * o Neither the name of the software nor the names of its contributors
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * </LICENSE>
- * 
+ *
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
@@ -301,7 +301,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                     break;
             }
         }
-        
+
         return true;
     }
     // }}}
@@ -331,7 +331,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
     /**
      * Downloads the weather- or forecast-data for an id from the server dependant on the datatype and returns it
-     * 
+     *
      * @param   string                      $id
      * @param   string                      $dataType
      * @return  PEAR_Error|array
@@ -391,20 +391,22 @@ class Services_Weather_Metar extends Services_Weather_Common
                 if (Services_Weather::isError($status)) {
                     return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
                 }
-                
+
                 // ...and retrieve the data into a temporary file
-                $tempfile = tempnam();
+                $tempfile = tempnam("./", "Services_Weather_Metar");
                 $status = $ftp->get($server["path"], $tempfile, true, FTP_ASCII);
                 if (Services_Weather::isError($status)) {
+                    unlink($tempfile);
                     return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
                 }
 
                 // Disconnect FTP server, and read data from temporary file
                 $ftp->disconnect();
                 $data = @file_get_contents($tempfile);
+                unlink($tempfile);
                 break;
         }
-        
+
         // Split data into an array and return
         return preg_split("/\n|\r\n|\n\r/", $data);
     }
@@ -553,7 +555,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                 $tab = str_repeat("\t", 2 - floor((strlen($metar[$i]) + 2) / 8));
                 echo "\"".$metar[$i]."\"".$tab."-> ";
             }
-            
+
             // Initialize some arrays
             $result   = array();
             $resultVF = array();
@@ -1728,7 +1730,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             } elseif (!is_array($weatherData) || sizeof($weatherData) < 2) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             }
-            
+
             // Parse weather
             $weatherReturn  = $this->_parseWeatherData($weatherData);
 
