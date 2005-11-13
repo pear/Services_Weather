@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+    <name>Services_Weather</name>
+    <channel>pear.php.net</channel>
+    <summary>This class acts as an interface to various online weather-services.</summary>
+    <description>
+        Services_Weather searches for given locations and retrieves current
+        weather data and, dependent on the used service, also forecasts. Up to
+        now, GlobalWeather from CapeScience, Weather XML from EJSE (US only),
+        a XOAP service from Weather.com and METAR/TAF from NOAA are supported.
+        Further services will get included, if they become available, have a
+        usable API and are properly documented.
+    </description>
+    <lead>
+        <name>Alexander Wirtz</name>
+        <user>eru</user>
+        <email>alex@pc4p.net</email>
+        <active>yes</active>
+    </lead>
+    <!-- Copy to changelog -->
+    <date>2005-11-14</date>
+    <version>
+        <release>1.4.0RC1</release>
+        <api>1.4.0RC1</api>
+    </version>
+    <stability>
+        <release>beta</release>
+        <api>beta</api>
+    </stability>
+    <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+    <notes>
+        o Changed license to BSD
+        o Added package2.xml for PEAR 1.4 compatibility
+        o Changed header-style as proposed in RFC::Header Comment Blocks
+        - Weather.php
+            o Fixed wrong cache-time for locations (Seth Price)
+        - Common.php
+            o Added function to calculate sunrise and sunset (taken from the example file php_sunrise_sunset.php) (Seth Price)
+            o Added function for determining a weather icon for current conditions (Seth Price)
+        - Metar.php
+            o Added icon for current conditions (Seth Price)
+            o Added using HTTP_Request or Net_FTP for retrieving the data
+            o Fixed location searching for certain cases (Christophe Messager)
+            o Added parsing of australian FM notation in TAF (Murray)
+            o Added error-checking for faulty locations in getWeather/getForecast (Jay Kramer)
+            o Added raw METAR/TAF-data to return array (Jay Kramer)
+            o Fixed improper parsing of fractional visibility data (Dave Parsons: Bug #4929)
+        - Weatherdotcom.php
+            o Changed searching for location to incorporate HTTP_Request, so that we can use a timeout
+            o Added mechanism for pre-fetching of server data (Seth Price)
+        - Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php
+            o Added mechanism for using a proxy in HTTP_Request (Michael Metz)
+        - Ejse.php, Globalweather.php
+            o Changed retrieval of SOAP data to avoid delays on cached items (Plix)
+        - Globalweather.php, Metar.php
+            o Add sunrise/sunset information, based on the new function in Common.php (Seth Price)
+        - metar-extensive.php
+            o Added icon for current condition
+        - weather.com-extensive.php
+            o Fixed bug in handling of non-standard condition-icons delivered by Weather.com (J.P. van Oyen)
+            o Fixed bug in display of wind direction in forecast
+    </notes>
+    <!-- /Copy to changelog -->
+    <contents>
+        <dir name="/">
+            <dir name="examples">
+                <file baseinstalldir="Services" name="ejse-basic.php" role="doc">
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="globalweather-basic.php" role="doc">
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="metar-basic.php" role="doc">
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="metar-extensive.php" role="doc">
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="weather.com-basic.php" role="doc">
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="weather.com-extensive.php" role="doc">
+                    <tasks:unixeol />
+                </file>
+            </dir> <!-- /examples -->
+            <dir name="images">
+                <file baseinstalldir="Services" name="sunrise.gif" role="data" />
+                <file baseinstalldir="Services" name="sunset.gif" role="data" />
+            </dir> <!-- /images -->
+            <dir name="Weather">
+                <file baseinstalldir="Services" name="Common.php" role="php">
+                    <tasks:replace from="@package_version@" to="version" type="package-info" />
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="Ejse.php" role="php">
+                    <tasks:replace from="@package_version@" to="version" type="package-info" />
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="Globalweather.php" role="php">
+                    <tasks:replace from="@package_version@" to="version" type="package-info" />
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="Metar.php" role="php">
+                    <tasks:replace from="@package_version@" to="version" type="package-info" />
+                    <tasks:unixeol />
+                </file>
+                <file baseinstalldir="Services" name="Weatherdotcom.php" role="php">
+                    <tasks:replace from="@package_version@" to="version" type="package-info" />
+                    <tasks:unixeol />
+                </file>
+            </dir> <!-- /Weather -->
+            <file baseinstalldir="Services" name="buildMetarDB.php" role="data">
+                <tasks:replace from="@package_version@" to="version" type="package-info" />
+                <tasks:unixeol />
+            </file>
+            <file baseinstalldir="Services" name="Weather.php" role="php" >
+                <tasks:replace from="@package_version@" to="version" type="package-info" />
+                <tasks:unixeol />
+            </file>
+        </dir> <!-- / -->
+    </contents>
+    <dependencies>
+        <required>
+            <php>
+                <min>4.0.0</min>
+                <max>6.0.0</max>
+            </php>
+            <pearinstaller>
+                <min>1.4.0</min>
+            </pearinstaller>
+            <package>
+                <name>HTTP_Request</name>
+                <channel>pear.php.net</channel>
+                <min>1.2.0</min>
+                <recommended>1.3.0</recommended>
+            </package>
+        </required>
+        <optional>
+            <package>
+                <name>Net_FTP</name>
+                <channel>pear.php.net</channel>
+                <min>1.3.1</min>
+                <recommended>1.3.1</recommended>
+            </package>
+            <package>
+                <name>Cache</name>
+                <channel>pear.php.net</channel>
+                <min>1.5.3</min>
+                <recommended>1.5.4</recommended>
+            </package>
+            <package>
+                <name>DB</name>
+                <channel>pear.php.net</channel>
+                <min>1.4.0</min>
+                <recommended>1.7.6</recommended>
+            </package>
+            <package>
+                <name>SOAP</name>
+                <channel>pear.php.net</channel>
+                <min>0.7.5</min>
+                <recommended>0.9.1</recommended>
+            </package>
+            <package>
+                <name>XML_Serializer</name>
+                <channel>pear.php.net</channel>
+                <min>0.8</min>
+                <recommended>0.18.0</recommended>
+            </package>
+        </optional>
+    </dependencies>
+    <phprelease />
+    <changelog />
+</package>

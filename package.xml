@@ -21,48 +21,76 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.3.2</version>
-        <date>2005-07-18</date>
-        <license>PHP License</license>
-        <state>stable</state>
+        <version>1.4.0RC1</version>
+        <date>2005-11-14</date>
+        <license>BSD License</license>
+        <state>beta</state>
         <notes>
+            o Changed license to BSD
+            o Added package2.xml for PEAR 1.4 compatibility
+            o Changed header-style as proposed in RFC::Header Comment Blocks
             - Weather.php
-                o Return-by-Reference fix for PHP 4.4 (Bug #4814) provided by (jan at horde dot org)
+                o Fixed wrong cache-time for locations (Seth Price)
+            - Common.php
+                o Added function to calculate sunrise and sunset (taken from the example file php_sunrise_sunset.php) (Seth Price)
+            	o Added function for determining a weather icon for current conditions (Seth Price)
+            - Metar.php
+                o Added icon for current conditions (Seth Price)
+                o Added using HTTP_Request or Net_FTP for retrieving the data
+            	o Fixed location searching for certain cases (Christophe Messager)
+            	o Added parsing of australian FM notation in TAF (Murray)
+                o Added error-checking for faulty locations in getWeather/getForecast (Jay Kramer)
+                o Added raw METAR/TAF-data to return array (Jay Kramer)
+                o Fixed improper parsing of fractional visibility data (Dave Parsons: Bug #4929)
+            - Weatherdotcom.php
+                o Changed searching for location to incorporate HTTP_Request, so that we can use a timeout
+                o Added mechanism for pre-fetching of server data (Seth Price)
+            - Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php
+                o Added mechanism for using a proxy in HTTP_Request (Michael Metz)
+            - Ejse.php, Globalweather.php
+            	o Changed retrieval of SOAP data to avoid delays on cached items (Plix)
+            - Globalweather.php, Metar.php
+                o Add sunrise/sunset information, based on the new function in Common.php (Seth Price)
+            - metar-extensive.php
+                o Added icon for current condition
+            - weather.com-extensive.php
+                o Fixed bug in handling of non-standard condition-icons delivered by Weather.com (J.P. van Oyen)
+                o Fixed bug in display of wind direction in forecast
         </notes>
         <deps>
+            <dep optional="no"  type="pkg" rel="ge" version="1.2">HTTP_Request</dep>
+            <dep optional="yes" type="pkg" rel="ge" version="1.3.1">Net_FTP</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.5.3">Cache</dep>
             <dep optional="yes" type="pkg" rel="ge" version="1.4">DB</dep>
-            <dep optional="yes" type="pkg" rel="ge" version="1.2">HTTP_Request</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.7.5">SOAP</dep>
             <dep optional="yes" type="pkg" rel="ge" version="0.8">XML_Serializer</dep>
         </deps>
         <filelist>
             <dir name="/" baseinstalldir="Services">
                 <file role="php">Weather.php</file>
-                <dir name="Weather" role="php">
-                    <file>Common.php</file>
-                    <file>Globalweather.php</file>
-                    <file>Ejse.php</file>
-                    <file>Metar.php</file>
-                    <file>Weatherdotcom.php</file>
+                <dir name="Weather">
+                    <file role="php">Common.php</file>
+                    <file role="php">Globalweather.php</file>
+                    <file role="php">Ejse.php</file>
+                    <file role="php">Metar.php</file>
+                    <file role="php">Weatherdotcom.php</file>
                 </dir>
             </dir>
-            <dir name="/" role="doc">
+            <dir name="/">
                 <dir name="examples">
-                    <file>globalweather-basic.php</file>
-                    <file>ejse-basic.php</file>
-                    <file>metar-basic.php</file>
-                    <file>metar-extensive.php</file>
-                    <file>php_sunrise_sunset.php</file>
-                    <file>weather.com-basic.php</file>
-                    <file>weather.com-extensive.php</file>
+                    <file role="doc">globalweather-basic.php</file>
+                    <file role="doc">ejse-basic.php</file>
+                    <file role="doc">metar-basic.php</file>
+                    <file role="doc">metar-extensive.php</file>
+                    <file role="doc">weather.com-basic.php</file>
+                    <file role="doc">weather.com-extensive.php</file>
                 </dir>
             </dir>
-            <dir name="/" role="data">
-                <file>buildMetarDB.php</file>
+            <dir name="/">
+                <file role="data">buildMetarDB.php</file>
                 <dir name="images">
-                    <file>sunrise.gif</file>
-                    <file>sunset.gif</file>
+                    <file role="data">sunrise.gif</file>
+                    <file role="data">sunset.gif</file>
                 </dir>
             </dir>
         </filelist>
