@@ -903,7 +903,7 @@ class Services_Weather_Common {
      * http://www.desktopsidebar.com/forums/index.php?showtopic=2441&st=0
      * http://www.desktopsidebar.com/forums/index.php?showtopic=819
      *
-     * @param   string                      $conditions     The conditions.
+     * @param   string                      $condition      The condition.
      * @param   array                       $clouds         The clouds at various levels.
      * @param   float                       $wind           Wind speed in mph.
      * @param   float                       $temperature    Temperature in deg F.
@@ -912,26 +912,26 @@ class Services_Weather_Common {
      * @author  Seth Price  <seth@pricepages.org>
      * @access  public
      */
-    function getWeatherIcon($conditions, $clouds = array(), $wind = 5, $temperature = 70, $latitude = -360, $longitude = -360)
+    function getWeatherIcon($condition, $clouds = array(), $wind = 5, $temperature = 70, $latitude = -360, $longitude = -360)
     {
         // Search for matches that don't use the time of day
-        $hail     = (bool) stristr($conditions, "hail");
-        $dust     = (bool) stristr($conditions, "dust")     || (bool) stristr($conditions, "sand");
-        $smoke    = (bool) stristr($conditions, "smoke")    || (bool) stristr($conditions, "volcanic ash");
+        $hail     = (bool) stristr($condition, "hail");
+        $dust     = (bool) stristr($condition, "dust")     || (bool) stristr($condition, "sand");
+        $smoke    = (bool) stristr($condition, "smoke")    || (bool) stristr($condition, "volcanic ash");
 
         // Slightly more complex matches that might or might not use the time of day
-        $near     = (bool) stristr($conditions, "vicinity") || (bool) stristr($conditions, "recent");
-        $light    = (bool) stristr($conditions, "light");
-        $heavy    = (bool) stristr($conditions, "heavy");
-        $ice      = (bool) stristr($conditions, "ice")      || (bool) stristr($conditions, "pellets");
-        $rain     = (bool) stristr($conditions, "rain");
-        $snow     = (bool) stristr($conditions, "snow");
-        $fog      = (bool) stristr($conditions, "fog")      || (bool) stristr($conditions, "spray") || (bool) stristr($conditions, "mist");
-        $haze     = (bool) stristr($conditions, "haze");
-        $ts       = (bool) stristr($conditions, "thunderstorm");
-        $freezing = (bool) stristr($conditions, "freezing");
-        $wind     = (bool) stristr($conditions, "squall")   || $wind > 25;
-        $nsw      = (bool) stristr($conditions, "no significant weather");
+        $near     = (bool) stristr($condition, "vicinity") || (bool) stristr($condition, "recent");
+        $light    = (bool) stristr($condition, "light");
+        $heavy    = (bool) stristr($condition, "heavy");
+        $ice      = (bool) stristr($condition, "ice")      || (bool) stristr($condition, "pellets");
+        $rain     = (bool) stristr($condition, "rain");
+        $snow     = (bool) stristr($condition, "snow");
+        $fog      = (bool) stristr($condition, "fog")      || (bool) stristr($condition, "spray")        || (bool) stristr($condition, "mist");
+        $haze     = (bool) stristr($condition, "haze");
+        $ts       = (bool) stristr($condition, "thunderstorm");
+        $freezing = (bool) stristr($condition, "freezing");
+        $wind     = (bool) stristr($condition, "squall")   || $wind > 25;
+        $nsw      = (bool) stristr($condition, "no significant weather");
         $hot      = $temperature > 95;
         $frigid   = $temperature < 5;
 
@@ -1131,7 +1131,6 @@ class Services_Weather_Common {
         return "na";
     }
     // }}}
- }
 }
 // }}}
 ?>
