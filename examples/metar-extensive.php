@@ -374,9 +374,8 @@ if (isset($weather["remark"]) && sizeof($weather["remark"])) {
             <td valign="top" nowrap><span class="bold">Visibility:</span> <?=strtolower($weather["visQualifier"])?> <?=round($weather["visibility"], 1).$units["vis"]?></td>
         </tr>
         <tr>
-            <td colspan="2" valign="top">
-                <span class="bold">Current condition:</span><br>
-                <?=isset($weather["condition"]) ? ucwords($weather["condition"]) : "No Significant Weather"?> 
+            <td><span class="bold">Current condition:</span><br><?=isset($weather["condition"]) ? ucwords($weather["condition"]) : "No Significant Weather"?></td>
+            <td><img style="height: 32px; width: 32px" alt="<?=isset($weather["condition"]) ? ucwords($weather["condition"]) : "No Significant Weather"?>" src="images/32x32/<?=$weather["conditionIcon"]?>.png"></td>
 <?php
 if (isset($weather["precipitation"]) && sizeof($weather["precipitation"])) {
     // Output a line for each type of precipitation,
