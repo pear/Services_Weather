@@ -5,21 +5,21 @@
 /**
  * This script downloads, saves and processes the textfiles needed for
  * the building the databases to enable searching for METAR stations.
- * 
+ *
  * You can download the locations, which is a database of about 12000 world-
  * wide locations, which can be used to determine the coordinates of your
  * city or you can download a file with 6500 airports providing the metar
  * data. This database is used for the next-METAR-station search. Please see
  * the apropriate documentation in the Services_Weather_Metar class.
- * 
+ *
  * For usage of this script, invoke with '-h'.
- * 
+ *
  * PHP versions 4 and 5
  *
  * <LICENSE>
  * Copyright (c) 2005, Alexander Wirtz
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -31,7 +31,7 @@
  * o Neither the name of the software nor the names of its contributors
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -44,7 +44,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * </LICENSE>
- * 
+ *
  * @category    Web Services
  * @package     Services_Weather
  * @subpackage  buildMetarDB
@@ -122,7 +122,7 @@ function Services_Weather_getNextArg(&$c)
         return $_SERVER["argv"][$c];
     } else {
         return false;
-    }    
+    }
 }
 // }}}
 
@@ -404,10 +404,10 @@ if (DB::isError($db)) {
 
             // integers: convert "--" fields to null, empty fields to 0
             foreach (array($dataOrder["b"], $dataOrder["s"], 6) as $i) {
-                if (strpos($data[$i], "--") !== false) { 
-                    $data[$i] = "null"; 
-                } elseif ($data[$i] == "") { 
-                    $data[$i] = 0; 
+                if (strpos($data[$i], "--") !== false) {
+                    $data[$i] = "null";
+                } elseif ($data[$i] == "") {
+                    $data[$i] = 0;
                 }
             }
 

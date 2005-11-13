@@ -9,7 +9,7 @@
  * <LICENSE>
  * Copyright (c) 2005, Alexander Wirtz
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -21,7 +21,7 @@
  * o Neither the name of the software nor the names of its contributors
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * </LICENSE>
- * 
+ *
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
@@ -102,7 +102,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
     /**
      * Switch to toggle pre-fetching of data in one single request
-     * 
+     *
      * @var     bool                        $_preFetch
      * @access  private
      */
@@ -244,9 +244,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if ($this->_preFetch) {
             $reqType = "all";
         }
-        
+
         $url = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey;
-        
+
         switch ($reqType) {
             case "links":
                 $url .= "&link=xoap";
@@ -269,7 +269,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
         $data = $request->getResponseBody();
-        
+
         // ...and unserialize
         $status = $this->_unserializer->unserialize($data);
 
@@ -351,7 +351,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         } else {
             $root = $this->_unserializer->getRootName();
             $search = $this->_unserializer->getUnserializedData();
-            
+
             if (Services_Weather::isError($search) || $root == "HTML") {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             } elseif (!is_array($search) || !sizeof($search)) {

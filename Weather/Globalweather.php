@@ -9,7 +9,7 @@
  * <LICENSE>
  * Copyright (c) 2005, Alexander Wirtz
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -21,7 +21,7 @@
  * o Neither the name of the software nor the names of its contributors
  *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * </LICENSE>
- * 
+ *
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
@@ -150,7 +150,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
         $this->_stationSoap = &new WebService_GlobalWeather_StationInfo;
         $this->_weatherSoap = &new WebService_GlobalWeather_GlobalWeather;
-        
+
         return true;
     }
     // }}}
