@@ -176,6 +176,14 @@ class Services_Weather_Common {
      */
     function Services_Weather_Common($options, &$error)
     {
+        // Set some constants for the case when PHP4 is used, as the
+        // date_sunset/sunrise functions are not implemented there
+        if (!defined("SUNFUNCS_RET_TIMESTAMP")) {
+            define("SUNFUNCS_RET_TIMESTAMP", 0);
+            define("SUNFUNCS_RET_STRING",    1);
+            define("SUNFUNCS_RET_DOUBLE",    2);
+        }
+
         // Set options accordingly
         if (isset($options["cacheType"])) {
             if (isset($options["cacheOptions"])) {
@@ -717,35 +725,29 @@ class Services_Weather_Common {
      */
     function calculateSunRiseSet($date, $retformat = null, $latitude = null, $longitude = null, $zenith = null, $gmt_offset = null, $sunrise = true)
     {
-        if (!defined("SUNFUNCS_RET_TIMESTAMP")) {
-            define("SUNFUNCS_RET_TIMESTAMP", 0);
-            define("SUNFUNCS_RET_STRING",    1);
-            define("SUNFUNCS_RET_DOUBLE",    2);
-        }
-
+        // Date must be timestamp for now
         if (!is_int($date)) {
-            // date must be timestamp for now
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SUNFUNCS_DATE_INVALID, __FILE__, __LINE__);
         }
 
+        // Check for proper return format
         if ($retformat === null) {
             $retformat  = SUNFUNCS_RET_STRING;
         } elseif (!in_array($retformat, array(SUNFUNCS_RET_TIMESTAMP, SUNFUNCS_RET_STRING, SUNFUNCS_RET_DOUBLE)) ) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_SUNFUNCS_RETFORM_INVALID, __FILE__, __LINE__);
         }
         
+        // Set default values for coordinates
         if ($latitude === null) {
             $latitude   = SUNFUNCS_DEFAULT_LATITUDE;
         } else {
             $latitude   = (float) $latitude;
         }
-
         if ($longitude === null) {
             $longitude  = SUNFUNCS_DEFAULT_LONGITUDE;
         } else {
             $longitude  = (float) $longitude;
         }
-
         if ($zenith === null) {
             if($sunrise) {
                 $zenith = SUNFUNCS_SUNRISE_ZENITH;
@@ -756,12 +758,14 @@ class Services_Weather_Common {
             $zenith     = (float) $zenith;
         }
 
+        // Default value for GMT offset
         if ($gmt_offset === null) {
             $gmt_offset = date("Z", $date) / 3600;
         } else {
             $gmt_offset = (float) $gmt_offset;
         }
 
+        // If we have PHP5, then act as wrapper for the appropriate functions
         if ($sunrise && function_exists("date_sunrise")) {
             return date_sunrise($date, $retformat, $latitude, $longitude, $zenith, $gmt_offset);
         }
@@ -769,13 +773,14 @@ class Services_Weather_Common {
             return date_sunset($date, $retformat, $latitude, $longitude, $zenith, $gmt_offset);
         }
 
-        // step 1: First calculate the day of the year
+        // Apparently we have PHP4, so calculate the neccessary steps in native PHP
+        // Step 1: First calculate the day of the year
         $N = date("z", $date) + 1;
 
-        // step 2: convert the longitude to hour value and calculate an approximate time
+        // Step 2: Convert the longitude to hour value and calculate an approximate time
         $lngHour = $longitude / 15;
     
-        // use 18 for sunset instead of 6
+        // Use 18 for sunset instead of 6
         if ($sunrise) {
             // Sunrise
             $t = $N + ((6 - $lngHour) / 24);
@@ -784,10 +789,10 @@ class Services_Weather_Common {
             $t = $N + ((18 - $lngHour) / 24);
         } 
     
-        // step 3: calculate the sun's mean anomaly
+        // Step 3: Calculate the sun's mean anomaly
         $M = (0.9856 * $t) - 3.289;
     
-        // step 4: calculate the sun's true longitude
+        // Step 4: Calculate the sun's true longitude
         $L = $M + (1.916 * sin(deg2rad($M))) + (0.020 * sin(deg2rad(2 * $M))) + 282.634;
     
         while ($L < 0) {
@@ -802,7 +807,7 @@ class Services_Weather_Common {
             $L = $Lx;
         }
     
-        // step 5a: calculate the sun's right ascension
+        // Step 5a: Calculate the sun's right ascension
         $RA = rad2deg(atan(0.91764 * tan(deg2rad($L))));
     
         while ($RA < 0) {
@@ -817,20 +822,20 @@ class Services_Weather_Common {
             $RA = $RAx;
         } 
     
-        // step 5b: right ascension value needs to be in the same quadrant as L
+        // Step 5b: Right ascension value needs to be in the same quadrant as L
         $Lquadrant  = floor($L / 90) * 90;
         $RAquadrant = floor($RA / 90) * 90;
     
         $RA = $RA + ($Lquadrant - $RAquadrant);
     
-        // step 5c: right ascension value needs to be converted into hours
+        // Step 5c: Right ascension value needs to be converted into hours
         $RA /= 15;
     
-        // step 6: calculate the sun's declination
+        // Step 6: Calculate the sun's declination
         $sinDec = 0.39782 * sin(deg2rad($L));
         $cosDec = cos(asin($sinDec));
     
-        // step 7a: calculate the sun's local hour angle
+        // Step 7a: Calculate the sun's local hour angle
         $cosH = (cos(deg2rad($zenith)) - ($sinDec * sin(deg2rad($latitude)))) / ($cosDec * cos(deg2rad($latitude)));
     
         // XXX: What's the use of this block.. ?
@@ -838,7 +843,7 @@ class Services_Weather_Common {
         //     throw doesnthappen();
         // }
     
-        // step 7b: finish calculating H and convert into hours 
+        // Step 7b: Finish calculating H and convert into hours 
         if ($sunrise) {
             // Sunrise
             $H = 360 - rad2deg(acos($cosH));
@@ -848,10 +853,10 @@ class Services_Weather_Common {
         }
         $H = $H / 15;
     
-        // step 8: calculate local mean time
+        // Step 8: Calculate local mean time
         $T = $H + $RA - (0.06571 * $t) - 6.622;
     
-        // Sunset step 9: convert to UTC
+        // Step 9: Convert to UTC
         $UT = $T - $lngHour;
     
         while ($UT < 0) {
@@ -868,6 +873,7 @@ class Services_Weather_Common {
         
         $UT = $UT + $gmt_offset;
 
+        // Now bring the result into the chosen format and return
         switch ($retformat) {
             case SUNFUNCS_RET_TIMESTAMP:
                 return floor($date - ($date % (24 * 3600))) + floor(60 * $UT);
