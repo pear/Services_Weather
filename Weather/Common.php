@@ -1065,6 +1065,14 @@ class Services_Weather_Common {
             }
         }
 
+        // Cloud conditions near the ground
+        if ($fog) {
+            return 20; // Fog
+        }
+        if ($haze) {
+            return 21; // Haze
+        }
+
         // Cloud conditions
         if ($coverage == 4) {
             return 26; // Mostly Cloudy
@@ -1100,12 +1108,6 @@ class Services_Weather_Common {
         }
 
         // Catch-alls
-        if ($fog) {
-            return 20; // Fog
-        }
-        if ($haze) {
-            return 21; // Haze
-        }
         if ($wind) {
             return 23; // Wind
         }
