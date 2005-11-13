@@ -1737,6 +1737,19 @@ class Services_Weather_Metar extends Services_Weather_Common
             if (Services_Weather::isError($weatherReturn)) {
                 return $weatherReturn;
             }
+
+            // Add an icon for the current conditions
+            // Determine if certain values are set, if not use defaults
+            $condition   = isset($weatherReturn["condition"])   ? $weatherReturn["condition"]   :      "";
+            $clouds      = isset($weatherReturn["clouds"])      ? $weatherReturn["clouds"]      : array();
+            $wind        = isset($weatherReturn["wind"])        ? $weatherReturn["wind"]        :       5; 
+            $temperature = isset($weatherReturn["temperature"]) ? $weatherReturn["temperature"] :      70; 
+            $latitude    = isset($location["latitude"])         ? $location["latitude"]         :    -360;
+            $longitude   = isset($location["longitude"])        ? $location["longitude"]        :    -360;
+            
+            // Get the icon
+            $weatherReturn["conditionIcon"] = $this->getWeatherIcon($condition, $clouds, $wind, $temperature, $latitude, $longitude);
+
             if ($this->_cacheEnabled) {
                 // Cache weather
                 $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
