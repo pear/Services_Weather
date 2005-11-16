@@ -335,34 +335,48 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
      */
     function searchLocation($location, $useFirst = false)
     {
-        // Get search data from server and unserialize
-        $request = &new HTTP_Request("http://xoap.weather.com/search/search?where=".urlencode(trim($location)), $this->_httpOptions);
-        $status = $request->sendRequest();
-        if (Services_Weather::isError($status)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
-        }
-        $data = $request->getResponseBody();
-
-        // ...and unserialize
-        $status = $this->_unserializer->unserialize($data, false, array("overrideOptions" => true, "complexType" => "array", "keyAttribute" => "id"));
-
-        if (Services_Weather::isError($status)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+        $location = trim($location);
+        $locLow   = strtolower($location);
+        
+        // Check on cached data: MD5-hash of location has to be correct and the userdata has to be the same as the given location 
+        if ($this->_cacheEnabled && $locLow == $this->_cache->getUserData(md5($locLow), "search")) {
+            $search = $this->_cache->get(md5($locLow), "search");
         } else {
+            // Get search data from server and unserialize
+            $request = &new HTTP_Request("http://xoap.weather.com/search/search?where=".urlencode($location), $this->_httpOptions);
+            $status = $request->sendRequest();
+            if (Services_Weather::isError($status)) {
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+            }
+            $data = $request->getResponseBody();
+    
+            // ...and unserialize
+            $status = $this->_unserializer->unserialize($data, false, array("overrideOptions" => true, "complexType" => "array", "keyAttribute" => "id"));
+    
+            if (Services_Weather::isError($status)) {
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+            }
+    
             $root = $this->_unserializer->getRootName();
             $search = $this->_unserializer->getUnserializedData();
-
+    
             if (Services_Weather::isError($search) || $root == "HTML") {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             } elseif (!is_array($search) || !sizeof($search)) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_UNKNOWN_LOCATION, __FILE__, __LINE__);
-            } else {
-                if (!$useFirst && (sizeof($search) > 1)) {
-                    $searchReturn = $search;
-                } elseif ($useFirst || (sizeof($search) == 1)) {
-                    $searchReturn = key($search);
-                }
             }
+
+            if ($this->_cacheEnabled) {
+                // ...and cache if possible
+                $expire = constant("SERVICES_WEATHER_EXPIRES_SEARCH");
+                $this->_cache->extSave(md5($locLow), $search, $locLow, $expire, "search");
+            }
+        }
+
+        if (!$useFirst && (sizeof($search) > 1)) {
+            $searchReturn = $search;
+        } elseif ($useFirst || (sizeof($search) == 1)) {
+            $searchReturn = key($search);
         }
 
         return $searchReturn;
