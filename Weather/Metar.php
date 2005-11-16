@@ -1461,7 +1461,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                 }
             }
             // Only one result? Return as string
-            if (sizeof($icao) == 1) {
+            if (sizeof($icao) == 1 || $useFirst) {
                 $icao = key($icao);
             }
         } elseif (is_array($location)) {
