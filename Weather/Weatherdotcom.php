@@ -258,7 +258,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 $url .= "&dayf=10&unit=s";
                 break;
             case "all":
-                $url = "&link=xoap&cc=*&dayf=10&unit=s";
+                $url .= "&link=xoap&cc=*&dayf=10&unit=s";
                 break;
         }
 
