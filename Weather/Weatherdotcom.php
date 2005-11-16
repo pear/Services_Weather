@@ -265,7 +265,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         // Get data from URL...
         $request = &new HTTP_Request($url, $this->_httpOptions);
         $status = $request->sendRequest();
-        if (Services_Weather::isError($status)) {
+        if (Services_Weather::isError($status) || (int) $request->getResponseCode() >= 400) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
         }
         $data = $request->getResponseBody();
@@ -345,7 +345,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             // Get search data from server and unserialize
             $request = &new HTTP_Request("http://xoap.weather.com/search/search?where=".urlencode($location), $this->_httpOptions);
             $status = $request->sendRequest();
-            if (Services_Weather::isError($status)) {
+            if (Services_Weather::isError($status) || (int) $request->getResponseCode() >= 400) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             }
             $data = $request->getResponseBody();
