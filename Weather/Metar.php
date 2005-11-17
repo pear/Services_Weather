@@ -355,7 +355,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
                 $request = &new HTTP_Request($this->{"_sourcePath".ucfirst($dataType)}."/".$id.".TXT", $this->_httpOptions);
                 $status = $request->sendRequest();
-                if (Services_Weather::isError($status) || (int) $request->getResponseCode() >= 400) {
+                if (Services_Weather::isError($status) || (int) $request->getResponseCode() <> 200) {
                     return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
                 }
 
