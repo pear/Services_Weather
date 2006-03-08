@@ -21,14 +21,14 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <active>yes</active>
     </lead>
     <!-- Copy to changelog -->
-    <date>2005-11-14</date>
+    <date>2006-03-08</date>
     <version>
-        <release>1.4.0RC1</release>
-        <api>1.4.0RC1</api>
+        <release>1.4.0</release>
+        <api>1.4.0</api>
     </version>
     <stability>
-        <release>beta</release>
-        <api>beta</api>
+        <release>stable</release>
+        <api>stable</api>
     </stability>
     <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
     <notes>
@@ -41,6 +41,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
             o Added function to calculate sunrise and sunset (taken from the example file php_sunrise_sunset.php) (Seth Price)
             o Added function for determining a weather icon for current conditions (Seth Price)
         - Metar.php
+            o Fixed ignoring $useFirst in searchLocation return
             o Added icon for current conditions (Seth Price)
             o Added using HTTP_Request or Net_FTP for retrieving the data
             o Fixed location searching for certain cases (Christophe Messager)
@@ -48,7 +49,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
             o Added error-checking for faulty locations in getWeather/getForecast (Jay Kramer)
             o Added raw METAR/TAF-data to return array (Jay Kramer)
             o Fixed improper parsing of fractional visibility data (Dave Parsons: Bug #4929)
+            o Fixed missing quotation of SQL search (hh at fsck dot dk: Bug #6652)
+            o Fixed rejection of valid ICAO codes by _checkLocationID (Seth Price: Bug #6781)
         - Weatherdotcom.php
+            o Added caching of location searches (Seth Price)
             o Changed searching for location to incorporate HTTP_Request, so that we can use a timeout
             o Added mechanism for pre-fetching of server data (Seth Price)
         - Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php

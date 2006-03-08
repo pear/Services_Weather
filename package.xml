@@ -21,10 +21,10 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.4.0RC1</version>
-        <date>2005-11-14</date>
+        <version>1.4.0</version>
+        <date>2006-03-08</date>
         <license>BSD License</license>
-        <state>beta</state>
+        <state>stable</state>
         <notes>
             o Changed license to BSD
             o Added package2.xml for PEAR 1.4 compatibility
@@ -35,6 +35,7 @@
                 o Added function to calculate sunrise and sunset (taken from the example file php_sunrise_sunset.php) (Seth Price)
             	o Added function for determining a weather icon for current conditions (Seth Price)
             - Metar.php
+                o Fixed ignoring $useFirst in searchLocation return
                 o Added icon for current conditions (Seth Price)
                 o Added using HTTP_Request or Net_FTP for retrieving the data
             	o Fixed location searching for certain cases (Christophe Messager)
@@ -42,7 +43,10 @@
                 o Added error-checking for faulty locations in getWeather/getForecast (Jay Kramer)
                 o Added raw METAR/TAF-data to return array (Jay Kramer)
                 o Fixed improper parsing of fractional visibility data (Dave Parsons: Bug #4929)
+                o Fixed missing quotation of SQL search (hh at fsck dot dk: Bug #6652)
+                o Fixed rejection of valid ICAO codes by _checkLocationID (Seth Price: Bug #6781)
             - Weatherdotcom.php
+                o Added caching of location searches (Seth Price)
                 o Changed searching for location to incorporate HTTP_Request, so that we can use a timeout
                 o Added mechanism for pre-fetching of server data (Seth Price)
             - Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php
