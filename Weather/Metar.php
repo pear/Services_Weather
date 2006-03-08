@@ -1411,19 +1411,25 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Try to part search string in name, state and country part
             // and build where clause from it for the select
             $location = explode(",", $location);
+
+            // Trim, caps-low and quote the strings
+            for ($i = 0; $i < sizeof($location); $i++) {
+                $location[$i] = $this->_db->quote("%".strtolower(trim($location[$i]))."%");
+            }
+
             if (sizeof($location) == 1) {
-                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0]))."%'";
+                $where  = "LOWER(name) LIKE ".$location[0];
             } elseif (sizeof($location) == 2) {
-                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0]))."%'";
-                $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[1]))."%'";
+                $where  = "LOWER(name) LIKE ".$location[0];
+                $where .= " AND LOWER(country) LIKE ".$location[1];
             } elseif (sizeof($location) == 3) {
-                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0]))."%'";
-                $where .= " AND LOWER(state) LIKE '%".strtolower(trim($location[1]))."%'";
-                $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[2]))."%'";
+                $where  = "LOWER(name) LIKE ".$location[0];
+                $where .= " AND LOWER(state) LIKE ".$location[1];
+                $where .= " AND LOWER(country) LIKE ".$location[2];
             } elseif (sizeof($location) == 4) {
-                $where  = "LOWER(name) LIKE '%".strtolower(trim($location[0])).", ".strtolower(trim($location[1]))."%'";
-                $where .= " AND LOWER(state) LIKE '%".strtolower(trim($location[2]))."%'";
-                $where .= " AND LOWER(country) LIKE '%".strtolower(trim($location[3]))."%'";
+                $where  = "LOWER(name) LIKE ".substr($location[0], 0, -2).", ".substr($location[1], 2);
+                $where .= " AND LOWER(state) LIKE ".$location[2];
+                $where .= " AND LOWER(country) LIKE ".$location[3];
             }
 
             // Create select, locations with ICAO first
