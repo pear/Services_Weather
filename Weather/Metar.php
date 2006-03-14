@@ -802,7 +802,13 @@ class Services_Weather_Metar extends Services_Weather_Common
                             unset($metarCode["snowequiv"]);
                             break;
                         case "cloudtypes":
-                            // Cloud types, haven't found a way for decent decoding (yet)
+                            // Cloud types
+                            // no special processing, just passing the data
+                            $weatherData["remark"]["cloudtypes"] = array(
+                                "low"    => $result[1],
+                                "middle" => $result[2],
+                                "high"   => $result[3]
+                            );
                             unset($metarCode["cloudtypes"]);
                             break;
                         case "sunduration":
@@ -856,8 +862,12 @@ class Services_Weather_Metar extends Services_Weather_Common
                             unset($metarCode["24htemp"]);
                             break;
                         case "3hpresstend":
-                            // We don't save the pressure during the day, so no decoding
-                            // possible, sorry
+                            // Pressure tendency of the last 3 hours
+                            // no special processing, just passing the data
+                            $weatherData["remark"]["3hpresstend"] = array(
+                                "presscode"   => $result[1],
+                                "presschange" => $this->convertPressure($result[2] / 10, "hpa", "in")
+                            );
                             unset($metarCode["3hpresstend"]);
                             break;
                         case "nospeci":
@@ -1356,6 +1366,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                             $newVal = $this->convertTemperature($val, "f", $units["temp"]);
                             break;
                         case "pressure":
+                        case "seapressure":
+                        case "presschange":
                             $newVal = $this->convertPressure($val, "in", $units["pres"]);
                             break;
                         case "amount":
@@ -1366,9 +1378,6 @@ class Services_Weather_Metar extends Services_Weather_Common
                             } else {
                                 $newVal = $val;
                             }
-                            break;
-                        case "seapressure":
-                            $newVal = $this->convertPressure($val, "in", $units["pres"]);
                             break;
                         case "1htemp":
                         case "1hdew":
