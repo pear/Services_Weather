@@ -1748,11 +1748,11 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Determine if certain values are set, if not use defaults
             $condition   = isset($weatherReturn["condition"])   ? $weatherReturn["condition"]   : "No Significant Weather";
             $clouds      = isset($weatherReturn["clouds"])      ? $weatherReturn["clouds"]      :                  array();
-            $wind        = isset($weatherReturn["wind"])        ? $weatherReturn["wind"]        :                        5; 
-            $temperature = isset($weatherReturn["temperature"]) ? $weatherReturn["temperature"] :                       70; 
+            $wind        = isset($weatherReturn["wind"])        ? $weatherReturn["wind"]        :                        5;
+            $temperature = isset($weatherReturn["temperature"]) ? $weatherReturn["temperature"] :                       70;
             $latitude    = isset($location["latitude"])         ? $location["latitude"]         :                     -360;
             $longitude   = isset($location["longitude"])        ? $location["longitude"]        :                     -360;
-            
+
             // Get the icon
             $weatherReturn["conditionIcon"] = $this->getWeatherIcon($condition, $clouds, $wind, $temperature, $latitude, $longitude);
 
