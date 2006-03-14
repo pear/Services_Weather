@@ -876,7 +876,7 @@ class Services_Weather_Common {
         // Now bring the result into the chosen format and return
         switch ($retformat) {
             case SUNFUNCS_RET_TIMESTAMP:
-                return floor($date - ($date % (24 * 3600))) + floor(60 * $UT);
+                return intval($date - $date % (24 * 3600) + 3600 * $UT);
             case SUNFUNCS_RET_STRING:
                 $N = floor($UT);
                 return sprintf("%02d:%02d", $N, floor(60 * ($UT - $N)));
