@@ -865,8 +865,8 @@ class Services_Weather_Metar extends Services_Weather_Common
                             // Pressure tendency of the last 3 hours
                             // no special processing, just passing the data
                             $weatherData["remark"]["3hpresstend"] = array(
-                                "presscode"   => $result[1],
-                                "presschange" => $this->convertPressure($result[2] / 10, "hpa", "in")
+                                "presscode" => $result[1],
+                                "presschng" => $this->convertPressure($result[2] / 10, "hpa", "in")
                             );
                             unset($metarCode["3hpresstend"]);
                             break;
@@ -1004,7 +1004,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "tempmax"     => "TX(\d{2})\/(\d{2})(\w)",
             "tempmin"     => "TN(\d{2})\/(\d{2})(\w)",
             "tempmaxmin"  => "TX(\d{2})\/(\d{2})(\w)TN(\d{2})\/(\d{2})(\w)",
-            "from"        => "FM(\d{2})(\d{2})?",
+            "from"        => "FM(\d{2})(\d{2})?Z?",
             "fmc"         => "(PROB|BECMG|TEMPO)(\d{2})?"
         );
 
@@ -1367,7 +1367,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "pressure":
                         case "seapressure":
-                        case "presschange":
+                        case "presschng":
                             $newVal = $this->convertPressure($val, "in", $units["pres"]);
                             break;
                         case "amount":
