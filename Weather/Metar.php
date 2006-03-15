@@ -477,29 +477,29 @@ class Services_Weather_Metar extends Services_Weather_Common
                 )
             );
             $conditions = array(
-                "+"           => "heavy",        "-"           => "light",
+                "+"           => "heavy",                   "-"           => "light",
 
-                "vc"          => "vicinity",     "re"          => "recent",
+                "vc"          => "vicinity",                "re"          => "recent",
                 "nsw"         => "no significant weather",
 
-                "mi"          => "shallow",      "bc"          => "patches",
-                "pr"          => "partial",      "ts"          => "thunderstorm",
-                "bl"          => "blowing",      "sh"          => "showers",
-                "dr"          => "low drifting", "fz"          => "freezing",
+                "mi"          => "shallow",                 "bc"          => "patches",
+                "pr"          => "partial",                 "ts"          => "thunderstorm",
+                "bl"          => "blowing",                 "sh"          => "showers",
+                "dr"          => "low drifting",            "fz"          => "freezing",
 
-                "dz"          => "drizzle",      "ra"          => "rain",
-                "sn"          => "snow",         "sg"          => "snow grains",
-                "ic"          => "ice crystals", "pe"          => "ice pellets",
-                "gr"          => "hail",         "gs"          => "small hail/snow pellets",
-                "up"          => "unknown precipitation",
+                "dz"          => "drizzle",                 "ra"          => "rain",
+                "sn"          => "snow",                    "sg"          => "snow grains",
+                "ic"          => "ice crystals",            "pe"          => "ice pellets",
+                "pl"          => "ice pellets",             "gr"          => "hail",
+                "gs"          => "small hail/snow pellets", "up"          => "unknown precipitation",
 
-                "br"          => "mist",         "fg"          => "fog",
-                "fu"          => "smoke",        "va"          => "volcanic ash",
-                "sa"          => "sand",         "hz"          => "haze",
-                "py"          => "spray",        "du"          => "widespread dust",
+                "br"          => "mist",                    "fg"          => "fog",
+                "fu"          => "smoke",                   "va"          => "volcanic ash",
+                "sa"          => "sand",                    "hz"          => "haze",
+                "py"          => "spray",                   "du"          => "widespread dust",
 
-                "sq"          => "squall",       "ss"          => "sandstorm",
-                "ds"          => "duststorm",    "po"          => "well developed dust/sand whirls",
+                "sq"          => "squall",                  "ss"          => "sandstorm",
+                "ds"          => "duststorm",               "po"          => "well developed dust/sand whirls",
                 "fc"          => "funnel cloud",
 
                 "+fc"         => "tornado/waterspout"
@@ -986,29 +986,29 @@ class Services_Weather_Metar extends Services_Weather_Common
                 "clr"         => "clear below 12,000 ft"
             );
             $conditions = array(
-                "+"           => "heavy",        "-"           => "light",
+                "+"           => "heavy",                   "-"           => "light",
 
-                "vc"          => "vicinity",     "re"          => "recent",
+                "vc"          => "vicinity",                "re"          => "recent",
                 "nsw"         => "no significant weather",
 
-                "mi"          => "shallow",      "bc"          => "patches",
-                "pr"          => "partial",      "ts"          => "thunderstorm",
-                "bl"          => "blowing",      "sh"          => "showers",
-                "dr"          => "low drifting", "fz"          => "freezing",
+                "mi"          => "shallow",                 "bc"          => "patches",
+                "pr"          => "partial",                 "ts"          => "thunderstorm",
+                "bl"          => "blowing",                 "sh"          => "showers",
+                "dr"          => "low drifting",            "fz"          => "freezing",
 
-                "dz"          => "drizzle",      "ra"          => "rain",
-                "sn"          => "snow",         "sg"          => "snow grains",
-                "ic"          => "ice crystals", "pe"          => "ice pellets",
-                "gr"          => "hail",         "gs"          => "small hail/snow pellets",
-                "up"          => "unknown precipitation",
+                "dz"          => "drizzle",                 "ra"          => "rain",
+                "sn"          => "snow",                    "sg"          => "snow grains",
+                "ic"          => "ice crystals",            "pe"          => "ice pellets",
+                "pl"          => "ice pellets",             "gr"          => "hail",
+                "gs"          => "small hail/snow pellets", "up"          => "unknown precipitation",
 
-                "br"          => "mist",         "fg"          => "fog",
-                "fu"          => "smoke",        "va"          => "volcanic ash",
-                "sa"          => "sand",         "hz"          => "haze",
-                "py"          => "spray",        "du"          => "widespread dust",
+                "br"          => "mist",                    "fg"          => "fog",
+                "fu"          => "smoke",                   "va"          => "volcanic ash",
+                "sa"          => "sand",                    "hz"          => "haze",
+                "py"          => "spray",                   "du"          => "widespread dust",
 
-                "sq"          => "squall",       "ss"          => "sandstorm",
-                "ds"          => "duststorm",    "po"          => "well developed dust/sand whirls",
+                "sq"          => "squall",                  "ss"          => "sandstorm",
+                "ds"          => "duststorm",               "po"          => "well developed dust/sand whirls",
                 "fc"          => "funnel cloud",
 
                 "+fc"         => "tornado/waterspout"
@@ -1266,13 +1266,17 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 // Set probability
                                 $probability = $result[2];
                                 // Now extract time for this group
-                                preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 2], $lresult);
-                                $from = $lresult[1].":00";
-                                $to   = $lresult[2].":00";
-                                $to   = ($to == "24:00") ? "00:00" : $to;
-                                // As we now have type, probability and time for this FMC
-                                // from our TAF, increase field-counter
-                                $i += 2;
+                                if (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 2], $lresult)) {
+                                    $from = $lresult[1].":00";
+                                    $to   = $lresult[2].":00";
+                                    $to   = ($to == "24:00") ? "00:00" : $to;
+                                    // As we now have type, probability and time for this FMC
+                                    // from our TAF, increase field-counter
+                                    $i += 2;
+                                } else {
+                                    // No timegroup present, so just increase field-counter by one
+                                    $i += 1;
+                                }
                             } elseif (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                 // Normal group, set type and use extracted time
                                 $type = $result[1];
@@ -1287,7 +1291,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 // increase field-counter
                                 $i += 1;
                             } else {
-                                // This is either a PROBdd or a malformed TAF
+                                // This is either a PROBdd or a malformed TAF with missing timegroup
                                 if (isset($result[2])) {
                                     $probability = $result[2];
                                 }
@@ -1304,9 +1308,12 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $fmcCount++;
                                 // Insert data
                                 $pointer["type"] = $type;
-                                $pointer["from"] = $from;
-                                $pointer["to"]   = $to;
-                                unset($type, $from, $to);
+                                unset($type);
+                                if (isset($from)) {
+                                    $pointer["from"] = $from;
+                                    $pointer["to"]   = $to;
+                                    unset($from, $to);
+                                }
                                 if (isset($probability)) {
                                     $pointer["probability"] = $probability;
                                     unset($probability);
