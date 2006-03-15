@@ -450,6 +450,32 @@ class Services_Weather_Metar extends Services_Weather_Common
                 "cb"          => "Cumulonimbus",
                 "clr"         => "clear below 12,000 ft"
             );
+            $cloudtypes = array(
+                "low" => array(
+                    "/" => "Overcast",
+                    "0" => "None",                                "1" => "Cumulus (fair weather)",
+                    "2" => "Cumulus (towering)",                  "3" => "Cumulonimbus (no anvil)",
+                    "4" => "Stratocumulus (from Cumulus)",        "5" => "Stratocumulus (not Cumulus)",
+                    "6" => "Stratus or Fractostratus (fair)",     "7" => "Fractocumulus/Fractostratus (bad weather)",
+                    "8" => "Cumulus and Stratocumulus",           "9" => "Cumulonimbus (thunderstorm)"
+                ),
+                "middle" => array(
+                    "/" => "Overcast",
+                    "0" => "None",                                "1" => "Altostratus (thin)",
+                    "2" => "Altostratus (thick)",                 "3" => "Altocumulus (thin)",
+                    "4" => "Altocumulus (patchy)",                "5" => "Altocumulus (thickening)",
+                    "6" => "Altocumulus (from Cumulus)",          "7" => "Altocumulus (w/ Altocumulus, Altostratus, Nimbostratus)",
+                    "8" => "Altocumulus (w/ turrets)",            "9" => "Altocumulus (chaotic)"
+                ),
+                "high" => array(
+                    "/" => "Overcast",
+                    "0" => "None",                                "1" => "Cirrus (filaments)",
+                    "2" => "Cirrus (dense)",                      "3" => "Cirrus (often w/ Cumulonimbus)",
+                    "4" => "Cirrus (thickening)",                 "5" => "Cirrus/Cirrostratus (low in sky)",
+                    "6" => "Cirrus/Cirrostratus (high in sky)",   "7" => "Cirrostratus (entire sky)",
+                    "8" => "Cirrostratus (partial)",              "9" => "Cirrocumulus or Cirrocumulus/Cirrus/Cirrostratus"
+                )
+            );
             $conditions = array(
                 "+"           => "heavy",        "-"           => "light",
 
@@ -494,7 +520,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "station"     => "\w{4}",
             "update"      => "(\d{2})?(\d{4})Z",
             "type"        => "AUTO|COR",
-            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2}))?(\w{2,3})",
+            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2,3}))?(\D{2,3})",
             "windVar"     => "(\d{3})V(\d{3})",
             "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
@@ -528,7 +554,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         if (SERVICES_WEATHER_DEBUG) {
             for ($i = 0; $i < sizeof($data); $i++) {
-                echo $data[$i];
+                echo $data[$i]."\n";
             }
         }
         // Start with parsing the first line for the last update
@@ -803,11 +829,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "cloudtypes":
                             // Cloud types
-                            // no special processing, just passing the data
                             $weatherData["remark"]["cloudtypes"] = array(
-                                "low"    => $result[1],
-                                "middle" => $result[2],
-                                "high"   => $result[3]
+                                "low"    => $cloudtypes["low"][$result[1]],
+                                "middle" => $cloudtypes["middle"][$result[2]],
+                                "high"   => $cloudtypes["high"][$result[3]]
                             );
                             unset($metarCode["cloudtypes"]);
                             break;
@@ -995,7 +1020,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "station"     => "\w{4}",
             "update"      => "(\d{2})?(\d{4})Z",
             "valid"       => "(\d{2})(\d{2})(\d{2})",
-            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2}))?(\w{2,3})",
+            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2,3}))?(\D{2,3})",
             "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
@@ -1010,7 +1035,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         if (SERVICES_WEATHER_DEBUG) {
             for ($i = 0; $i < sizeof($data); $i++) {
-                echo $data[$i];
+                echo $data[$i]."\n";
             }
         }
         // Ok, we have correct data, start with parsing the first line for the last update
