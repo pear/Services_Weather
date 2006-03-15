@@ -520,7 +520,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "station"     => "\w{4}",
             "update"      => "(\d{2})?(\d{4})Z",
             "type"        => "AUTO|COR",
-            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2,3}))?(\D{2,3})",
+            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2,3}))?(FPS|KPH|KT|KTS|MPH|MPS)",
             "windVar"     => "(\d{3})V(\d{3})",
             "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
@@ -598,7 +598,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "wind":
                             // Parse wind data, first the speed, convert from kt to chosen unit
-                            $pointer["wind"] = $this->convertSpeed($result[2], strtolower($result[5]), "mph");
+                            if ($result[5] == "KTS") {
+                                $result[5] = "KT";
+                            }
+                            $pointer["wind"] = $this->convertSpeed($result[2], $result[5], "mph");
                             if ($result[1] == "VAR" || $result[1] == "VRB") {
                                 // Variable winds
                                 $pointer["windDegrees"]   = "Variable";
@@ -610,7 +613,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                             }
                             if (is_numeric($result[4])) {
                                 // Wind with gusts...
-                                $pointer["windGust"] = $this->convertSpeed($result[4], strtolower($result[5]), "mph");
+                                $pointer["windGust"] = $this->convertSpeed($result[4], $result[5], "mph");
                             }
                             break;
                         case "windVar":
@@ -1020,12 +1023,12 @@ class Services_Weather_Metar extends Services_Weather_Common
             "station"     => "\w{4}",
             "update"      => "(\d{2})?(\d{4})Z",
             "valid"       => "(\d{2})(\d{2})(\d{2})",
-            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2,3}))?(\D{2,3})",
+            "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2,3}))?(FPS|KPH|KT|KTS|MPH|MPS)",
             "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PE)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
             "clouds"      => "(SKC|CLR|NSC|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
-            "windshear"   => "WS(\d{3})\/(\d{3})(\d{2,3})(\w{2,3})",
+            "windshear"   => "WS(\d{3})\/(\d{3})(\d{2,3})(FPS|KPH|KT|KTS|MPH|MPS)",
             "tempmax"     => "TX(\d{2})\/(\d{2})(\w)",
             "tempmin"     => "TN(\d{2})\/(\d{2})(\w)",
             "tempmaxmin"  => "TX(\d{2})\/(\d{2})(\w)TN(\d{2})\/(\d{2})(\w)",
@@ -1103,7 +1106,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "wind":
                             // Parse wind data, first the speed, convert from kt to chosen unit
-                            $pointer["wind"] = $this->convertSpeed($result[2], strtolower($result[5]), "mph");
+                            if ($result[5] == "KTS") {
+                                $result[5] = "KT";
+                            }
+                            $pointer["wind"] = $this->convertSpeed($result[2], $result[5], "mph");
                             if ($result[1] == "VAR" || $result[1] == "VRB") {
                                 // Variable winds
                                 $pointer["windDegrees"]   = "Variable";
@@ -1115,7 +1121,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                             }
                             if (is_numeric($result[4])) {
                                 // Wind with gusts...
-                                $pointer["windGust"] = $this->convertSpeed($result[4], strtolower($result[5]), "mph");
+                                $pointer["windGust"] = $this->convertSpeed($result[4], $result[5], "mph");
                             }
                             if (isset($probability)) {
                                 $pointer["windProb"] = $probability;
@@ -1228,7 +1234,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "windshear":
                             // Parse windshear, if available
-                            $pointer["windshear"]          = $this->convertSpeed($result[3], strtolower($result[4]), "mph");
+                            if ($result[4] == "KTS") {
+                                $result[4] = "KT";
+                            }
+                            $pointer["windshear"]          = $this->convertSpeed($result[3], $result[4], "mph");
                             $pointer["windshearHeight"]    = $result[1] * 100;
                             $pointer["windshearDegrees"]   = $result[2];
                             $pointer["windshearDirection"] = $compass[round($result[2] / 22.5) % 16];
