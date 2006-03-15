@@ -526,7 +526,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "runway"      => "R(\d{2})(\w)?\/(P|M)?(\d{4})(FT)?(V(P|M)?(\d{4})(FT)?)?(\w)?",
             "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PE)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
-            "clouds"      => "(SKC|CLR|NSC|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
+            "clouds"      => "(SKC|CLR|NSC|((FEW|SCT|BKN|OVC|VV)(\d{3}|\/{3})(TCU|CB)?))",
             "temperature" => "(M)?(\d{2})\/((M)?(\d{2})|XX|\/\/)?",
             "pressure"    => "(A)(\d{4})|(Q)(\d{4})",
             "trend"       => "NOSIG|TEMPO|BECMG",
@@ -700,13 +700,21 @@ class Services_Weather_Metar extends Services_Weather_Common
 
                             if (sizeof($result) == 5) {
                                 // Only amount and height
-                                $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4]*100));
-                            }
-                            elseif (sizeof($result) == 6) {
+                                $cloud = array("amount" => $clouds[strtolower($result[3])]);
+                                if ($result[4] == "///") {
+                                    $cloud["height"] = "station level or below";
+                                } else {
+                                    $cloud["height"] = $result[4] * 100;
+                                }
+                            } elseif (sizeof($result) == 6) {
                                 // Amount, height and type
-                                $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4]*100), "type" => $clouds[strtolower($result[5])]);
-                            }
-                            else {
+                                $cloud = array("amount" => $clouds[strtolower($result[3])], "type" => $clouds[strtolower($result[5])]);
+                                if ($result[4] == "///") {
+                                    $cloud["height"] = "station level or below";
+                                } else {
+                                    $cloud["height"] = $result[4] * 100;
+                                }
+                            } else {
                                 // SKC or CLR or NSC
                                 $cloud = array("amount" => $clouds[strtolower($result[0])]);
                             }
@@ -812,7 +820,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $precip = "indeterminable";
                             } elseif ($result[2] == "0000") {
                                 $precip = "traceable";
-                            }else {
+                            } else {
                                 $precip = $result[2] / 100;
                             }
                             $weatherData["precipitation"][] = array(
@@ -1027,7 +1035,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
             "condition"   => "(-|\+|VC|RE|NSW)?(MI|BC|PR|TS|BL|SH|DR|FZ)?((DZ)|(RA)|(SN)|(SG)|(IC)|(PE)|(PL)|(GR)|(GS)|(UP))*(BR|FG|FU|VA|DU|SA|HZ|PY)?(PO|SQ|FC|SS|DS)?",
-            "clouds"      => "(SKC|CLR|NSC|((FEW|SCT|BKN|OVC|VV)(\d{3})(TCU|CB)?))",
+            "clouds"      => "(SKC|CLR|NSC|((FEW|SCT|BKN|OVC|VV)(\d{3}|\/{3})(TCU|CB)?))",
             "windshear"   => "WS(\d{3})\/(\d{3})(\d{2,3})(FPS|KPH|KT|KTS|MPH|MPS)",
             "tempmax"     => "TX(\d{2})\/(\d{2})(\w)",
             "tempmin"     => "TN(\d{2})\/(\d{2})(\w)",
@@ -1216,17 +1224,25 @@ class Services_Weather_Metar extends Services_Weather_Common
 
                             if (sizeof($result) == 5) {
                                 // Only amount and height
-                                $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4] * 100));
-                            }
-                            elseif (sizeof($result) == 6) {
+                                $cloud = array("amount" => $clouds[strtolower($result[3])]);
+                                if ($result[4] == "///") {
+                                    $cloud["height"] = "station level or below";
+                                } else {
+                                    $cloud["height"] = $result[4] * 100;
+                                }
+                            } elseif (sizeof($result) == 6) {
                                 // Amount, height and type
-                                $cloud = array("amount" => $clouds[strtolower($result[3])], "height" => ($result[4] * 100), "type" => $clouds[strtolower($result[5])]);
-                            }
-                            else {
+                                $cloud = array("amount" => $clouds[strtolower($result[3])], "type" => $clouds[strtolower($result[5])]);
+                                if ($result[4] == "///") {
+                                    $cloud["height"] = "station level or below";
+                                } else {
+                                    $cloud["height"] = $result[4] * 100;
+                                }
+                            } else {
                                 // SKC or CLR or NSC
                                 $cloud = array("amount" => $clouds[strtolower($result[0])]);
                             }
-                            if(isset($probability)) {
+                            if (isset($probability)) {
                                 $cloud["prob"] = $probability;
                                 unset($probability);
                             }
@@ -1397,7 +1413,11 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "height":
                         case "windshearHeight":
-                            $newVal = $this->convertDistance($val, "ft", $units["height"]);
+                            if (is_numeric($val)) {
+                                $newVal = $this->convertDistance($val, "ft", $units["height"]);
+                            } else {
+                                $newVal = $val;
+                            }
                             break;
                         case "temperature":
                         case "temperatureHigh":
