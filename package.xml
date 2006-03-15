@@ -21,45 +21,20 @@
         </maintainer>
     </maintainers>
     <release>
-        <version>1.4.0</version>
-        <date>2006-03-08</date>
+        <version>1.4.1RC1</version>
+        <date>2006-04-01</date>
         <license>BSD License</license>
-        <state>stable</state>
+        <state>beta</state>
         <notes>
-            o Changed license to BSD
-            o Added package2.xml for PEAR 1.4 compatibility
-            o Changed header-style as proposed in RFC::Header Comment Blocks
-            - Weather.php
-                o Fixed wrong cache-time for locations (Seth Price)
             - Common.php
-                o Added function to calculate sunrise and sunset (taken from the example file php_sunrise_sunset.php) (Seth Price)
-            	o Added function for determining a weather icon for current conditions (Seth Price)
+                o Fixed timestamp calculation of sunrise/sunset
             - Metar.php
-                o Fixed ignoring $useFirst in searchLocation return
-                o Added icon for current conditions (Seth Price)
-                o Added using HTTP_Request or Net_FTP for retrieving the data
-            	o Fixed location searching for certain cases (Christophe Messager)
-            	o Added parsing of australian FM notation in TAF (Murray)
-                o Added error-checking for faulty locations in getWeather/getForecast (Jay Kramer)
-                o Added raw METAR/TAF-data to return array (Jay Kramer)
-                o Fixed improper parsing of fractional visibility data (Dave Parsons: Bug #4929)
-                o Fixed missing quotation of SQL search (hh at fsck dot dk: Bug #6652)
-                o Fixed rejection of valid ICAO codes by _checkLocationID (Seth Price: Bug #6781)
-            - Weatherdotcom.php
-                o Added caching of location searches (Seth Price)
-                o Changed searching for location to incorporate HTTP_Request, so that we can use a timeout
-                o Added mechanism for pre-fetching of server data (Seth Price)
-            - Weather.php, Common.php, Ejse.php, Globalweather.php, Weatherdotcom.php
-                o Added mechanism for using a proxy in HTTP_Request (Michael Metz)
-            - Ejse.php, Globalweather.php
-            	o Changed retrieval of SOAP data to avoid delays on cached items (Plix)
-            - Globalweather.php, Metar.php
-                o Add sunrise/sunset information, based on the new function in Common.php (Seth Price)
-            - metar-extensive.php
-                o Added icon for current condition
-            - weather.com-extensive.php
-                o Fixed bug in handling of non-standard condition-icons delivered by Weather.com (J.P. van Oyen)
-                o Fixed bug in display of wind direction in forecast
+	            o Added analysis of cloudtypes and pressure tendency in remarks
+	            o Added US version of ice pellets (PL) to conditions
+	            o Changed parsing of wind related groups to prevent errors from irregular codes
+	            o Changed parsing of cloud related groups to accomodate for clouds at station level or below
+	            o Fixed parsing of wind-group in case of 3-digit gust value
+	            o Fixed parsing of forecast FMC when timegroup is missing
         </notes>
         <deps>
             <dep optional="no"  type="pkg" rel="ge" version="1.2">HTTP_Request</dep>
