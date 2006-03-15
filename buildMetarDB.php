@@ -17,7 +17,7 @@
  * PHP versions 4 and 5
  *
  * <LICENSE>
- * Copyright (c) 2005, Alexander Wirtz
+ * Copyright (c) 2005-2006, Alexander Wirtz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@
  * @package     Services_Weather
  * @subpackage  buildMetarDB
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005 Alexander Wirtz
+ * @copyright   2005-2006 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/Services_Weather
