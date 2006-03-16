@@ -429,6 +429,7 @@ class Services_Weather_Metar extends Services_Weather_Common
     {
         static $compass;
         static $clouds;
+        static $cloudtypes;
         static $conditions;
         static $sensors;
         if (!isset($compass)) {
@@ -578,7 +579,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             }
 
             if (SERVICES_WEATHER_DEBUG) {
-                $tab = str_repeat("\t", 2 - floor((strlen($metar[$i]) + 2) / 8));
+                $tab = str_repeat("\t", 3 - floor((strlen($metar[$i]) + 2) / 8));
                 echo "\"".$metar[$i]."\"".$tab."-> ";
             }
 
@@ -1071,7 +1072,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             }
 
             if (SERVICES_WEATHER_DEBUG) {
-                $tab = str_repeat("\t", 2 - floor((strlen($taf[$i]) + 2) / 8));
+                $tab = str_repeat("\t", 3 - floor((strlen($taf[$i]) + 2) / 8));
                 echo "\"".$taf[$i]."\"".$tab."-> ";
             }
 
