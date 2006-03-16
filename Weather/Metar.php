@@ -1286,7 +1286,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                             break;
                         case "fmc";
                             // Test, if this is a probability for the next FMC
-                            if (preg_match("/^BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
+                            if (isset($result[2]) && preg_match("/^BECMG|TEMPO$/i", $taf[$i + 1], $lresult)) {
                                 // Set type to BECMG or TEMPO
                                 $type = $lresult[0];
                                 // Set probability
@@ -1316,11 +1316,9 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 // Same as above, we have a time for this FMC from our TAF,
                                 // increase field-counter
                                 $i += 1;
-                            } else {
+                            } elseif (isset($result[2])) {
                                 // This is either a PROBdd or a malformed TAF with missing timegroup
-                                if (isset($result[2])) {
-                                    $probability = $result[2];
-                                }
+                                $probability = $result[2];
                             }
 
                             // Handle the FMC, generate neccessary array if it's the first...
