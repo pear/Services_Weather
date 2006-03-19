@@ -1094,7 +1094,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                         case "valid":
                             $pointer["validRaw"] = $result[0];
                             // Generates the timeperiod the report is valid for
-                            list($year, $month, $day) = explode("-", date("Y-m-d", $forecastData["update"]));
+                            list($year, $month, $day) = explode("-", gmdate("Y-m-d", $forecastData["update"]));
                             // Date is in next month
                             if ($result[1] < $day) {
                                 $month++;
@@ -1757,8 +1757,8 @@ class Services_Weather_Metar extends Services_Weather_Common
         $locationReturn["name"]      = $locname;
         $locationReturn["latitude"]  = $this->_location["latitude"];
         $locationReturn["longitude"] = $this->_location["longitude"];
-        $locationReturn["sunrise"]   = date($this->_timeFormat, $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $this->_location["latitude"], $this->_location["longitude"], SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, true));
-        $locationReturn["sunset"]    = date($this->_timeFormat, $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $this->_location["latitude"], $this->_location["longitude"], SERVICES_WEATHER_SUNFUNCS_SUNSET_ZENITH,  0, false));
+        $locationReturn["sunrise"]   = gmdate($this->_timeFormat, $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $this->_location["latitude"], $this->_location["longitude"], SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, true));
+        $locationReturn["sunset"]    = gmdate($this->_timeFormat, $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $this->_location["latitude"], $this->_location["longitude"], SERVICES_WEATHER_SUNFUNCS_SUNSET_ZENITH,  0, false));
         $locationReturn["elevation"] = $this->_location["elevation"];
 
         return $locationReturn;
