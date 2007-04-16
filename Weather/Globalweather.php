@@ -168,6 +168,14 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
      */
     function _checkLocationID($id)
     {
+        // Check, if the stationSoap-Object is present. If not, connect to the Server and retrieve the WDSL data
+        if (!$this->_stationSoap) {
+            $status = $this->_connectServer();
+            if (Services_Weather::isError($status)) {
+                return $status;
+            }
+        }
+
         if (is_array($id) || is_object($id) || !strlen($id)) {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_NO_LOCATION, __FILE__, __LINE__);
         } elseif ($this->_stationSoap->isValidCode($id) === false) {
@@ -247,7 +255,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
 
         // Return the available countries as no country was given
         if (!strlen($country)) {
-            $countries = $this->_stationSoap->listCountries();
+            $countries = $this->_stationSoap->listCountries("");
             if (Services_Weather::isError($countries)) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             }
