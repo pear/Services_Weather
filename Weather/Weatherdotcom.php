@@ -377,6 +377,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $searchReturn = $search;
         } elseif ($useFirst || (sizeof($search) == 1)) {
             $searchReturn = key($search);
+        } else {
+            $searchReturn = array();
         }
 
         return $searchReturn;
