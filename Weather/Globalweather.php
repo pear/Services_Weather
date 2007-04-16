@@ -139,13 +139,13 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
         $this->_wsdl = new SOAP_WSDL("http://live.capeclear.com/ccx/GlobalWeather?wsdl", $this->_httpOptions);
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
             $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
-            return;
+            return $error;
         }
 
         eval($this->_wsdl->generateAllProxies());
         if (!class_exists("WebService_GlobalWeather_StationInfo") || !class_exists("WebService_GlobalWeather_GlobalWeather")) {
             $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
-            return;
+            return $error;
         }
 
         $this->_stationSoap = &new WebService_GlobalWeather_StationInfo;
