@@ -54,6 +54,9 @@ if (Services_Weather::isError($ejse)) {
     die("Error: ".$ejse->getMessage()."\n");
 }
 
+// Set ejse.com account data
+$ejse->setAccountData("<Username>", "<Password>");
+
 /* Erase comments to enable caching
 $status = $ejse->setCache("file", array("cache_dir" => "/tmp/cache/"));
 if (Services_Weather::isError($status)) {

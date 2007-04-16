@@ -73,6 +73,22 @@ class Services_Weather_Ejse extends Services_Weather_Common {
 
     // {{{ properties
     /**
+     * Username at ejse.com
+     *
+     * @var     string                      $_username
+     * @access  private
+     */
+    var $_username = "";
+
+    /**
+     * Password key at ejse.com
+     *
+     * @var     string                      $_password
+     * @access  private
+     */
+    var $_password = "";
+
+    /**
      * WSDL object, provided by EJSE
      *
      * @var     object                      $_wsdl
@@ -123,16 +139,38 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         include_once "SOAP/Client.php";
         $this->_wsdl = new SOAP_WSDL("http://www.ejse.com/WeatherService/Service.asmx?WSDL", $this->_httpOptions);
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+            return $error;
         }
 
         eval($this->_wsdl->generateAllProxies());
         if (!class_exists("WebService_Service_ServiceSoap")) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+            $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
+            return $error;
         }
         $this->_weatherSoap = &new WebService_Service_ServiceSoap;
 
         return true;
+    }
+    // }}}
+
+    // {{{ setAccountData()
+    /**
+     * Sets the neccessary account-information for ejse.com, you'll
+     * receive them after registering for the service
+     *
+     * @param   string                      $username
+     * @param   string                      $password
+     * @access  public
+     */
+    function setAccountData($username, $password)
+    {
+        if (strlen($username)) {
+            $this->_username  = $username;
+        }
+        if (strlen($password) && ctype_alnum($password)) {
+            $this->_password = $password;
+        }
     }
     // }}}
 
@@ -223,7 +261,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
                 }
             }
 
-            $weather = $this->_weatherSoap->getWeatherInfo($id);
+            $weather = $this->_weatherSoap->getWeatherInfo2($this->_username, $this->_password, $id);
 
             if (Services_Weather::isError($weather)) {
                 return $weather;
@@ -280,7 +318,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             }
 
             // ...as last function
-            $weather = $this->_weatherSoap->getWeatherInfo($id);
+            $weather = $this->_weatherSoap->getWeatherInfo2($this->_username, $this->_password, $id);
 
             if (Services_Weather::isError($weather)) {
                 return $weather;
@@ -419,7 +457,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
             }
 
             // ...as last function
-            $forecast = $this->_weatherSoap->GetNineDayForecastInfo($id);
+            $forecast = $this->_weatherSoap->GetNineDayForecastInfo2($this->_username, $this->_password, $id);
 
             if (Services_Weather::isError($forecast)) {
                 return $forecast;
