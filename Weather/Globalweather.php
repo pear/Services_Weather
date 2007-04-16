@@ -136,7 +136,7 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
     function _connectServer()
     {
         include_once "SOAP/Client.php";
-        $this->_wsdl = new SOAP_WSDL("http://live.capescience.com/wsdl/GlobalWeather.wsdl", $this->_httpOptions);
+        $this->_wsdl = new SOAP_WSDL("http://live.capeclear.com/ccx/GlobalWeather?wsdl", $this->_httpOptions);
         if (isset($this->_wsdl->fault) && Services_Weather::isError($this->_wsdl->fault)) {
             $error = Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             return;
@@ -237,6 +237,14 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
      */
     function searchLocationByCountry($country = "")
     {
+        // Check, if the stationSoap-Object is present. If not, connect to the Server and retrieve the WDSL data
+        if (!$this->_stationSoap) {
+            $status = $this->_connectServer();
+            if (Services_Weather::isError($status)) {
+                return $status;
+            }
+        }
+
         // Return the available countries as no country was given
         if (!strlen($country)) {
             $countries = $this->_stationSoap->listCountries();
@@ -244,14 +252,6 @@ class Services_Weather_Globalweather extends Services_Weather_Common {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_WRONG_SERVER_DATA, __FILE__, __LINE__);
             }
             return $countries;
-        }
-
-        // Check, if the stationSoap-Object is present. If not, connect to the Server and retrieve the WDSL data
-        if (!$this->_stationSoap) {
-            $status = $this->_connectServer();
-            if (Services_Weather::isError($status)) {
-                return $status;
-            }
         }
 
         // Now for the real search
