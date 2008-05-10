@@ -33,6 +33,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
     <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
     <notes>
         - Weatherdotcom.php
+            o Changed available forecast days to 5 as per change in the xoap offering (boigelot)
             o Fixed Bug #13845: Weather.com service requires link request in all xoap requests (mscannel)
     </notes>
     <!-- /Copy to changelog -->

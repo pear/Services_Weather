@@ -54,7 +54,7 @@ require_once "Services/Weather/Common.php";
 /**
  * This class acts as an interface to the xml service of weather.com. It
  * searches for given locations and retrieves current weather data as well
- * as forecast for up to 10 days.
+ * as forecast for up to 5 days.
  *
  * For using the weather.com xml-service please visit
  *     http://www.weather.com/services/xmloap.html
@@ -255,10 +255,10 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 $url .= "&cc=*&unit=s";
                 break;
             case "forecast":
-                $url .= "&dayf=10&unit=s";
+                $url .= "&dayf=5&unit=s";
                 break;
             case "all":
-                $url .= "&link=xoap&cc=*&dayf=10&unit=s";
+                $url .= "&link=xoap&cc=*&dayf=5&unit=s";
                 break;
         }
 
@@ -570,7 +570,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
      * Get the forecast for the next days
      *
      * @param   string                      $id
-     * @param   int                         $days           Values between 1 and 10
+     * @param   int                         $days           Values between 1 and 5
      * @param   string                      $unitsFormat
      * @return  PEAR_Error|array
      * @throws  PEAR_Error
@@ -583,7 +583,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (!in_array($days, range(1, 10))) {
+        if (!in_array($days, range(1, 5))) {
             $days = 2;
         }
 
