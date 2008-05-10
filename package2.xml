@@ -21,10 +21,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <active>yes</active>
     </lead>
     <!-- Copy to changelog -->
-    <date>2007-04-16</date>
+    <date>2008-05-10</date>
     <version>
-        <release>1.4.1</release>
-        <api>1.4.1</api>
+        <release>1.4.3</release>
+        <api>1.4.3</api>
     </version>
     <stability>
         <release>stable</release>
@@ -32,10 +32,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
     </stability>
     <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
     <notes>
-        -package2.xml
-            o Added dependencies ctype and pcre to accomodate Gentoo (cweiske)
         - Weatherdotcom.php
-            o Fixed Bug #9471 Undefined variable ($searchReturn)
+            o Fixed Bug #13845: Weather.com service requires link request in all xoap requests (mscannel)
     </notes>
     <!-- /Copy to changelog -->
     <contents>

@@ -245,7 +245,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $reqType = "all";
         }
 
-        $url = "http://xoap.weather.com/weather/local/".$id."?prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey;
+        $url = "http://xoap.weather.com/weather/local/".$id."?link=xoap&prod=xoap&par=".$this->_partnerID."&key=".$this->_licenseKey;
 
         switch ($reqType) {
             case "links":
