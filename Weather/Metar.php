@@ -562,6 +562,10 @@ class Services_Weather_Metar extends Services_Weather_Common
         // Start with parsing the first line for the last update
         $weatherData = array();
         $weatherData["station"]   = "";
+        // Eliminate trailing information
+        if (strpos($data, "=") !== false) {
+            $data = substr($data, 0, strpos($data, "="))
+        }
         $weatherData["dataRaw"]   = implode(" ", $data);
         $weatherData["update"]    = strtotime(trim($data[0])." GMT");
         $weatherData["updateRaw"] = trim($data[0]);
@@ -1054,6 +1058,10 @@ class Services_Weather_Metar extends Services_Weather_Common
         // Ok, we have correct data, start with parsing the first line for the last update
         $forecastData = array();
         $forecastData["station"]   = "";
+        // Eliminate trailing information
+        if (strpos($data, "=") !== false) {
+            $data = substr($data, 0, strpos($data, "="))
+        }
         $forecastData["dataRaw"]   = implode(" ", $data);
         $forecastData["update"]    = strtotime(trim($data[0])." GMT");
         $forecastData["updateRaw"] = trim($data[0]);
