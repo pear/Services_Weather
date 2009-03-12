@@ -154,6 +154,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         }
 
         // Set options accordingly
+        $status = null;
         if (isset($options["dsn"])) {
             if (isset($options["dbOptions"])) {
                 $status = $this->setMetarDB($options["dsn"], $options["dbOptions"]);

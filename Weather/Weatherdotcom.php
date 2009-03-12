@@ -249,7 +249,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         switch ($reqType) {
             case "links":
-                $url .= "&link=xoap";
+                $url .= "";
                 break;
             case "weather":
                 $url .= "&cc=*&unit=s";
@@ -258,7 +258,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 $url .= "&dayf=5&unit=s";
                 break;
             case "all":
-                $url .= "&link=xoap&cc=*&dayf=5&unit=s";
+                $url .= "&cc=*&dayf=5&unit=s";
                 break;
         }
 
@@ -576,15 +576,15 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
      * @throws  PEAR_Error
      * @access  public
      */
-    function getForecast($id = "", $days = 2, $unitsFormat = "")
+    function getForecast($id = "", $days = 5, $unitsFormat = "")
     {
         $status = $this->_checkLocationID($id);
 
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (!in_array($days, range(1, 5))) {
-            $days = 2;
+        if (!is_int($days) || ($days < 1) || ($days > 5)
+            $days = 5;
         }
 
         // Get other data
