@@ -1032,7 +1032,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "report"      => "TAF|AMD",
             "station"     => "\w{4}",
             "update"      => "(\d{2})?(\d{4})Z",
-            "valid"       => "(\d{2})(\d{2})(\d{2})",
+            "valid"       => "(\d{2})(\d{2})\/(\d{2})(\d{2})",
             "wind"        => "(\d{3}|VAR|VRB)(\d{2,3})(G(\d{2,3}))?(FPS|KPH|KT|KTS|MPH|MPS)",
             "visFrac"     => "(\d{1})",
             "visibility"  => "(\d{4})|((M|P)?((\d{1,2}|((\d) )?(\d)\/(\d))(SM|KM)))|(CAVOK)",
@@ -1042,7 +1042,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             "tempmax"     => "TX(\d{2})\/(\d{2})(\w)",
             "tempmin"     => "TN(\d{2})\/(\d{2})(\w)",
             "tempmaxmin"  => "TX(\d{2})\/(\d{2})(\w)TN(\d{2})\/(\d{2})(\w)",
-            "from"        => "FM(\d{2})(\d{2})?Z?",
+            "from"        => "FM(\d{2})(\d{2})(\d{2})?Z?",
             "fmc"         => "(PROB|BECMG|TEMPO)(\d{2})?"
         );
 
@@ -1101,11 +1101,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                 $month++;
                             }
                             $pointer["validFrom"] = gmmktime($result[2], 0, 0, $month, $result[1], $year);
-                            // Valid time ends next day
-                            if ($result[2] >= $result[3]) {
-                                $result[1]++;
-                            }
-                            $pointer["validTo"]   = gmmktime($result[3], 0, 0, $month, $result[1], $year);
+                            $pointer["validTo"]   = gmmktime($result[4], 0, 0, $month, $result[3], $year);
                             unset($tafCode["valid"]);
                             // Now the groups will start, so initialize the time groups
                             $pointer["time"] = array();
@@ -1276,7 +1272,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                             // set pointer accordingly
                             if (sizeof($result) > 2) {
                                 // The ICAO way
-                                $fromTime = $result[1].":".$result[2];
+                                $fromTime = $result[2].":".$result[3];
                             } else {
                                 // The Australian way (Hey mates!)
                                 $fromTime = $result[1].":00";
@@ -1304,15 +1300,15 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     // No timegroup present, so just increase field-counter by one
                                     $i += 1;
                                 }
-                            } elseif (preg_match("/^(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
+                            } elseif ("/^(\d{2})(\d{2})\/(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                 // Normal group, set type and use extracted time
                                 $type = $result[1];
                                 // Check for PROBdd
                                 if (isset($result[2])) {
                                     $probability = $result[2];
                                 }
-                                $from = $lresult[1].":00";
-                                $to   = $lresult[2].":00";
+                                $from = $lresult[2].":00";
+                                $to   = $lresult[4].":00";
                                 $to   = ($to == "24:00") ? "00:00" : $to;
                                 // Same as above, we have a time for this FMC from our TAF,
                                 // increase field-counter
