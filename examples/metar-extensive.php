@@ -48,7 +48,7 @@
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2007 Alexander Wirtz
+ * @copyright   2005-2009 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/Services_Weather
