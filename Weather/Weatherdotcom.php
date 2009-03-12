@@ -583,7 +583,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         if (Services_Weather::isError($status)) {
             return $status;
         }
-        if (!is_int($days) || ($days < 1) || ($days > 5)
+        if (!is_int($days) || ($days < 1) || ($days > 5)) {
             $days = 5;
         }
 
