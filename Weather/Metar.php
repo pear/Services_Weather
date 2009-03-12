@@ -1300,7 +1300,7 @@ class Services_Weather_Metar extends Services_Weather_Common
                                     // No timegroup present, so just increase field-counter by one
                                     $i += 1;
                                 }
-                            } elseif ("/^(\d{2})(\d{2})\/(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
+                            } elseif (preg_match("/^(\d{2})(\d{2})\/(\d{2})(\d{2})$/i", $taf[$i + 1], $lresult)) {
                                 // Normal group, set type and use extracted time
                                 $type = $result[1];
                                 // Check for PROBdd
