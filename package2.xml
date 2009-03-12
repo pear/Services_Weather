@@ -21,10 +21,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <active>yes</active>
     </lead>
     <!-- Copy to changelog -->
-    <date>2008-05-10</date>
+    <date>2009-03-15</date>
     <version>
-        <release>1.4.3</release>
-        <api>1.4.3</api>
+        <release>1.4.4</release>
+        <api>1.4.4</api>
     </version>
     <stability>
         <release>stable</release>
@@ -32,9 +32,12 @@ http://pear.php.net/dtd/package-2.0.xsd">
     </stability>
     <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
     <notes>
+        - Metar.php
+            o Fixed Bug #9471 Undefined variable ($status)
+            o Fixed Bug #15637 New TAF format breaks date groups (thanks to Michael Rubinsky for the patch!)
         - Weatherdotcom.php
-            o Changed available forecast days to 5 as per change in the xoap offering (boigelot)
-            o Fixed Bug #13845: Weather.com service requires link request in all xoap requests (mscannel)
+            o Removed formerly neccessary GET option link=xoap from HTTP requests
+            o Set default forecast days to 5
     </notes>
     <!-- /Copy to changelog -->
     <contents>
