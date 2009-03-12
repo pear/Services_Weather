@@ -564,7 +564,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $weatherData["station"]   = "";
         // Eliminate trailing information
         if (strpos($data, "=") !== false) {
-            $data = substr($data, 0, strpos($data, "="))
+            $data = substr($data, 0, strpos($data, "="));
         }
         $weatherData["dataRaw"]   = implode(" ", $data);
         $weatherData["update"]    = strtotime(trim($data[0])." GMT");
@@ -1060,7 +1060,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         $forecastData["station"]   = "";
         // Eliminate trailing information
         if (strpos($data, "=") !== false) {
-            $data = substr($data, 0, strpos($data, "="))
+            $data = substr($data, 0, strpos($data, "="));
         }
         $forecastData["dataRaw"]   = implode(" ", $data);
         $forecastData["update"]    = strtotime(trim($data[0])." GMT");
