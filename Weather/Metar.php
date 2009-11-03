@@ -559,13 +559,17 @@ class Services_Weather_Metar extends Services_Weather_Common
                 echo $data[$i]."\n";
             }
         }
+        // Eliminate trailing information
+        for ($i = 0; $i < sizeof($data); $i++) {
+            if (strpos($data[$i], "=") !== false) {
+                $data[$i] = substr($data[$i], 0, strpos($data[$i], "="));
+                $data = array_slice($data, 0, $i + 1);
+                break;
+            }
+        }
         // Start with parsing the first line for the last update
         $weatherData = array();
         $weatherData["station"]   = "";
-        // Eliminate trailing information
-        if (strpos($data, "=") !== false) {
-            $data = substr($data, 0, strpos($data, "="));
-        }
         $weatherData["dataRaw"]   = implode(" ", $data);
         $weatherData["update"]    = strtotime(trim($data[0])." GMT");
         $weatherData["updateRaw"] = trim($data[0]);
@@ -1055,13 +1059,17 @@ class Services_Weather_Metar extends Services_Weather_Common
                 echo $data[$i]."\n";
             }
         }
+        // Eliminate trailing information
+        for ($i = 0; $i < sizeof($data); $i++) {
+            if (strpos($data[$i], "=") !== false) {
+                $data[$i] = substr($data[$i], 0, strpos($data[$i], "="));
+                $data = array_slice($data, 0, $i + 1);
+                break;
+            }
+        }
         // Ok, we have correct data, start with parsing the first line for the last update
         $forecastData = array();
         $forecastData["station"]   = "";
-        // Eliminate trailing information
-        if (strpos($data, "=") !== false) {
-            $data = substr($data, 0, strpos($data, "="));
-        }
         $forecastData["dataRaw"]   = implode(" ", $data);
         $forecastData["update"]    = strtotime(trim($data[0])." GMT");
         $forecastData["updateRaw"] = trim($data[0]);
