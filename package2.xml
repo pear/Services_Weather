@@ -21,10 +21,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <active>yes</active>
     </lead>
     <!-- Copy to changelog -->
-    <date>2009-03-13</date>
+    <date>2009-11-04</date>
     <version>
-        <release>1.4.4</release>
-        <api>1.4.4</api>
+        <release>1.4.5</release>
+        <api>1.4.5</api>
     </version>
     <stability>
         <release>stable</release>
@@ -33,11 +33,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
     <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
     <notes>
         - Metar.php
-            o Fixed Bug #9471 Undefined variable ($status)
-            o Fixed Bug #15637 New TAF format breaks date groups (thanks to Michael Rubinsky for the patch!)
-            o Fixed Bug #14732 Parsing weird TAFs (reported by Robin King)
-        - Weatherdotcom.php
-            o Set default forecast days to 5
+            o Fixed Bug #14732 Parsing weird TAFs _again_ (reported by Robin King)
     </notes>
     <!-- /Copy to changelog -->
     <contents>
