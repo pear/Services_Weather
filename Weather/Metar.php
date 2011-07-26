@@ -1418,15 +1418,15 @@ class Services_Weather_Metar extends Services_Weather_Common
                         case "wind":
                         case "windGust":
                         case "windshear":
-                            $newVal = $this->convertSpeed($val, "mph", $units["wind"]);
+                            $newVal = round($this->convertSpeed($val, "mph", $units["wind"]), 2);
                             break;
                         case "visibility":
-                            $newVal = $this->convertDistance($val, "sm", $units["vis"]);
+                            $newVal = round($this->convertDistance($val, "sm", $units["vis"], 2));
                             break;
                         case "height":
                         case "windshearHeight":
                             if (is_numeric($val)) {
-                                $newVal = $this->convertDistance($val, "ft", $units["height"]);
+                                $newVal = round($this->convertDistance($val, "ft", $units["height"]), 2);
                             } else {
                                 $newVal = $val;
                             }
@@ -1436,18 +1436,18 @@ class Services_Weather_Metar extends Services_Weather_Common
                         case "temperatureLow":
                         case "dewPoint":
                         case "feltTemperature":
-                            $newVal = $this->convertTemperature($val, "f", $units["temp"]);
+                            $newVal = round($this->convertTemperature($val, "f", $units["temp"]), 2);
                             break;
                         case "pressure":
                         case "seapressure":
                         case "presschng":
-                            $newVal = $this->convertPressure($val, "in", $units["pres"]);
+                            $newVal = round($this->convertPressure($val, "in", $units["pres"]), 2);
                             break;
                         case "amount":
                         case "snowdepth":
                         case "snowequiv":
                             if (is_numeric($val)) {
-                                $newVal = $this->convertPressure($val, "in", $units["rain"]);
+                                $newVal = round($this->convertPressure($val, "in", $units["rain"]), 2);
                             } else {
                                 $newVal = $val;
                             }
@@ -1458,7 +1458,10 @@ class Services_Weather_Metar extends Services_Weather_Common
                         case "6hmintemp":
                         case "24hmaxtemp":
                         case "24hmintemp":
-                            $newVal = $this->convertTemperature($val, "f", $units["temp"]);
+                            $newVal = round($this->convertTemperature($val, "f", $units["temp"]), 2);
+                            break;
+                        case "humidity":
+                            $newVal = round($val, 1);
                             break;
                         default:
                             continue 2;

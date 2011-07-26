@@ -542,25 +542,25 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update) - $adjustTZ);
         $weatherReturn["updateRaw"]         = $this->_weather->lsup;
         $weatherReturn["station"]           = $this->_weather->obst;
-        $weatherReturn["temperature"]       = $this->convertTemperature($this->_weather->tmp, "f", $units["temp"]);
-        $weatherReturn["feltTemperature"]   = $this->convertTemperature($this->_weather->flik, "f", $units["temp"]);
+        $weatherReturn["temperature"]       = round($this->convertTemperature($this->_weather->tmp, "f", $units["temp"]), 2);
+        $weatherReturn["feltTemperature"]   = round($this->convertTemperature($this->_weather->flik, "f", $units["temp"], 2));
         $weatherReturn["condition"]         = $this->_weather->t;
         $weatherReturn["conditionIcon"]     = $this->_weather->icon;
-        $weatherReturn["pressure"]          = $this->convertPressure($this->_weather->bar->r, "in", $units["pres"]);
+        $weatherReturn["pressure"]          = round($this->convertPressure($this->_weather->bar->r, "in", $units["pres"]), 2);
         $weatherReturn["pressureTrend"]     = $this->_weather->bar->d;
-        $weatherReturn["wind"]              = $this->convertSpeed($this->_weather->wind->s, "mph", $units["wind"]);
-        $weatherReturn["windGust"]          = $this->convertSpeed($this->_weather->wind->gust, "mph", $units["wind"]);
+        $weatherReturn["wind"]              = round($this->convertSpeed($this->_weather->wind->s, "mph", $units["wind"]), 2);
+        $weatherReturn["windGust"]          = round($this->convertSpeed($this->_weather->wind->gust, "mph", $units["wind"]), 2);
         $weatherReturn["windDegrees"]       = $this->_weather->wind->d;
         $weatherReturn["windDirection"]     = $this->_weather->wind->t;
-        $weatherReturn["humidity"]          = $this->_weather->hmid;
+        $weatherReturn["humidity"]          = round($this->_weather->hmid, 1);
         if (is_numeric($this->_weather->vis)) {
-            $weatherReturn["visibility"]    = $this->convertDistance($this->_weather->vis, "sm", $units["vis"]);
+            $weatherReturn["visibility"]    = round($this->convertDistance($this->_weather->vis, "sm", $units["vis"]), 2);
         } else {
             $weatherReturn["visibility"]    = $this->_weather->vis;
         }
         $weatherReturn["uvIndex"]           = $this->_weather->uv->i;
         $weatherReturn["uvText"]            = $this->_weather->uv->t;
-        $weatherReturn["dewPoint"]          = $this->convertTemperature($this->_weather->dewp, "f", $units["temp"]);
+        $weatherReturn["dewPoint"]          = round($this->convertTemperature($this->_weather->dewp, "f", $units["temp"]), 2);
         $weatherReturn["moon"]              = $this->_weather->moon->t;
         $weatherReturn["moonIcon"]          = $this->_weather->moon->icon;
 
@@ -625,29 +625,29 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         for ($i = 0; $i < $days; $i++) {
             $day = array(
-                "temperatureHigh" => $this->convertTemperature($this->_forecast->day[$i]->hi, "f", $units["temp"]),
-                "temperatureLow"  => $this->convertTemperature($this->_forecast->day[$i]->low, "f", $units["temp"]),
+                "temperatureHigh" => round($this->convertTemperature($this->_forecast->day[$i]->hi, "f", $units["temp"]), 2),
+                "temperatureLow"  => round($this->convertTemperature($this->_forecast->day[$i]->low, "f", $units["temp"]), 2),
                 "sunrise"         => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->sunr)),
                 "sunset"          => date($this->_timeFormat, strtotime($this->_forecast->day[$i]->suns)),
                 "day" => array(
                     "condition"     => $this->_forecast->day[$i]->part[0]->t,
                     "conditionIcon" => $this->_forecast->day[$i]->part[0]->icon,
-                    "wind"          => $this->convertSpeed($this->_forecast->day[$i]->part[0]->wind->s, "mph", $units["wind"]),
-                    "windGust"      => $this->convertSpeed($this->_forecast->day[$i]->part[0]->wind->gust, "mph", $units["wind"]),
+                    "wind"          => round($this->convertSpeed($this->_forecast->day[$i]->part[0]->wind->s, "mph", $units["wind"]), 2),
+                    "windGust"      => round($this->convertSpeed($this->_forecast->day[$i]->part[0]->wind->gust, "mph", $units["wind"]), 2),
                     "windDegrees"   => $this->_forecast->day[$i]->part[0]->wind->d,
                     "windDirection" => $this->_forecast->day[$i]->part[0]->wind->t,
                     "precipitation" => $this->_forecast->day[$i]->part[0]->ppcp,
-                    "humidity"      => $this->_forecast->day[$i]->part[0]->hmid
+                    "humidity"      => round($this->_forecast->day[$i]->part[0]->hmid, 1)
                 ),
                 "night" => array (
                     "condition"     => $this->_forecast->day[$i]->part[1]->t,
                     "conditionIcon" => $this->_forecast->day[$i]->part[1]->icon,
-                    "wind"          => $this->convertSpeed($this->_forecast->day[$i]->part[1]->wind->s, "mph", $units["wind"]),
-                    "windGust"      => $this->convertSpeed($this->_forecast->day[$i]->part[1]->wind->gust, "mph", $units["wind"]),
+                    "wind"          => round($this->convertSpeed($this->_forecast->day[$i]->part[1]->wind->s, "mph", $units["wind"]), 2),
+                    "windGust"      => round($this->convertSpeed($this->_forecast->day[$i]->part[1]->wind->gust, "mph", $units["wind"]), 2),
                     "windDegrees"   => $this->_forecast->day[$i]->part[1]->wind->d,
                     "windDirection" => $this->_forecast->day[$i]->part[1]->wind->t,
                     "precipitation" => $this->_forecast->day[$i]->part[1]->ppcp,
-                    "humidity"      => $this->_forecast->day[$i]->part[1]->hmid
+                    "humidity"      => round($this->_forecast->day[$i]->part[1]->hmid, 1)
                 )
             );
 
