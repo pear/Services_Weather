@@ -426,7 +426,7 @@ class Services_Weather_Common {
      */
     function convertTemperature($temperature, $from, $to)
     {
-        if ($temperature == 'N/A') {
+        if ($temperature == "N/A") {
             return $temperature;
         }
 
