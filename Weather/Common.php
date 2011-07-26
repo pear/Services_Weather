@@ -913,10 +913,11 @@ class Services_Weather_Common {
      * @param   float                       $temperature    Temperature in deg F.
      * @param   float                       $latitude       Point latitude.
      * @param   float                       $longitude      Point longitude.
+     * @param   int                         $reportTime     The time when the weather report was generated.
      * @author  Seth Price  <seth@pricepages.org>
      * @access  public
      */
-    function getWeatherIcon($condition, $clouds = array(), $wind = 5, $temperature = 70, $latitude = -360, $longitude = -360)
+    function getWeatherIcon($condition, $clouds = array(), $wind = 5, $temperature = 70, $latitude = -360, $longitude = -360, $reportTime = "")
     {
         // Search for matches that don't use the time of day
         $hail     = (bool) stristr($condition, "hail");
@@ -1000,10 +1001,17 @@ class Services_Weather_Common {
         // or twilight (~(+|-)1 hour of sunrise/sunset). Note that twilight isn't
         // always accurate because of issues wrapping around the 24hr clock. Oh well...
         if ($latitude < 90 && $latitude > -90 && $longitude < 180 && $longitude > -180) {
+
+            // Use provided time by report if available, otherwise use current GMT time
+            if ($reportTime <> "" && is_numeric($reportTime)) {
+                $timeOfDay = $reportTime;
+            } else {
+                $timeOfDay = gmmktime();
+            }
+
             // Calculate sunrise/sunset and current time in GMT
-            $sunrise   = $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $latitude, $longitude, SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, true);
-            $sunset    = $this->calculateSunRiseSet(gmmktime(), SUNFUNCS_RET_TIMESTAMP, $latitude, $longitude, SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, false);
-            $timeOfDay = gmmktime();
+            $sunrise   = $this->calculateSunRiseSet($timeOfDay, SUNFUNCS_RET_TIMESTAMP, $latitude, $longitude, SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, true);
+            $sunset    = $this->calculateSunRiseSet($timeOfDay, SUNFUNCS_RET_TIMESTAMP, $latitude, $longitude, SERVICES_WEATHER_SUNFUNCS_SUNRISE_ZENITH, 0, false);
 
             // Now that we have the sunrise/sunset times and the current time,
             // we need to figure out if it is day, night, or twilight. Wrapping
