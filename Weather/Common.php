@@ -426,6 +426,10 @@ class Services_Weather_Common {
      */
     function convertTemperature($temperature, $from, $to)
     {
+        if ($temperature == 'N/A') {
+            return $temperature;
+        }
+
         $from = strtolower($from{0});
         $to   = strtolower($to{0});
 
