@@ -244,17 +244,17 @@ class Services_Weather_Common {
         // The error handling in Cache is a bit crummy (read: not existent)
         // so we have to do that on our own...
         if ((@include_once "Cache.php") === false) {
-            return false;
-        }
-        
-        @$cache = new Cache($cacheType, $cacheOptions);
-        if (is_object($cache) && (strtolower(get_class($cache)) == "cache" || is_subclass_of($cache, "cache"))) {
-            $this->_cache        = $cache;
-            $this->_cacheEnabled = true;
-        } else {
-            $this->_cache        = null;
-            $this->_cacheEnabled = false;
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED, __FILE__, __LINE__);
+        } else {
+            @$cache = new Cache($cacheType, $cacheOptions);
+            if (is_object($cache) && (strtolower(get_class($cache)) == "cache" || is_subclass_of($cache, "cache"))) {
+                $this->_cache        = $cache;
+                $this->_cacheEnabled = true;
+            } else {
+                $this->_cache        = null;
+                $this->_cacheEnabled = false;
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED, __FILE__, __LINE__);
+            }
         }
 
         return true;
