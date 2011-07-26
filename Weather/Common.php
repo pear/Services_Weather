@@ -932,7 +932,8 @@ class Services_Weather_Common {
         $light    = (bool) stristr($condition, "light");
         $heavy    = (bool) stristr($condition, "heavy");
         $ice      = (bool) stristr($condition, "ice")      || (bool) stristr($condition, "pellets");
-        $rain     = (bool) stristr($condition, "rain");
+        // Have to add a space to prevent matching on "snow grains"
+        $rain     = (bool) stristr($condition, " rain");
         $snow     = (bool) stristr($condition, "snow");
         $fog      = (bool) stristr($condition, "fog")      || (bool) stristr($condition, "spray")        || (bool) stristr($condition, "mist");
         $haze     = (bool) stristr($condition, "haze");
