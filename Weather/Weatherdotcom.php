@@ -536,6 +536,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         // find it, I calculate the difference between the timezone at the location
         // and this computers timezone. This amount of seconds is then subtracted from
         // the time the update-string has delivered.
+        $this->getLocation($id);
         $update   = str_replace("Local Time", "", $this->_weather->lsup);
         $adjustTZ = ($update == $this->_weather->lsup) ? 0 : $this->_location->zone * 3600 - date("Z");
         $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update) - $adjustTZ);
@@ -613,6 +614,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         // find it, I calculate the difference between the timezone at the location
         // and this computers timezone. This amount of seconds is then subtracted from
         // the time the update-string has delivered.
+        $this->getLocation($id);
         $update   = str_replace("Local Time", "", $this->_forecast->lsup);
         $adjustTZ = ($update == $this->_forecast->lsup) ? 0 : $this->_location->zone * 3600 - date("Z");
         $forecastReturn["update"]    = gmdate($this->_dateFormat." ".$this->_timeFormat, strtotime($update) - $adjustTZ);
