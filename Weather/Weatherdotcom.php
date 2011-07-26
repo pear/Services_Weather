@@ -561,6 +561,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $weatherReturn["uvIndex"]           = $this->_weather->uv->i;
         $weatherReturn["uvText"]            = $this->_weather->uv->t;
         $weatherReturn["dewPoint"]          = $this->convertTemperature($this->_weather->dewp, "f", $units["temp"]);
+        $weatherReturn["moon"]              = $this->_weather->moon->t;
+        $weatherReturn["moonIcon"]          = $this->_weather->moon->icon;
 
         return $weatherReturn;
     }

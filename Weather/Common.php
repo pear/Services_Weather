@@ -243,7 +243,10 @@ class Services_Weather_Common {
     {
         // The error handling in Cache is a bit crummy (read: not existent)
         // so we have to do that on our own...
-        @include_once "Cache.php";
+        if ((@include_once "Cache.php") === false) {
+            return false;
+        }
+        
         @$cache = new Cache($cacheType, $cacheOptions);
         if (is_object($cache) && (strtolower(get_class($cache)) == "cache" || is_subclass_of($cache, "cache"))) {
             $this->_cache        = $cache;
