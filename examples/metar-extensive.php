@@ -363,7 +363,7 @@ if (isset($weather["remark"]) && sizeof($weather["remark"])) {
         </tr>
         <tr style="height: 15px">
             <td colspan="2" style="width: 310px" nowrap><span class="bold">Pressure:</span> <?=round($weather["pressure"], 1).$units["pres"]?></td>
-            <td nowrap><span class="bold">Humidity:</span> <?=$weather["humidity"]?>%</td>
+            <td nowrap><span class="bold">Humidity:</span> <?=round($weather["humidity"], 2)?>%</td>
         </tr>
         <tr style="height: 15px">
             <td colspan="2" nowrap>

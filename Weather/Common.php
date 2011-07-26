@@ -438,7 +438,7 @@ class Services_Weather_Common {
             )
         );
 
-        return round($result[$from][$to], 2);
+        return $result[$from][$to];
     }
     // }}}
 
@@ -501,7 +501,7 @@ class Services_Weather_Common {
             }
             return sizeof($beaufort);
         } else {
-            return round($speed * $factor[$from][$to], 2);
+            return ($speed * $factor[$from][$to]);
         }
     }
     // }}}
@@ -542,7 +542,7 @@ class Services_Weather_Common {
             );
         }
 
-        return round($pressure * $factor[$from][$to], 2);
+        return ($pressure * $factor[$from][$to]);
     }
     // }}}
 
@@ -579,7 +579,7 @@ class Services_Weather_Common {
             );
         }
 
-        return round($distance * $factor[$from][$to], 2);
+        return ($distance * $factor[$from][$to]);
     }
     // }}}
 
@@ -597,7 +597,7 @@ class Services_Weather_Common {
      */
     function calculateWindChill($temperature, $speed)
     {
-        return round(35.74 + 0.6215 * $temperature - 35.75 * pow($speed, 0.16) + 0.4275 * $temperature * pow($speed, 0.16));
+        return (35.74 + 0.6215 * $temperature - 35.75 * pow($speed, 0.16) + 0.4275 * $temperature * pow($speed, 0.16));
     }
     // }}}
 
@@ -636,7 +636,7 @@ class Services_Weather_Common {
         }
         $dewSSP  = 6.1078 * pow(10, ($a * $dewPoint) / ($b + $dewPoint));
 
-        return round(100 * $dewSSP / $tempSSP, 1);
+        return (100 * $dewSSP / $tempSSP);
     }
     // }}}
 
@@ -672,7 +672,7 @@ class Services_Weather_Common {
 
         $v   = log($SP / 6.1078, 10);
 
-        return round($b * $v / ($a - $v), 1);
+        return ($b * $v / ($a - $v));
     }
     // }}}
 
