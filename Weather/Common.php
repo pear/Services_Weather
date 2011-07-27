@@ -801,6 +801,105 @@ class Services_Weather_Common {
     }
     // }}}
 
+    // {{{ calculateMoonPhase()
+    /**
+     * Calculates the moon age and phase
+     *
+     * The algorithm for the general moon age was taken from Mostafa Kaisun at www.codeproject.com
+     * The moonphases are mentioned by Keith Cooley on his website at home.hiwaay.net and were put
+     * into a selecting statement by Paul Sadowski in his moon phase calculator
+     *
+     * The date has to be entered as a timestamp!
+     *
+     * @param   int                         $date
+     * @return  PEAR_Error|array
+     * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_MOONFUNCS_DATE_INVALID
+     * @access  public
+     * @link    http://www.codeproject.com/KB/graphics/MoonPhase.aspx
+     * @link    http://home.hiwaay.net/~krcool/Astro/moon/moonphase/
+     * @link    http://www.paulsadowski.com/wsh/moonphase.htm
+     */
+    function calculateMoonPhase($date)
+    {
+        // Date must be timestamp for now
+        if (!is_int($date)) {
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_MOONFUNCS_DATE_INVALID, __FILE__, __LINE__);
+        }
+
+        $day    = date("j", $date);
+        $month = date("m", $date);
+        $year   = date("Y", $date);
+
+        $julian = gregoriantojd($month, $day, $year);
+
+        //Calculate the approximate phase of the moon
+        $ip = ($julian + 4.867) / 29.53059;
+        $ip = $ip - floor($ip); 
+
+        //After several trials I've seen to add the following lines, 
+        //which gave the result was not bad 
+        if($ip < 0.5) {
+            $ag = $ip * 29.53059 + 29.53059 / 2;
+        } else {
+            $ag = $ip * 29.53059 - 29.53059 / 2;
+        }
+        // Moon's age in days
+        $moonAge = floor($ag) + 1;
+
+        $phases = array ("new", "waxing crescent", "first quarter", "waxing gibbous", "full", "waning gibbous", "last quarter", "waning crescent");
+        switch ($moonAge) {
+            case  0:
+            case 29:
+                $moonPhase = 0;
+                break;
+            case  1:
+            case  2:
+            case  3:
+            case  4:
+            case  5:
+            case  6:
+                $moonPhase = 1;
+                break;
+                case  7:
+                $moonPhase = 2;
+                break;
+                case  8:
+            case  9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+                $moonPhase = 3;
+                break;
+            case 14:
+                $moonPhase = 4;
+                break;
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+                $moonPhase = 5;
+                break;
+            case 22:
+                $moonPhase = 6;
+                break;
+            case 23:
+            case 24:
+            case 25:
+            case 26:
+            case 27:
+            case 28:
+                $moonPhase = 7;
+                break;
+        }
+        $moonPhase = ucwords($phases[$moonPhase]);
+        
+        return array("age" => $moonAge, "phase" => $moonPhase);
+    }
+    // }}}
 
     // {{{ calculateSunRiseSet()
     /**

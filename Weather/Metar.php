@@ -1840,6 +1840,11 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Get the icon
             $weatherReturn["conditionIcon"] = $this->getWeatherIcon($condition, $clouds, $wind, $temperature, $latitude, $longitude, strtotime($weatherData["updateRaw"]." GMT"));
 
+            // Calculate the moon phase and age
+            $moon = $this->calculateMoonPhase(strtotime($weatherData["updateRaw"]." GMT"));
+            $weatherReturn["moon"]     = $moon["phase"];
+            $weatherReturn["moonIcon"] = $moon["age"]."";
+
             if ($this->_cacheEnabled) {
                 // Cache weather
                 $this->_saveCache("METAR-".$id, $weatherReturn, $unitsFormat, "weather");
