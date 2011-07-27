@@ -117,6 +117,30 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
     var $_links;
 
     /**
+     * Object containing the location
+     *
+     * @var     object stdClass             $_location
+     * @access  private
+     */
+    var $_location;
+    
+    /**
+     * Object containing the weather
+     *
+     * @var     object stdClass             $_weather
+     * @access  private
+     */
+    var $_weather;
+    
+    /**
+     * Object containing the forecast
+     *
+     * @var     object stdClass             $_forecast
+     * @access  private
+     */
+    var $_forecast;
+
+    /**
      * XML_Unserializer, used for processing the xml
      *
      * @var     object XML_Unserializer     $_unserializer
@@ -164,6 +188,12 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         } else {
             $this->_unserializer = $unserializer;
         }
+
+        // Initialize the properties containing the data from the server
+        $this->_links    = null;
+        $this->_location = null;
+        $this->_weather  = null;
+        $this->_forecast = null;
 
         // Can't acquire an object here, has to be clean on every request
         include_once "HTTP/Request.php";
@@ -288,7 +318,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                 return Services_Weather::raiseError($errno, __FILE__, __LINE__);
             } else {
                 // Valid data, lets get started
-                // Loop through the different sub-parts of the data fro processing
+                // Loop through the different sub-parts of the data for processing
                 foreach (get_object_vars($data) as $key => $val) {
                     switch ($key) {
                         case "head":
@@ -418,7 +448,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $linksReturn = array();
 
-        if ($this->_cacheEnabled && ($links = $this->_getCache($id, "links"))) {
+        if (is_object($this->_links)) {
+            $linksReturn["cache"] = "MEM";
+        } elseif ($this->_cacheEnabled && ($links = $this->_getCache($id, "links"))) {
             // Get data from cache
             $this->_links = $links;
             $linksReturn["cache"] = "HIT";
@@ -464,7 +496,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $locationReturn = array();
 
-        if ($this->_cacheEnabled && ($location = $this->_getCache($id, "location"))) {
+        if (is_object($this->_location)) {
+            $locationReturn["cache"] = "MEM";
+        } elseif ($this->_cacheEnabled && ($location = $this->_getCache($id, "location"))) {
             // Get data from cache
             $this->_location = $location;
             $locationReturn["cache"] = "HIT";
@@ -513,7 +547,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $weatherReturn = array();
 
-        if ($this->_cacheEnabled && ($weather = $this->_getCache($id, "weather"))) {
+        if (is_object($this->_weather)) {
+            $weatherReturn["cache"] = "MEM";
+        } elseif ($this->_cacheEnabled && ($weather = $this->_getCache($id, "weather"))) {
             // Same procedure...
             $this->_weather = $weather;
             $weatherReturn["cache"] = "HIT";
@@ -527,6 +563,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $weatherReturn["cache"] = "MISS";
         }
 
+        // Make sure the location object has been loaded
+        if (!is_object($this->_location)) {
+            $this->getLocation($id);
+        }
+
         // Some explanation for the next two lines:
         // weather.com isn't always supplying the timezone in the update string, but
         // uses "Local Time" as reference, which is imho utterly stupid, because it's
@@ -534,7 +575,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         // find it, I calculate the difference between the timezone at the location
         // and this computers timezone. This amount of seconds is then subtracted from
         // the time the update-string has delivered.
-        $this->getLocation($id);
         $update   = str_replace("Local Time", "", $this->_weather->lsup);
         $adjustTZ = ($update == $this->_weather->lsup) ? 0 : $this->_location->zone * 3600 - date("Z");
         $weatherReturn["update"]            = gmdate(trim($this->_dateFormat." ".$this->_timeFormat), strtotime($update) - $adjustTZ);
@@ -593,7 +633,9 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $forecastReturn = array();
 
-        if ($this->_cacheEnabled && ($forecast = $this->_getCache($id, "forecast"))) {
+        if (is_object($this->_forecast)) {
+            $forecastReturn["cache"] = "MEM";
+        } elseif ($this->_cacheEnabled && ($forecast = $this->_getCache($id, "forecast"))) {
             // Encore...
             $this->_forecast = $forecast;
             $forecastReturn["cache"] = "HIT";
@@ -607,6 +649,11 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
             $forecastReturn["cache"] = "MISS";
         }
 
+        // Make sure the location object has been loaded
+        if (!is_object($this->_location)) {
+            $this->getLocation($id);
+        }
+
         // Some explanation for the next two lines: (same as above)
         // weather.com isn't always supplying the timezone in the update string, but
         // uses "Local Time" as reference, which is imho utterly stupid, because it's
@@ -614,7 +661,6 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         // find it, I calculate the difference between the timezone at the location
         // and this computers timezone. This amount of seconds is then subtracted from
         // the time the update-string has delivered.
-        $this->getLocation($id);
         $update   = str_replace("Local Time", "", $this->_forecast->lsup);
         $adjustTZ = ($update == $this->_forecast->lsup) ? 0 : $this->_location->zone * 3600 - date("Z");
         $forecastReturn["update"]    = gmdate($this->_dateFormat." ".$this->_timeFormat, strtotime($update) - $adjustTZ);
