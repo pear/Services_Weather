@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * <LICENSE>
- * Copyright (c) 2005-2009, Alexander Wirtz
+ * Copyright (c) 2005-2011, Alexander Wirtz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/Services_Weather
@@ -82,7 +82,7 @@ require_once "DB.php";
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     Release: @package_version@
  * @link        http://pear.php.net/package/Services_Weather
@@ -1727,7 +1727,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
         $locationReturn = array();
 
-        if ($this->_cacheEnabled && ($location = $this->_cache->get("METAR-".$id, "location"))) {
+        if ($this->_cacheEnabled && ($location = $this->_getCache("METAR-".$id, "location"))) {
             // Grab stuff from cache
             $this->_location = $location;
             $locationReturn["cache"] = "HIT";
@@ -1747,8 +1747,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
             if ($this->_cacheEnabled) {
                 // ...and cache it
-                $expire = constant("SERVICES_WEATHER_EXPIRES_LOCATION");
-                $this->_cache->extSave("METAR-".$id, $this->_location, "", $expire, "location");
+                $this->_saveCache("METAR-".$id, $this->_location, "", "location");
             }
 
             $locationReturn["cache"] = "MISS";
@@ -1808,7 +1807,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             return $location;
         }
 
-        if ($this->_cacheEnabled && ($weather = $this->_cache->get("METAR-".$id, "weather"))) {
+        if ($this->_cacheEnabled && ($weather = $this->_getCache("METAR-".$id, "weather"))) {
             // Wee... it was cached, let's have it...
             $weatherReturn  = $weather;
             $this->_weather = $weatherReturn;
@@ -1843,8 +1842,7 @@ class Services_Weather_Metar extends Services_Weather_Common
 
             if ($this->_cacheEnabled) {
                 // Cache weather
-                $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
-                $this->_cache->extSave("METAR-".$id, $weatherReturn, $unitsFormat, $expire, "weather");
+                $this->_saveCache("METAR-".$id, $weatherReturn, $unitsFormat, "weather");
             }
             $this->_weather = $weatherReturn;
             $weatherReturn["cache"] = "MISS";
@@ -1885,7 +1883,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             return $location;
         }
 
-        if ($this->_cacheEnabled && ($forecast = $this->_cache->get("METAR-".$id, "forecast"))) {
+        if ($this->_cacheEnabled && ($forecast = $this->_getCache("METAR-".$id, "forecast"))) {
             // Wee... it was cached, let's have it...
             $forecastReturn  = $forecast;
             $this->_forecast = $forecastReturn;
@@ -1907,8 +1905,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             }
             if ($this->_cacheEnabled) {
                 // Cache weather
-                $expire = constant("SERVICES_WEATHER_EXPIRES_FORECAST");
-                $this->_cache->extSave("METAR-".$id, $forecastReturn, $unitsFormat, $expire, "forecast");
+                $this->_saveCache("METAR-".$id, $forecastReturn, $unitsFormat, "forecast");
             }
             $this->_forecast = $forecastReturn;
             $forecastReturn["cache"] = "MISS";

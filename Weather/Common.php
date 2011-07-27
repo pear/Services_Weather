@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * <LICENSE>
- * Copyright (c) 2005-2009, Alexander Wirtz
+ * Copyright (c) 2005-2011, Alexander Wirtz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/Services_Weather
@@ -69,7 +69,7 @@ define("SERVICES_WEATHER_SUNFUNCS_SUNSET_ZENITH",     90.83);
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     Release: @package_version@
  * @link        http://pear.php.net/package/Services_Weather
@@ -241,23 +241,119 @@ class Services_Weather_Common {
      */
     function setCache($cacheType = "file", $cacheOptions = array())
     {
-        // The error handling in Cache is a bit crummy (read: not existent)
-        // so we have to do that on our own...
-        if ((@include_once "Cache.php") === false) {
-            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED, __FILE__, __LINE__);
-        } else {
-            @$cache = new Cache($cacheType, $cacheOptions);
-            if (is_object($cache) && (strtolower(get_class($cache)) == "cache" || is_subclass_of($cache, "cache"))) {
-                $this->_cache        = $cache;
-                $this->_cacheEnabled = true;
-            } else {
-                $this->_cache        = null;
-                $this->_cacheEnabled = false;
+        if ($cacheType == "lite") {
+            if ((@include_once "Cache/Lite.php") == false) {
                 return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED, __FILE__, __LINE__);
+            } else {
+                $cacheOptions["automaticSerialization"] = true;
+                $cacheOptions["pearErrorMode"]          = CACHE_LITE_ERROR_RETURN;
+                $cacheOptions["lifeTime"]               = null;
+                @$cache = new Cache_Lite($cacheOptions);
+            }
+        } else {
+            // The error handling in Cache is a bit crummy (read: not existent)
+            // so we have to do that on our own...
+            if ((@include_once "Cache.php") === false) {
+                return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED, __FILE__, __LINE__);
+            } else {
+                @$cache = new Cache($cacheType, $cacheOptions);
             }
         }
 
+        if (is_object($cache) && (strtolower(get_class($cache)) == "cache_lite" || strtolower(get_class($cache)) == "cache" || is_subclass_of($cache, "cache"))) {
+            $this->_cache        = $cache;
+            $this->_cacheEnabled = true;
+        } else {
+            $this->_cache        = null;
+            $this->_cacheEnabled = false;
+            return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_CACHE_INIT_FAILED, __FILE__, __LINE__);
+        }
+
         return true;
+    }
+    // }}}
+
+    // {{{ _getCache()
+    /**
+     * Wrapper to retrieve cached data
+     *
+     * Requires Cache to be installed
+     *
+     * @param   string                      $id
+     * @param   string                      $type
+     * @return  array|bool
+     * @access  private
+     */
+    function _getCache($id, $type)
+    {
+        if ($this->_cacheEnabled) {
+            if (strtolower(get_class($this->_cache)) == "cache_lite") {
+                $this->_cache->setLifeTime(constant("SERVICES_WEATHER_EXPIRES_".strtoupper($type)));
+                $cache = $this->_cache->get($id, $type);
+            } else {
+                $cache = $this->_cache->get($id, $type);
+            }
+            
+            return $cache;
+        } else {
+            return false;
+        }
+    }
+    // }}}
+
+    // {{{ _getUserCache()
+    /**
+     * Wrapper to retrieve cached user-data
+     *
+     * Requires Cache to be installed
+     *
+     * @param   string                      $id
+     * @param   string                      $type
+     * @return  array|bool
+     * @access  private
+     */
+    function _getUserCache($id, $type)
+    {
+        if ($this->_cacheEnabled) {
+            if (strtolower(get_class($this->_cache)) == "cache_lite") {
+                $this->_cache->setLifeTime(constant("SERVICES_WEATHER_EXPIRES_".strtoupper($type)));
+                $cache = $this->_cache->get($id, $type."_user");
+            } else {
+                $cache = $this->_cache->getUserdata($id, $type);
+            }
+            
+            return $cache;
+        } else {
+            return false;
+        }
+    }
+    // }}}
+
+    // {{{ _saveCache()
+    /**
+     * Wrapper to save data to cache
+     *
+     * Requires Cache to be installed
+     *
+     * @param   string                      $id
+     * @param   mixed                       $data
+     * @param   mixed                       $userData
+     * @param   string                      $type
+     * @return  array|bool
+     * @access  private
+     */
+    function _saveCache($id, $data, $userData, $type)
+    {
+        if ($this->_cacheEnabled) {
+            if (strtolower(get_class($this->_cache)) == "cache_lite") {
+                $this->_cache->setLifeTime(null);
+                return ($this->_cache->save($data, $id, $type) && $this->_cache->save($userData, $id, $type."_user"));
+            } else {
+                return $this->_cache->extSave($id, $data, $userData, constant("SERVICES_WEATHER_EXPIRES_".strtoupper($type)), $type);
+            }
+        } else {
+            return false;
+        }
     }
     // }}}
 

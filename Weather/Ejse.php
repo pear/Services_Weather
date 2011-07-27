@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * <LICENSE>
- * Copyright (c) 2005-2009, Alexander Wirtz
+ * Copyright (c) 2005-2011, Alexander Wirtz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/Services_Weather
@@ -62,7 +62,7 @@ require_once "Services/Weather/Common.php";
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     Release: @package_version@
  * @link        http://pear.php.net/package/Services_Weather
@@ -248,7 +248,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
 
         $locationReturn = array();
 
-        if ($this->_cacheEnabled && ($weather = $this->_cache->get($id, "weather"))) {
+        if ($this->_cacheEnabled && ($weather = $this->_getCache($id, "weather"))) {
             // Get data from cache
             $this->_weather = $weather;
             $locationReturn["cache"] = "HIT";
@@ -271,8 +271,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
 
             if ($this->_cacheEnabled) {
                 // ...and cache it
-                $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
-                $this->_cache->extSave($id, $this->_weather, "", $expire, "weather");
+                $this->_saveCache($id, $this->_weather, "", "weather");
             }
             $locationReturn["cache"] = "MISS";
         }
@@ -304,7 +303,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         $units    = $this->getUnitsFormat($unitsFormat);
 
         $weatherReturn = array();
-        if ($this->_cacheEnabled && ($weather = $this->_cache->get($id, "weather"))) {
+        if ($this->_cacheEnabled && ($weather = $this->_getCache($id, "weather"))) {
             // Same procedure...
             $this->_weather = $weather;
             $weatherReturn["cache"] = "HIT";
@@ -328,8 +327,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
 
             if ($this->_cacheEnabled) {
                 // ...and cache it
-                $expire = constant("SERVICES_WEATHER_EXPIRES_WEATHER");
-                $this->_cache->extSave($id, $this->_weather, "", $expire, "weather");
+                $this->_saveCache($id, $this->_weather, "", "weather");
             }
             $weatherReturn["cache"] = "MISS";
         }
@@ -443,7 +441,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
         $units    = $this->getUnitsFormat($unitsFormat);
 
         $forecastReturn = array();
-        if ($this->_cacheEnabled && ($forecast = $this->_cache->get($id, "forecast"))) {
+        if ($this->_cacheEnabled && ($forecast = $this->_getCache($id, "forecast"))) {
             // Same procedure...
             $this->_forecast = $forecast;
             $forecastReturn["cache"] = "HIT";
@@ -467,8 +465,7 @@ class Services_Weather_Ejse extends Services_Weather_Common {
 
             if ($this->_cacheEnabled) {
                 // ...and cache it
-                $expire = constant("SERVICES_WEATHER_EXPIRES_FORECAST");
-                $this->_cache->extSave($id, $this->_forecast, "", $expire, "forecast");
+                $this->_saveCache($id, $this->_forecast, "", "forecast");
             }
             $forecastReturn["cache"] = "MISS";
         }

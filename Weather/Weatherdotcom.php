@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * <LICENSE>
- * Copyright (c) 2005-2009, Alexander Wirtz
+ * Copyright (c) 2005-2011, Alexander Wirtz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/Services_Weather
@@ -73,7 +73,7 @@ require_once "Services/Weather/Common.php";
  * @category    Web Services
  * @package     Services_Weather
  * @author      Alexander Wirtz <alex@pc4p.net>
- * @copyright   2005-2009 Alexander Wirtz
+ * @copyright   2005-2011 Alexander Wirtz
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version     Release: @package_version@
  * @link        http://pear.php.net/package/Services_Weather
@@ -310,8 +310,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
                     $this->{"_".$varname} = $val;
                     if ($this->_cacheEnabled) {
                         // ...and cache if possible
-                        $expire = constant("SERVICES_WEATHER_EXPIRES_".strtoupper($varname));
-                        $this->_cache->extSave($id, $val, "", $expire, $varname);
+                        $this->_saveCache($id, $val, "", $varname);
                     }
                 }
             }
@@ -339,8 +338,8 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
         $locLow   = strtolower($location);
         
         // Check on cached data: MD5-hash of location has to be correct and the userdata has to be the same as the given location 
-        if ($this->_cacheEnabled && $locLow == $this->_cache->getUserData(md5($locLow), "search")) {
-            $search = $this->_cache->get(md5($locLow), "search");
+        if ($this->_cacheEnabled && $locLow == $this->_getUserCache(md5($locLow), "search")) {
+            $search = $this->_getCache(md5($locLow), "search");
         } else {
             // Get search data from server and unserialize
             $request = &new HTTP_Request("http://xoap.weather.com/search/search?where=".urlencode($location), $this->_httpOptions);
@@ -368,8 +367,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
             if ($this->_cacheEnabled) {
                 // ...and cache if possible
-                $expire = constant("SERVICES_WEATHER_EXPIRES_SEARCH");
-                $this->_cache->extSave(md5($locLow), $search, $locLow, $expire, "search");
+                $this->_saveCache(md5($locLow), $search, $locLow, "search");
             }
         }
 
@@ -420,7 +418,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $linksReturn = array();
 
-        if ($this->_cacheEnabled && ($links = $this->_cache->get($id, "links"))) {
+        if ($this->_cacheEnabled && ($links = $this->_getCache($id, "links"))) {
             // Get data from cache
             $this->_links = $links;
             $linksReturn["cache"] = "HIT";
@@ -466,7 +464,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $locationReturn = array();
 
-        if ($this->_cacheEnabled && ($location = $this->_cache->get($id, "location"))) {
+        if ($this->_cacheEnabled && ($location = $this->_getCache($id, "location"))) {
             // Get data from cache
             $this->_location = $location;
             $locationReturn["cache"] = "HIT";
@@ -515,7 +513,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $weatherReturn = array();
 
-        if ($this->_cacheEnabled && ($weather = $this->_cache->get($id, "weather"))) {
+        if ($this->_cacheEnabled && ($weather = $this->_getCache($id, "weather"))) {
             // Same procedure...
             $this->_weather = $weather;
             $weatherReturn["cache"] = "HIT";
@@ -595,7 +593,7 @@ class Services_Weather_Weatherdotcom extends Services_Weather_Common {
 
         $forecastReturn = array();
 
-        if ($this->_cacheEnabled && ($forecast = $this->_cache->get($id, "forecast"))) {
+        if ($this->_cacheEnabled && ($forecast = $this->_getCache($id, "forecast"))) {
             // Encore...
             $this->_forecast = $forecast;
             $forecastReturn["cache"] = "HIT";
