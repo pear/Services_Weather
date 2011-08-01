@@ -1843,7 +1843,7 @@ class Services_Weather_Metar extends Services_Weather_Common
             // Calculate the moon phase and age
             $moon = $this->calculateMoonPhase(strtotime($weatherData["updateRaw"]." GMT"));
             $weatherReturn["moon"]     = $moon["phase"];
-            $weatherReturn["moonIcon"] = $moon["age"]."";
+            $weatherReturn["moonIcon"] = $moon["icon"];
 
             if ($this->_cacheEnabled) {
                 // Cache weather

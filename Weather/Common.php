@@ -805,9 +805,11 @@ class Services_Weather_Common {
     /**
      * Calculates the moon age and phase
      *
-     * The algorithm for the general moon age was taken from Mostafa Kaisun at www.codeproject.com
-     * The moonphases are mentioned by Keith Cooley on his website at home.hiwaay.net and were put
-     * into a selecting statement by Paul Sadowski in his moon phase calculator
+     * The algorithms for this functions were taken from the German Wikipedia
+     * entry on Julian Daycount for getting the accurate JD to the second and
+     * the overall moon calculation were done according to
+     * Stephen R. Schmitt's website, which is cited multiple times on the web
+     * for this kind of calculation.
      *
      * The date has to be entered as a timestamp!
      *
@@ -815,9 +817,8 @@ class Services_Weather_Common {
      * @return  PEAR_Error|array
      * @throws  PEAR_Error::SERVICES_WEATHER_ERROR_MOONFUNCS_DATE_INVALID
      * @access  public
-     * @link    http://www.codeproject.com/KB/graphics/MoonPhase.aspx
-     * @link    http://home.hiwaay.net/~krcool/Astro/moon/moonphase/
-     * @link    http://www.paulsadowski.com/wsh/moonphase.htm
+     * @link    http://de.wikipedia.org/wiki/Julianisches_Datum
+     * @link    http://mysite.verizon.net/res148h4j/javascript/script_moon_phase.html
      */
     function calculateMoonPhase($date)
     {
@@ -826,78 +827,140 @@ class Services_Weather_Common {
             return Services_Weather::raiseError(SERVICES_WEATHER_ERROR_MOONFUNCS_DATE_INVALID, __FILE__, __LINE__);
         }
 
-        $day    = date("j", $date);
-        $month = date("m", $date);
-        $year   = date("Y", $date);
+        $moon = array();
 
-        $julian = gregoriantojd($month, $day, $year);
+        $year  = date("Y", $date);
+        $month = date("n", $date);
+        $day   = date("j", $date);
+        $hour  = date("G", $date);
+        $min   = date("i", $date);
+        $sec   = date("s", $date);
 
-        //Calculate the approximate phase of the moon
-        $ip = ($julian + 4.867) / 29.53059;
-        $ip = $ip - floor($ip); 
+        $age       = 0.0; // Moon's age in days from New Moon
+        $distance  = 0.0; // Moon's distance in Earth radii
+        $latitude  = 0.0; // Moon's ecliptic latitude in degrees
+        $longitude = 0.0; // Moon's ecliptic longitude in degrees
+        $phase     = "";  // Moon's phase
+        $zodiac    = "";  // Moon's zodiac
+        $icon      = "";  // The icon to represent the moon phase
 
-        //After several trials I've seen to add the following lines, 
-        //which gave the result was not bad 
-        if($ip < 0.5) {
-            $ag = $ip * 29.53059 + 29.53059 / 2;
+        $YY = 0;
+        $MM = 0;
+        $DD = 0;
+        $HH = 0;
+        $A  = 0;
+        $B  = 0;
+        $JD = 0;
+        $IP = 0.0;
+        $DP = 0.0;
+        $NP = 0.0;
+        $RP = 0.0;
+
+        // Calculate Julian Daycount to the second
+        if ($month > 2) {
+            $YY = $year;
+            $MM = $month;
         } else {
-            $ag = $ip * 29.53059 - 29.53059 / 2;
+            $YY = $year  - 1;
+            $MM = $month + 12;
         }
-        // Moon's age in days
-        $moonAge = floor($ag) + 1;
 
-        $phases = array ("new", "waxing crescent", "first quarter", "waxing gibbous", "full", "waning gibbous", "last quarter", "waning crescent");
-        switch ($moonAge) {
-            case  0:
-            case 29:
-                $moonPhase = 0;
-                break;
-            case  1:
-            case  2:
-            case  3:
-            case  4:
-            case  5:
-            case  6:
-                $moonPhase = 1;
-                break;
-                case  7:
-                $moonPhase = 2;
-                break;
-                case  8:
-            case  9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-                $moonPhase = 3;
-                break;
-            case 14:
-                $moonPhase = 4;
-                break;
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-            case 21:
-                $moonPhase = 5;
-                break;
-            case 22:
-                $moonPhase = 6;
-                break;
-            case 23:
-            case 24:
-            case 25:
-            case 26:
-            case 27:
-            case 28:
-                $moonPhase = 7;
-                break;
+        $DD = $day;
+        $HH = $hour/24 + $min/1440 + $sec/86400;
+
+        // Check for Gregorian date and adjust JD appropriately
+        if (($year*10000 + $month*100 + $day) >= 15821015) {
+            $A = floor($YY/100);
+            $B = 2 - $A + floor($A/4);
         }
-        $moonPhase = ucwords($phases[$moonPhase]);
-        
-        return array("age" => $moonAge, "phase" => $moonPhase);
+
+        $JD = floor(365.25*($YY+4716)) + floor(30.6001*($MM+1)) + $DD + $HH + $B - 1524.5;
+
+        // Calculate moon's age in days
+        $IP = ($JD - 2451550.1) / 29.530588853;
+        if (($IP = $IP - floor($IP)) < 0) $IP++;
+        $age = $IP * 29.530588853;
+
+        switch ($age) {
+            case ($age <  1.84566):
+                $phase = "New";             break;
+            case ($age <  5.53699):
+                $phase = "Waxing Crescent"; break;
+            case ($age <  9.22831):
+                $phase = "First Quarter";   break;
+            case ($age < 12.91963):
+                $phase = "Waxing Gibbous";  break;
+            case ($age < 16.61096):
+                $phase = "Full";            break;
+            case ($age < 20.30228):
+                $phase = "Waning Gibbous";  break;
+            case ($age < 23.99361):
+                $phase = "Last Quarter";    break;
+            case ($age < 27.68493):
+                $phase = "Waning Crescent"; break;
+            default:
+                $phase = "New";
+        }
+
+        // Convert phase to radians
+        $IP = $IP * 2 * pi();
+
+        // Calculate moon's distance
+        $DP = ($JD - 2451562.2) / 27.55454988;
+        if (($DP = $DP - floor($DP)) < 0) $DP++;
+        $DP = $DP * 2 * pi();
+        $distance = 60.4 - 3.3 * cos($DP) - 0.6 * cos(2 * $IP - $DP) - 0.5 * cos(2 * $IP);
+
+        // Calculate moon's ecliptic latitude
+        $NP = ($JD - 2451565.2) / 27.212220817;
+        if (($NP = $NP - floor($NP)) < 0) $NP++;
+        $NP = $NP * 2 * pi();
+        $latitude = 5.1 * sin($NP);
+
+        // Calculate moon's ecliptic longitude
+        $RP = ($JD - 2451555.8) / 27.321582241;
+        if (($RP = $RP - floor($RP)) < 0) $RP++;
+        $longitude = 360 * $RP + 6.3 * sin($DP) + 1.3 * sin(2 * $IP - $DP) + 0.7 * sin(2 * $IP);
+        if ($longitude >= 360) $longitude -= 360;
+
+        switch ($longitude) {
+            case ($longitude <  33.18):
+                $zodiac = "Pisces";      break;
+            case ($longitude <  51.16):
+                $zodiac = "Aries";       break;
+            case ($longitude <  93.44):
+                $zodiac = "Taurus";      break;
+            case ($longitude < 119.48):
+                $zodiac = "Gemini";      break;
+            case ($longitude < 135.30):
+                $zodiac = "Cancer";      break;
+            case ($longitude < 173.34):
+                $zodiac = "Leo";         break;
+            case ($longitude < 224.17):
+                $zodiac = "Virgo";       break;
+            case ($longitude < 242.57):
+                $zodiac = "Libra";       break;
+            case ($longitude < 271.26):
+                $zodiac = "Scorpio";     break;
+            case ($longitude < 302.49):
+                $zodiac = "Sagittarius"; break;
+            case ($longitude < 311.72):
+                $zodiac = "Capricorn";   break;
+            case ($longitude < 348.58):
+                $zodiac = "Aquarius";    break;
+            default:
+                $zodiac = "Pisces";
+        }
+
+        $moon["age"]       = round($age, 2);
+        $moon["distance"]  = round($distance, 2);
+        $moon["latitude"]  = round($latitude, 2);
+        $moon["longitude"] = round($longitude, 2);
+        $moon["zodiac"]    = $zodiac;
+        $moon["phase"]     = $phase;
+        $moon["icon"]      = (floor($age) - 1)."";
+
+        return $moon;
     }
     // }}}
 
