@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Services_Weather</name>
+ <channel>pear.php.net</channel>
+ <summary>This class acts as an interface to various online weather-services.</summary>
+ <description>Services_Weather searches for given locations and retrieves current
+        weather data and, dependent on the used service, also forecasts. Up to
+        now, GlobalWeather from CapeScience, Weather XML from EJSE (US only),
+        a XOAP service from Weather.com and METAR/TAF from NOAA are supported.
+        Further services will get included, if they become available, have a
+        usable API and are properly documented.</description>
+ <lead>
+  <name>Alexander Wirtz</name>
+  <user>eru</user>
+  <email>alex@pc4p.net</email>
+  <active>yes</active>
+ </lead>
+ <date>2011-12-11</date>
+ <time>00:58:09</time>
+ <version>
+  <release>1.4.6</release>
+  <api>1.4.5</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+ <notes>
+QA Release
+Bug #16801 Wrong temperature calculation on current day	eru
+Bug #16802 Location used without being processed	eru
+Request # 16803 Caching without cache	eru
+Bug #16899 Pressure conversion from inHg to hPa calculated wrong	eru
+Bug #16928 getWeatherIcon() vs. grains	eru
+Request #17856 getWeatherIcon() / time issue	eru
+Request #18502 Moon data not avaolable	eru
+Request #18503 Use of Cache_Lite	eru
+ </notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <file baseinstalldir="Services" md5sum="f1bcc7d69e79d239b4eed0e74d430ed2" name="examples/ejse-basic.php" role="doc">
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="4be209cf5072ab6b69c6e016c23292fc" name="examples/globalweather-basic.php" role="doc">
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="226c47a955c79c918ae4fd60c9fffdae" name="examples/metar-basic.php" role="doc">
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="8c8a1d68c61f7c0e9b6db405881ad7fd" name="examples/metar-extensive.php" role="doc">
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="3d9c5a85836b5a30c756c55037df8ef6" name="examples/weather.com-basic.php" role="doc">
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="048afed2127a6944dc3b0bbf204b6e1a" name="examples/weather.com-extensive.php" role="doc">
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="faa7aee758a1469c166e3cdba704136c" name="images/sunrise.gif" role="data" />
+   <file baseinstalldir="Services" md5sum="51e35fa311feec611f3e1ee734f2655f" name="images/sunset.gif" role="data" />
+   <file baseinstalldir="Services" md5sum="b94e8d2b7cc4287e3bf98613189ccfdc" name="Weather/Common.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="19b35ebd33eb4504b5412b3bfb3251fb" name="Weather/Ejse.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="4136dbedfc3fb5eec30a846536d9a084" name="Weather/Globalweather.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="4d27612e30bf8afec11b9b32b259b142" name="Weather/Metar.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="c993da3ab888c22cadf0513375528ddc" name="Weather/Weatherdotcom.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="bfcc9030c9b0126e5a0b85dbc986169c" name="buildMetarDB.php" role="data">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:unixeol />
+   </file>
+   <file baseinstalldir="Services" md5sum="fb94e91d2ffa9a1e10ac4933d082213f" name="Weather.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:unixeol />
+   </file>
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>4.0.0</min>
+    <max>6.0.0</max>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+   <package>
+    <name>HTTP_Request</name>
+    <channel>pear.php.net</channel>
+    <min>1.2.0</min>
+   </package>
+   <extension>
+    <name>ctype</name>
+   </extension>
+   <extension>
+    <name>pcre</name>
+   </extension>
+  </required>
+  <optional>
+   <package>
+    <name>Net_FTP</name>
+    <channel>pear.php.net</channel>
+    <min>1.3.1</min>
+   </package>
+   <package>
+    <name>Cache</name>
+    <channel>pear.php.net</channel>
+    <min>1.5.3</min>
+   </package>
+   <package>
+    <name>DB</name>
+    <channel>pear.php.net</channel>
+    <min>1.4.0</min>
+   </package>
+   <package>
+    <name>SOAP</name>
+    <channel>pear.php.net</channel>
+    <min>0.7.5</min>
+   </package>
+   <package>
+    <name>XML_Serializer</name>
+    <channel>pear.php.net</channel>
+    <min>0.8</min>
+   </package>
+  </optional>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>1.4.6</release>
+    <api>1.4.5</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2011-12-11</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>
+QA Release
+Bug #16801 Wrong temperature calculation on current day	eru
+Bug #16802 Location used without being processed	eru
+Request # 16803 Caching without cache	eru
+Bug #16899 Pressure conversion from inHg to hPa calculated wrong	eru
+Bug #16928 getWeatherIcon() vs. grains	eru
+Request #17856 getWeatherIcon() / time issue	eru
+Request #18502 Moon data not avaolable	eru
+Request #18503 Use of Cache_Lite	eru
+   </notes>
+  </release>
+ </changelog>
+</package>
