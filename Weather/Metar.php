@@ -1838,10 +1838,10 @@ class Services_Weather_Metar extends Services_Weather_Common
             $longitude   = isset($location["longitude"])        ? $location["longitude"]        :                     -360;
 
             // Get the icon
-            $weatherReturn["conditionIcon"] = $this->getWeatherIcon($condition, $clouds, $wind, $temperature, $latitude, $longitude, strtotime($weatherData["updateRaw"]." GMT"));
+            $weatherReturn["conditionIcon"] = $this->getWeatherIcon($condition, $clouds, $wind, $temperature, $latitude, $longitude, strtotime($weatherReturn["updateRaw"]." GMT"));
 
             // Calculate the moon phase and age
-            $moon = $this->calculateMoonPhase(strtotime($weatherData["updateRaw"]." GMT"));
+            $moon = $this->calculateMoonPhase(strtotime($weatherReturn["updateRaw"]." GMT"));
             $weatherReturn["moon"]     = $moon["phase"];
             $weatherReturn["moonIcon"] = $moon["icon"];
 
