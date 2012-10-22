@@ -15,10 +15,10 @@
   <email>alex@pc4p.net</email>
   <active>yes</active>
  </lead>
- <date>2011-12-11</date>
- <time>00:58:09</time>
+ <date>2012-10-22</date>
+ <time>13:10:45</time>
  <version>
-  <release>1.4.6</release>
+  <release>1.4.7</release>
   <api>1.4.5</api>
  </version>
  <stability>
@@ -28,62 +28,56 @@
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
  <notes>
 QA Release
-Bug #16801 Wrong temperature calculation on current day	eru
-Bug #16802 Location used without being processed	eru
-Request # 16803 Caching without cache	eru
-Bug #16899 Pressure conversion from inHg to hPa calculated wrong	eru
-Bug #16928 getWeatherIcon() vs. grains	eru
-Request #17856 getWeatherIcon() / time issue	eru
-Request #18502 Moon data not avaolable	eru
-Request #18503 Use of Cache_Lite	eru
+Bug #19228 Fatal error: Cannot use object of type PEAR_Error
+Bug #19213 Undefined array index in Metar.php
  </notes>
  <contents>
-  <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="Services" md5sum="f1bcc7d69e79d239b4eed0e74d430ed2" name="examples/ejse-basic.php" role="doc">
+  <dir baseinstalldir="Services" name="/">
+   <file baseinstalldir="Services" md5sum="b120794bf933e1452cc0010a08bef56b" name="examples/ejse-basic.php" role="doc">
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="4be209cf5072ab6b69c6e016c23292fc" name="examples/globalweather-basic.php" role="doc">
+   <file baseinstalldir="Services" md5sum="7387f77ae133a3f449f2cd057a524560" name="examples/globalweather-basic.php" role="doc">
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="226c47a955c79c918ae4fd60c9fffdae" name="examples/metar-basic.php" role="doc">
+   <file baseinstalldir="Services" md5sum="d5b545649737836ccc2a056a95771211" name="examples/metar-basic.php" role="doc">
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="8c8a1d68c61f7c0e9b6db405881ad7fd" name="examples/metar-extensive.php" role="doc">
+   <file baseinstalldir="Services" md5sum="7ec5661c54f3c783a0ead0742a9c6fe9" name="examples/metar-extensive.php" role="doc">
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="3d9c5a85836b5a30c756c55037df8ef6" name="examples/weather.com-basic.php" role="doc">
+   <file baseinstalldir="Services" md5sum="741797744ceb7c0bdfb05d037cc26b13" name="examples/weather.com-basic.php" role="doc">
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="048afed2127a6944dc3b0bbf204b6e1a" name="examples/weather.com-extensive.php" role="doc">
+   <file baseinstalldir="Services" md5sum="3ae0fda1d55606d5819cffe30bc9230e" name="examples/weather.com-extensive.php" role="doc">
     <tasks:unixeol />
    </file>
    <file baseinstalldir="Services" md5sum="faa7aee758a1469c166e3cdba704136c" name="images/sunrise.gif" role="data" />
    <file baseinstalldir="Services" md5sum="51e35fa311feec611f3e1ee734f2655f" name="images/sunset.gif" role="data" />
-   <file baseinstalldir="Services" md5sum="b94e8d2b7cc4287e3bf98613189ccfdc" name="Weather/Common.php" role="php">
+   <file baseinstalldir="Services" md5sum="a5d2799c628c4628fc07ec80b4588c60" name="Weather/Common.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="19b35ebd33eb4504b5412b3bfb3251fb" name="Weather/Ejse.php" role="php">
+   <file baseinstalldir="Services" md5sum="fe1bc5e898b54aaddb39154eb233e490" name="Weather/Ejse.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="4136dbedfc3fb5eec30a846536d9a084" name="Weather/Globalweather.php" role="php">
+   <file baseinstalldir="Services" md5sum="821595fa69c095a79a6fa546125faad6" name="Weather/Globalweather.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="4d27612e30bf8afec11b9b32b259b142" name="Weather/Metar.php" role="php">
+   <file baseinstalldir="Services" md5sum="56d72f8e5e369a05281ac7fd2223481d" name="Weather/Metar.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="c993da3ab888c22cadf0513375528ddc" name="Weather/Weatherdotcom.php" role="php">
+   <file baseinstalldir="Services" md5sum="2561bc077116b7c08e4ae5a4f437b0e7" name="Weather/Weatherdotcom.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="bfcc9030c9b0126e5a0b85dbc986169c" name="buildMetarDB.php" role="data">
+   <file baseinstalldir="Services" md5sum="77f2b05dec10aa28f377dd8014a8e42c" name="buildMetarDB.php" role="data">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
     <tasks:unixeol />
    </file>
-   <file baseinstalldir="Services" md5sum="fb94e91d2ffa9a1e10ac4933d082213f" name="Weather.php" role="php">
+   <file baseinstalldir="Services" md5sum="eafb67ee07ed5cec367d1dd95cf8d514" name="Weather.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
     <tasks:unixeol />
    </file>
@@ -161,6 +155,23 @@ Bug #16928 getWeatherIcon() vs. grains	eru
 Request #17856 getWeatherIcon() / time issue	eru
 Request #18502 Moon data not avaolable	eru
 Request #18503 Use of Cache_Lite	eru
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.7</release>
+    <api>1.4.5</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-10-22</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>
+QA Release
+Bug #19228 Fatal error: Cannot use object of type PEAR_Error
+Bug #19213 Undefined array index in Metar.php
    </notes>
   </release>
  </changelog>
