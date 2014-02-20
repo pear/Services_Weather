@@ -1,0 +1,32 @@
+{
+    "authors": [
+        {
+            "email": "alex@pc4p.net",
+            "name": "Alexander Wirtz",
+            "role": "Lead"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "./"
+        ]
+    },
+    "description": "More info available on: http://pear.php.net/package/Services_Weather",
+    "license": "BSD License",
+    "name": "pear/services_weather",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Services_Weather",
+        "source": "https://github.com/pear/Services_Weather"
+    },
+    "type": "library",
+    "require": {
+        "pear/pear_exception": "*",
+        "pear/http_request": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "suggest": {
+        "pear/net_ftp": "Install optionally via your project's composer.json"
+    }
+}
