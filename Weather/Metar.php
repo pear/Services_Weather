@@ -264,7 +264,7 @@ class Services_Weather_Metar extends Services_Weather_Common
         } else {
             switch ($sourceMetar) {
                 case "http":
-                    $this->_sourcePathMetar = "http://weather.noaa.gov/pub/data/observations/metar/stations";
+                    $this->_sourcePathMetar = "http://tgftp.nws.noaa.gov/data/observations/metar/stations";
                     break;
                 case "ftp":
                     $this->_sourcePathMetar = "ftp://weather.noaa.gov/data/observations/metar/stations";
